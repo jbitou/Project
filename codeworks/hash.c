@@ -264,7 +264,7 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 	else if(flag == 3)	 pos = hash_func_MSearch(g[0],qdata,distances,k,d);
 	
 	lshnn = search_chain_NN(htable[0].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);
-	if (counter > 3*L) 	return lshnn;
+	if (counter > 6*L) 	return lshnn;
 	for (i=1; i < L; i++)
 	{
 		if (!flag) pos = hash_func_Ham(g[i],qdata,k);
@@ -282,7 +282,7 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 			lshnn.distance = lshnn1.distance;	
 			strcpy(lshnn.key,lshnn1.key);
 		}
-		if(counter > 3*L) 	return lshnn;
+		if(counter > 6*L) 	return lshnn;
 	}
 	return lshnn;
 }
