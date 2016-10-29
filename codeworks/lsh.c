@@ -286,60 +286,84 @@ int main(int argc, char **argv)
 			printf("TABLE %d\n",i);
 			print_table(htable[i]);	
 		}*/
-		/*read file, get radius*/
-		fscanf(fq,"%s%lf[^\n]",radius,&rad);	
-		printf("%s	'%lf'\n",radius,rad);
-		if (rad > 0)	valid = 1;		
-		else if (rad == 0) valid = 0;
-		else 							
+		files = 1;
+		do
 		{
-			printf("Negative radius found. Try again\n");
-			return -1;
-		}
-		/*search starts*/
-		int *qdata = malloc(numofitems*sizeof(int));
-		while(fscanf(fq,"%s",item) != EOF)		
-		{
-			for(i=0; i < numofitems; i++)
+			if (files == 1) 	fq = fopen(argv[query],"r");
+			else
 			{
-				fscanf(fq,"%d",&token);
-				qdata[i] = token;
+				printf("Give QueryFile name: ");
+				scanf("%s",fileName);
+				fq = fopen(fileName,"r");
+				printf("Give OutputFile name: ");
+				scanf("%s",fileName);
+				fe = fopen(fileName,"w+");
 			}
-			if (valid)
+			if (fq == NULL)
 			{
-				for (i=0; i < L;i++)
+				perror("Error:");
+				return -1;
+			}
+			/*read file, get radius*/
+			fscanf(fq,"%s%lf[^\n]",radius,&rad);
+			if (rad > 0)	valid = 1;		
+			else if (rad == 0) valid = 0;
+			else 							
+			{
+				printf("Negative radius found. Try again\n");
+				return -1;
+			}
+			/*search starts*/
+			int *qdata = malloc(numofitems*sizeof(int));
+			while(fscanf(fq,"%s",item) != EOF)		
+			{
+				for(i=0; i < numofitems; i++)
 				{
-					pos = hash_func_MSearch(g[i],qdata,p,k,numofitems);
-					search_table_NNR(pos,htable[i],qdata,rad,&nnrlist,flag,0,0);	
+					fscanf(fq,"%d",&token);
+					qdata[i] = token;
 				}
-				fprintf(fe,"Query: %s\nR-near neighbors:\n",item); 
-				destroy_nnrlist(&nnrlist,fe);
+				if (valid)
+				{
+					for (i=0; i < L;i++)
+					{
+						pos = hash_func_MSearch(g[i],qdata,p,k,numofitems);
+						search_table_NNR(pos,htable[i],qdata,rad,&nnrlist,flag,0,0);	
+					}
+					fprintf(fe,"Query: %s\nR-near neighbors:\n",item); 
+					destroy_nnrlist(&nnrlist,fe);
+				}
+				/*brute starts*/
+				bruflag = 1;
+				start_t = clock();
+				nn tnn;
+				tnn = brute_force_table(htable[0],qdata,flag,bruflag,0,0,L);
+				end_t = clock();
+				total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+				bruflag = 0;
+				/*brute ends*/
+				/*NN starts*/
+				start_t = clock();
+				nn lshnn;		
+				lshnn = search_table_NN(g,htable,qdata,p,flag,numofitems,k,L,tableSize);	
+				end_t = clock();
+				total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+				fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
+				fprintf(fe,"True neighbor: %s\n",tnn.key);
+				fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
+				fprintf(fe,"distanceTrue: %f\n",tnn.distance);
+				fprintf(fe,"tLSH: %f\n",total_t1);
+				fprintf(fe,"tTrue: %f\n\n",total_t);
+				free(lshnn.key);
+				free(tnn.key);
 			}
-			/*brute starts*/
-			bruflag = 1;
-			start_t = clock();
-			nn tnn;
-			tnn = brute_force_table(htable[0],qdata,flag,bruflag,0,0,L);
-			end_t = clock();
-			total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-			bruflag = 0;
-			/*brute ends*/
-			/*NN starts*/
-			start_t = clock();
-			nn lshnn;		
-			lshnn = search_table_NN(g,htable,qdata,p,flag,numofitems,k,L,tableSize);	
-			end_t = clock();
-			total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-			fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
-			fprintf(fe,"True neighbor: %s\n",tnn.key);
-			fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
-			fprintf(fe,"distanceTrue: %f\n",tnn.distance);
-			fprintf(fe,"tLSH: %f\n",total_t1);
-			fprintf(fe,"tTrue: %f\n\n",total_t);
-			free(lshnn.key);
-			free(tnn.key);
-		}
-		free(qdata);
+			free(qdata);
+			printf("Search completed with success.\n");
+			fclose(fq);	
+			fclose(fe);
+			printf("Would you like to continue the search? Y or N: ");
+			scanf("%s",answer);
+			files++;
+		}while (strcmp(answer,"Y") == 0);
 		free(allitems);
 		for(i=0; i < numofitems-1; i++)	
 			free(p[i]);
@@ -452,110 +476,135 @@ int main(int argc, char **argv)
 			printf("TABLE %d\n",i);
 			print_table(htable[3]);	//Print tables for check
 		}*/
-		/*Search phase*/
-		fscanf(fq,"%s%lf[^\n]",radius,&rad);	//Read first line of query_file
-		printf("%s	'%lf'\n",radius,rad);
-		if (rad > 0)	valid = 1;		//If a positive Radius is given, then compute all neighbors
-		else if (rad == 0) valid = 0;	//If Radius equals to zero, then find only THE nearest neighbor
-		else 							//If Radius < 0, then report error
+		files = 1;
+		do
 		{
-			printf("Negative radius found. Try again\n");
-			return -1;
-		}
-		double *q = malloc(col * sizeof(double));
-		while(fscanf(fq,"%s",qitem) != EOF)		//String returned is itemK
-		{
-			//itemid = make_item(qitem);
-			for(i=0; i < col; i++)
+			if (files == 1) 	fq = fopen(argv[query],"r");
+			else
 			{
-				fscanf(fq,"%s",token);	//Read coordinates
-				q[i] = atof(token);		//Convert coordinates to double
+				printf("Give QueryFile name: ");
+				scanf("%s",fileName);
+				fq = fopen(fileName,"r");
+				printf("Give OutputFile name: ");
+				scanf("%s",fileName);
+				fe = fopen(fileName,"w+");
 			}
-			if (strcmp(m,"@metriceuclidean") == 0)
+			if (fq == NULL)
 			{
-				/*Brute force starts*/
-				bruflag = 1;
-				start_t = clock();
-				nn tnn;
-				tnn = brute_force_table(htable[0],q,flag,bruflag,0,col,L);
-				end_t = clock();
-				total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-				bruflag = 0;
-				/*Brute force ends*/
-				/*NNR starts*/
-				if (valid)
+				perror("Error:");
+				return -1;
+			}
+			/*Search phase*/
+			fscanf(fq,"%s%lf[^\n]",radius,&rad);	//Read first line of query_file
+			printf("%s	'%lf'\n",radius,rad);
+			if (rad > 0)	valid = 1;		//If a positive Radius is given, then compute all neighbors
+			else if (rad == 0) valid = 0;	//If Radius equals to zero, then find only THE nearest neighbor
+			else 							//If Radius < 0, then report error
+			{
+				printf("Negative radius found. Try again\n");
+				return -1;
+			}
+			double *q = malloc(col * sizeof(double));
+			while(fscanf(fq,"%s",qitem) != EOF)		//String returned is itemK
+			{
+				//itemid = make_item(qitem);
+				for(i=0; i < col; i++)
 				{
-					for(i = 0; i < L; i++)	
-					{
-						//printf("TABLE %d\n",i);
-						euclID = hash_func_Eucl(g[i],q,k,col);
-						euclID = abs(euclID);
-						pos = mod(euclID , tableSize);
-						//printf("pos=%d\n",pos);
-						search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,euclID,col);		//Search for NNRs
-					}
-					fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
-					destroy_nnrlist(&nnrlist,fe);	
+					fscanf(fq,"%s",token);	//Read coordinates
+					q[i] = atof(token);		//Convert coordinates to double
 				}
-				/*NNR ends*/
-				/*NN starts*/
-				start_t = clock();
-				nn lshnn;			
-				lshnn = search_table_NN(g,htable,q,NULL,flag,col,k,L,tableSize);
-				end_t = clock();
-				total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-				/*NN ends*/
-				fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
-				fprintf(fe,"True neighbor: %s\n",tnn.key);
-				fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
-				fprintf(fe,"distanceTrue: %f\n",tnn.distance);
-				fprintf(fe,"tLSH: %f\n",total_t1);
-				fprintf(fe,"tTrue: %f\n\n",total_t);
-				free(lshnn.key);
-				free(tnn.key);
-			}
-			else 
-			{
-				/*Brute force starts*/
-				bruflag = 1;
-				start_t = clock();
-				nn tnn;
-				tnn = brute_force_table(htable[0],q,flag,bruflag,0,col,L);
-				end_t = clock();
-				total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-				bruflag = 0;
-				/*Brute force ends*/
-				/*NNR starts*/
-				if (valid)
+				if (strcmp(m,"@metriceuclidean") == 0)
 				{
-					for(i = 0; i < L; i++)	
+					/*Brute force starts*/
+					bruflag = 1;
+					start_t = clock();
+					nn tnn;
+					tnn = brute_force_table(htable[0],q,flag,bruflag,0,col,L);
+					end_t = clock();
+					total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+					bruflag = 0;
+					/*Brute force ends*/
+					/*NNR starts*/
+					if (valid)
 					{
-						pos = hash_func_Cos(g[i],q,k,col);
-						search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,0,col);		//Search for NNRs
+						for(i = 0; i < L; i++)	
+						{
+							//printf("TABLE %d\n",i);
+							euclID = hash_func_Eucl(g[i],q,k,col);
+							euclID = abs(euclID);
+							pos = mod(euclID , tableSize);
+							//printf("pos=%d\n",pos);
+							search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,euclID,col);		//Search for NNRs
+						}
+						fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
+						destroy_nnrlist(&nnrlist,fe);	
 					}
-					fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
-					destroy_nnrlist(&nnrlist,fe);	
+					/*NNR ends*/
+					/*NN starts*/
+					start_t = clock();
+					nn lshnn;			
+					lshnn = search_table_NN(g,htable,q,NULL,flag,col,k,L,tableSize);
+					end_t = clock();
+					total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+					/*NN ends*/
+					fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
+					fprintf(fe,"True neighbor: %s\n",tnn.key);
+					fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
+					fprintf(fe,"distanceTrue: %f\n",tnn.distance);
+					fprintf(fe,"tLSH: %f\n",total_t1);
+					fprintf(fe,"tTrue: %f\n\n",total_t);
+					free(lshnn.key);
+					free(tnn.key);
 				}
-				/*NNR ends*/
-				/*NN starts*/
-				start_t = clock();
-				nn lshnn;		
-				lshnn = search_table_NN(g,htable,q,NULL,flag,col,k,L,tableSize);
-				end_t = clock();
-				total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-				/*NN ends*/
-				fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
-				fprintf(fe,"True neighbor: %s\n",tnn.key);
-				fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
-				fprintf(fe,"distanceTrue: %f\n",tnn.distance);
-				fprintf(fe,"tLSH: %f\n",total_t1);
-				fprintf(fe,"tTrue: %f\n\n",total_t);
-				free(lshnn.key);
-				free(tnn.key);
+				else 
+				{
+					/*Brute force starts*/
+					bruflag = 1;
+					start_t = clock();
+					nn tnn;
+					tnn = brute_force_table(htable[0],q,flag,bruflag,0,col,L);
+					end_t = clock();
+					total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+					bruflag = 0;
+					/*Brute force ends*/
+					/*NNR starts*/
+					if (valid)
+					{
+						for(i = 0; i < L; i++)	
+						{
+							pos = hash_func_Cos(g[i],q,k,col);
+							search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,0,col);		//Search for NNRs
+						}
+						fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
+						destroy_nnrlist(&nnrlist,fe);	
+					}
+					/*NNR ends*/
+					/*NN starts*/
+					start_t = clock();
+					nn lshnn;		
+					lshnn = search_table_NN(g,htable,q,NULL,flag,col,k,L,tableSize);
+					end_t = clock();
+					total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+					/*NN ends*/
+					fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
+					fprintf(fe,"True neighbor: %s\n",tnn.key);
+					fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
+					fprintf(fe,"distanceTrue: %f\n",tnn.distance);
+					fprintf(fe,"tLSH: %f\n",total_t1);
+					fprintf(fe,"tTrue: %f\n\n",total_t);
+					free(lshnn.key);
+					free(tnn.key);
+				}
 			}
-		}
-		free(q);
-		/*End of search phase*/
+			free(q);
+			/*End of search phase*/
+			printf("Search completed with success.\n");
+			fclose(fq);	
+			fclose(fe);
+			printf("Would you like to continue the search? Y or N: ");
+			scanf("%s",answer);
+			files++;
+		}while (strcmp(answer,"Y") == 0);
 	}
 	/*Memory release*/
 	for (i = 0; i < L; i++)

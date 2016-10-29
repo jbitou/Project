@@ -349,7 +349,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 			if (!bruflag)
 			{
 				*counter = *counter+1;
-				if(*counter > 3*L)
+				if(*counter > 6*L)
 				{
 					strcpy(lshnn.key,key);
 					lshnn.distance = (double)diff;
@@ -366,7 +366,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 				if (!bruflag)
 				{
 					*counter= *counter+1;
-					if(*counter > 3*L)
+					if(*counter > 6*L)
 					{
 						strcpy(lshnn.key,key);
 						lshnn.distance = (double)diff;
@@ -393,7 +393,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 				if (!bruflag)
 				{
 					*counter= *counter+1;
-					if(*counter > 3*L)
+					if(*counter > 6*L)
 					{
 						strcpy(lshnn.key,key);
 						lshnn.distance = (double)diff;
@@ -418,7 +418,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 					if (!bruflag)
 					{
 						*counter= *counter+1;
-						if(*counter > 3*L)
+						if(*counter > 6*L)
 						{
 							strcpy(lshnn.key,key);
 							lshnn.distance = (double)diff;
