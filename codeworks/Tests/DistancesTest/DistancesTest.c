@@ -47,7 +47,7 @@ void test_distance_Euclidean()
 
 void test_distance_Cosine()
 {
-	double *v1,*v2;
+	double *v1,*v2,epsilon = 0.000000001,distance;
 	int d = 2,i;
 	v1 = malloc(d*sizeof(double));
 	v1[0] = 86.569874;
@@ -55,7 +55,8 @@ void test_distance_Cosine()
 	v2 = malloc(d*sizeof(double));
 	v2[0] = 69.736987;
 	v2[1] = -5.333366;
-	CU_ASSERT(99.15827208 == distance_Euclidean(v1,v2,d));
+	distance = distance_Cosine(v1,v2,d);
+	CU_ASSERT(fabs(distance - 0.3738690549) < epsilon);
 	free(v1);
 	free(v2);
 }
@@ -77,8 +78,8 @@ int main (void)
 
     /* Add the tests to the suite */
     if ((NULL == CU_add_test(pSuite, "test_distance_Hamming", test_distance_Hamming))
-     || (NULL == CU_add_test(pSuite, "test_distance_Euclidean", test_distance_Euclidean)))
-     /*|| (NULL == CU_add_test(pSuite, "test_distance_Cosine", test_hash_func_Cos)))*/
+     || (NULL == CU_add_test(pSuite, "test_distance_Euclidean", test_distance_Euclidean))
+     || (NULL == CU_add_test(pSuite, "test_distance_Cosine", test_distance_Cosine)))
     {
         CU_cleanup_registry();
         return CU_get_error();
