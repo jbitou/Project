@@ -4,6 +4,7 @@
 #include "chain.h"
 #include "distances.h"
 #define ITEM_ID 15
+#define TRICK 6
 
 void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 {
@@ -21,7 +22,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp = malloc(sizeof(chain));
 			temp-> p = NULL;
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
-			strcpy(temp->key ,key);
+			strcpy(temp->key,key);
 			if ((size>32) && (size<=64))
 			{
 				temp->value = malloc(sizeof(uint64_t));
@@ -49,7 +50,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp = malloc(sizeof(chain));
 			temp->p = NULL;
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
-			strcpy(temp->key ,key);
+			strcpy(temp->key,key);
 			temp->value = NULL;	
 		}
 		else 	//Vectors
@@ -68,6 +69,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 		temp->next = NULL;
 		*pointer = temp;
 	}
+	/*If list isn't empty, put new node at the end*/
 	else
 	{
 		while(temp->next!=NULL)
@@ -80,7 +82,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp->next = malloc(sizeof(chain));
 			temp->next->p = NULL;
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
-			strcpy(temp->next->key ,key);
+			strcpy(temp->next->key,key);
 			if ((size>32) && (size<=64))
 			{
 				temp->next->value = malloc(sizeof(uint64_t));
@@ -143,7 +145,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
 			if (diff <= R)
-				insertnnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp->key,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -156,7 +158,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			position = make_item(temp->key);
 			diff = q[position-1];
 			if (diff <= R)
-				insertnnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp->key,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -166,7 +168,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 		double *q = (double *)qdata;
 		int exists = 0;
 		/*Only for euclidean metric, count items for which ID(p) = ID(q)*/
-		if(flag!=2) 
+		if(flag != 2) 
 		{
 			while (temp != NULL)
 			{
@@ -186,7 +188,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				else
 					diff = distance_Cosine(temp->p,q,d);
 				if (diff <= R)
-					insertnnrlist(temp->key,nnrlist);
+					insert_nnrlist(temp->key,nnrlist);
 				temp = temp->next;
 			}
 		}
@@ -198,7 +200,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
-						insertnnrlist(temp->key,nnrlist);
+						insert_nnrlist(temp->key,nnrlist);
 				}
 				temp = temp->next;
 			}
@@ -232,19 +234,8 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		temp = temp->next;
 		while (temp != NULL)
 		{
-			/*If search is not brute check for trick*/
-			/*if (!bruflag)
-			{
-				if (*counter > 6*L)
-				{
-					strcpy(lshnn.key,key);
-					lshnn.distance = (double)diff;
-					return lshnn;
-				}
-			}*/
 			num1 = *(temp->value);   
 			diff1 = distance_Hamming(num1,num2);
-			//if (!bruflag) *counter= *counter+1;
 			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
 			{
 				diff = diff1;
@@ -273,18 +264,8 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		temp = temp->next;
 		while (temp != NULL)
 		{
-			/*if (!bruflag)
-			{
-				if (*counter > 6*L) 
-				{
-					strcpy(lshnn.key,key);
-					lshnn.distance = (double)diff;
-					return lshnn;
-				}
-			}*/
 			position = make_item(temp->key);
 			diff1 = qdata[position-1];
-			//if (!bruflag) *counter = *counter+1;
 			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
 			{
 				diff = diff1;
@@ -329,7 +310,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 			if (!bruflag)
 			{
 				*counter = *counter+1;
-				if(*counter > 6*L)
+				if(*counter > TRICK*L)
 				{
 					strcpy(lshnn.key,key);
 					lshnn.distance = (double)diff;
@@ -346,7 +327,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 				if (!bruflag)
 				{
 					*counter= *counter+1;
-					if(*counter > 6*L)
+					if(*counter > TRICK*L)
 					{
 						strcpy(lshnn.key,key);
 						lshnn.distance = (double)diff;
@@ -373,7 +354,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 				if (!bruflag)
 				{
 					*counter= *counter+1;
-					if(*counter > 6*L)
+					if(*counter > TRICK*L)
 					{
 						strcpy(lshnn.key,key);
 						lshnn.distance = (double)diff;
@@ -398,7 +379,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 					if (!bruflag)
 					{
 						*counter= *counter+1;
-						if(*counter > 6*L)
+						if(*counter > TRICK*L)
 						{
 							strcpy(lshnn.key,key);
 							lshnn.distance = (double)diff;
