@@ -24,4 +24,3 @@ void insert_chain(char *, void *, chainp *, int, int, int);
 void search_chain_NNR(chainp, void *, double, nnrp *, int, int, int);
 nn search_chain_NN(chainp, void *, int, int, int, int, int *, int);
 void destroy_chain(chainp *, int);
-void print_chain(chainp);

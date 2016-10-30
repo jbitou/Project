@@ -12,7 +12,7 @@
 
 char *inputString(FILE *, size_t);
 
-int main(int argc, char **argv)
+int main (int argc, char **argv)
 {
 	FILE *fp, *fq, *fe;
 	int i, j, foundK, foundL, f1, f2, f3, k, L, key, bs, pos, input, query, output, flag, valid, tableSize, bruflag, files;
@@ -28,15 +28,17 @@ int main(int argc, char **argv)
 		printf("Too many arguments. Try again.\n");
 		return -1;
 	}
+	/*Every parameter has to be given after a recogniser*/
 	if ((argc % 2) == 0)
 	{
-		printf("Wrong arguments. Try again.\n");	//Every parameter has to be given after a recogniser
+		printf("Wrong arguments. Try again.\n");	
 		return -1;
 	}	
-	srand(time(NULL));	//Intializes random number generator
+	/*Initialize random number generator*/
+	srand(time(NULL));	
 	foundK = foundL = 0;
 	f1 = f2 = f3 = 0;
-	for (i=1; i<(argc-1); i+=2)
+	for (i=1; i < (argc-1); i+=2)
 	{
 		if (strcmp(argv[i],"-k") == 0)
 		{
@@ -101,42 +103,33 @@ int main(int argc, char **argv)
 	}
 	
 	htable = malloc(L * sizeof(hash_table));
-	ghashp *g = malloc(L * sizeof(ghashp));		//Allocate memory for hash family G
+	ghashp *g = malloc(L * sizeof(ghashp));		
 	for(i = 0; i < L; i++) 
 		g[i] = malloc(k * sizeof(ghash));
-	fscanf(fp,"%s%s[^\n]",ms,space);	//Read first line of input_file
+	/*Read first line of input_file*/	
+	fscanf(fp,"%s%s[^\n]",ms,space);	
 	if (strcmp(space,"hamming") == 0)
 	{
 		flag = 0;
 		tableSize = 1 << k;
 		for (i=0; i<L; i++)
 			init_table(k,&htable[i],tableSize);
-		fscanf(fp,"%s %s[^\n]",item,data);	//Read first datasets' line to compute 'N'
+		/*Read  datasets' first line to compute 'N'(number of bits)*/
+		fscanf(fp,"%s %s[^\n]",item,data);	
 		init_hash_Ham(g,L,k,data);
-		/*for(i=0; i < L; i++) 
-		{
-			for(j=0; j < k; j++) 
-				printf("%d ",g[i][j].t);		//Print g[i][j] to check
-			printf("\n");
-		}*/
+		/*Go back to the start*/
 		fseek(fp,0,SEEK_SET);
 		fscanf(fp,"%s%s[^\n]",ms,space);
 		/*Ιnput phase*/
-		while (fscanf(fp,"%s %s[^\n]",item,data)!=EOF)		
+		while (fscanf(fp,"%s %s[^\n]",item,data) != EOF)		
 		{   
-			//key = make_item(item);
 			for(i = 0; i < L; i++)	
 			{
-				pos = hash_func_Ham(g[i],data,k);	//Find the right bucket according to function g for Hamming
+				pos = hash_func_Ham(g[i],data,k);
 				insert_chain(item,data,&(htable[i].table[pos]),flag,0,0);
 			}
 		}
 		/*End of Ιnput phase*/
-		/*for(i = 0; i < L; i++)	
-		{
-			printf("TABLE %d\n",i);
-			print_table(htable[i]);
-		}*/
 		files = 1;
 		do
 		{
@@ -155,17 +148,20 @@ int main(int argc, char **argv)
 				perror("Error:");
 				return -1;
 			}
-			fscanf(fq,"%s%lf[^\n]",radius,&rad);	//Read first line of query_file
-			if (rad > 0)	valid = 1;		//If a positive Radius is given, then compute all neighbors
-			else if (rad == 0) valid = 0;	//If Radius equals to zero, then find only THE nearest neighbor
-			else 							//If Radius < 0, then report error
+			/*Read first line of query_file*/
+			fscanf(fq,"%s%lf[^\n]",radius,&rad);
+			/*If a positive Radius is given, then compute all neighbors else only the nearest one*/	
+			if (rad > 0)	valid = 1;		
+			else if (rad == 0) valid = 0;	
+			else 							
 			{
 				printf("Negative radius found. Try again\n");
 				return -1;
 			}
 			/*Search phase*/
-			while (fscanf(fq,"%s %s[^\n]",qitem,qdata)!=EOF)		
+			while (fscanf(fq,"%s %s[^\n]",qitem,qdata) != EOF)		
 			{
+				/*Brute force starts*/
 				bruflag = 1;
 				start_t = clock();
 				nn tnn;
@@ -173,25 +169,30 @@ int main(int argc, char **argv)
 				end_t = clock();
 				total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
 				bruflag = 0;
+				/*Brute force ends*/
+				/*NNR starts*/
 				if (valid)
 				{
-					for (i=0; i < L;i++)
+					for (i=0; i < L; i++)
 					{
-						pos = hash_func_Ham(g[i],qdata,k);	//Find the right bucket according to function g
-						search_table_NNR(pos,htable[i],qdata,rad,&nnrlist,flag,0,0);		//Search for NNRs
+						pos = hash_func_Ham(g[i],qdata,k);	
+						search_table_NNR(pos,htable[i],qdata,rad,&nnrlist,flag,0,0);
 					}
 					fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
 					destroy_nnrlist(&nnrlist,fe);
 				}
+				/*NNR ends*/
+				/*NN starts*/
 				start_t = clock();
 				nn lshnn;			
 				lshnn = search_table_NN(g,htable,qdata,NULL,flag,0,k,L,tableSize);
 				end_t = clock();
 				total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+				/*NN ends*/
 				fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
 				fprintf(fe,"True neighbor: %s\n",tnn.key);
-				fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
-				fprintf(fe,"distanceTrue: %f\n",tnn.distance);
+				fprintf(fe,"distanceLSH: %.0f\n",lshnn.distance);
+				fprintf(fe,"distanceTrue: %.0f\n",tnn.distance);
 				fprintf(fe,"tLSH: %f\n",total_t1);
 				fprintf(fe,"tTrue: %f\n\n",total_t);
 				free(lshnn.key);
@@ -213,20 +214,18 @@ int main(int argc, char **argv)
 		flag = 3;	
 		fscanf(fp,"%s",itemsline);
 		allitems = inputString(fp,MAX_LINE);
-		/*read line with items to get the size of te matrix (numofitems x numofitems)*/
+		/*Read line with items to get the size of te matrix (numofitems x numofitems)*/
 		i = 0;
 		numofitems = 1;
 		while( allitems[i] != '\0')		
 		{
-			if( allitems[i]== ',')
+			if( allitems[i] == ',')
 				numofitems++;
 			i++;	
 		}
-		printf("numofitems=%d\n",numofitems);
-		/*Allocate memory for tables*/
 		for (i=0; i < L; i++)	
 			init_table(k,&htable[i],tableSize);
-		/*read table*/
+		/*Read matrix*/
 		int **p = malloc((numofitems-1)*sizeof(int*));	
 		j = numofitems-1;
 		for(i=0; i < numofitems-1; i++) 
@@ -240,7 +239,8 @@ int main(int argc, char **argv)
 		{
 			flag1=0;
 			z=0;
-			if (token == 0)  flag1 = 1;	//From now and then, read next distance and store it
+			if (token == 0)  flag1 = 1;	
+			/*From now on, read next distance and store it*/
 			for(j=0; j < numofitems-1; j++)
 			{
 				fscanf(fp,"%d",&token);
@@ -253,26 +253,11 @@ int main(int argc, char **argv)
 			}
 			i++;	
 		}
-		/*z = numofitems-1;
-		for(i=0; i < numofitems-1; i++) {
-			for(j=0; j < z; j++)
-				printf("distance of %d from %d is %d\n",i,i+j+1,p[i][j]);
-			z--;
-		}*/
-		/*create g functions*/	
 		init_hash_matrix(g,p,L,k,numofitems);
-		/*for (i=0; i < L; i++) 
-		{
-			for (j=0; j < k; j++)
-			{ 
-				printf("H%d,%d--x1=%d--x2=%d--t1=%d\n",i,j,g[i][j].t,g[i][j].r,g[i][j].t1);
-			}
-		}*/
+		/*Start input*/
 		char itemID[ITEM_ID];
-		/*start input*/
 		for(i = 0; i < L; i++)	
 		{ 
-			//z = numofitems-1;
 			for(j = 0; j < numofitems; j++)	
 			{
 				sprintf(itemID,"item%d",j+1);
@@ -280,12 +265,7 @@ int main(int argc, char **argv)
 				insert_chain(itemID,NULL,&(htable[i].table[pos]),flag,0,0);
 			}
 		}
-		/*end of input phase*/
-		/*for(i = 0; i < L; i++)	
-		{
-			printf("TABLE %d\n",i);
-			print_table(htable[i]);	
-		}*/
+		/*End of input phase*/
 		files = 1;
 		do
 		{
@@ -304,7 +284,7 @@ int main(int argc, char **argv)
 				perror("Error:");
 				return -1;
 			}
-			/*read file, get radius*/
+			/*Read file, get radius*/
 			fscanf(fq,"%s%lf[^\n]",radius,&rad);
 			if (rad > 0)	valid = 1;		
 			else if (rad == 0) valid = 0;
@@ -313,7 +293,7 @@ int main(int argc, char **argv)
 				printf("Negative radius found. Try again\n");
 				return -1;
 			}
-			/*search starts*/
+			/*Search starts*/
 			int *qdata = malloc(numofitems*sizeof(int));
 			while(fscanf(fq,"%s",item) != EOF)		
 			{
@@ -324,6 +304,7 @@ int main(int argc, char **argv)
 				}
 				if (valid)
 				{
+					/*NNR starts*/
 					for (i=0; i < L;i++)
 					{
 						pos = hash_func_MSearch(g[i],qdata,p,k,numofitems);
@@ -331,8 +312,9 @@ int main(int argc, char **argv)
 					}
 					fprintf(fe,"Query: %s\nR-near neighbors:\n",item); 
 					destroy_nnrlist(&nnrlist,fe);
+					/*NNR ends*/
 				}
-				/*brute starts*/
+				/*Brute force starts*/
 				bruflag = 1;
 				start_t = clock();
 				nn tnn;
@@ -340,17 +322,18 @@ int main(int argc, char **argv)
 				end_t = clock();
 				total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
 				bruflag = 0;
-				/*brute ends*/
+				/*Brute force ends*/
 				/*NN starts*/
 				start_t = clock();
 				nn lshnn;		
 				lshnn = search_table_NN(g,htable,qdata,p,flag,numofitems,k,L,tableSize);	
 				end_t = clock();
 				total_t1 = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+				/*NN ends*/
 				fprintf(fe,"Nearest neighbor: %s\n",lshnn.key);
 				fprintf(fe,"True neighbor: %s\n",tnn.key);
-				fprintf(fe,"distanceLSH: %f\n",lshnn.distance);
-				fprintf(fe,"distanceTrue: %f\n",tnn.distance);
+				fprintf(fe,"distanceLSH: %.0f\n",lshnn.distance);
+				fprintf(fe,"distanceTrue: %.0f\n",tnn.distance);
 				fprintf(fe,"tLSH: %f\n",total_t1);
 				fprintf(fe,"tTrue: %f\n\n",total_t);
 				free(lshnn.key);
@@ -375,14 +358,15 @@ int main(int argc, char **argv)
 		int l, col, lines = -2, c, t, itemid, euclID;
 		char metric[20], m[10], token[100];
 		char *eucldata, *ptr, delim[] = " \t", itemID[ITEM_ID], *point;
-		fscanf(fp,"\n");	//Read \n of first line, go to second line
+		/*Read \n of first line, go to second line*/
+		fscanf(fp,"\n");
+		/*Read only second line*/	
 		i = 0;
 		while (i < 19)
 		{
 			c = fgetc(fp);
-			if (c == '\n')	break;	//Read only second line
+			if (c == '\n')	break;	
 			metric[i++] = c;
-			printf("|%c|",c);
 		}
 		metric[i] = '\0';
 		/*Delete blank*/
@@ -395,29 +379,29 @@ int main(int argc, char **argv)
 		}
 		m[j]=0;
 		/*Blank deleted*/
+		/*Read first line to count the dimensions*/
 		fscanf(fp,"%s",itemID);
 		eucldata = inputString(fp,MAX_LINE);
 		/*Count dimensions*/
 		ptr = eucldata;
-		strtok(ptr,delim);		//Get first item_id to count dimensions
+		strtok(ptr,delim);
 		ptr = NULL;
 		col = 1;		
 		while ((point = strtok(ptr,delim)) != NULL)   
 		{
-			if (lines == -2)	col++;	//Count dimensions of vectors
+			if (lines == -2)	col++;
 			ptr = NULL; 
 		}
 		/*Dimensions found*/
-		printf("dimensions: %d\n",col);
-		fseek(fp,0,SEEK_SET);	//Return file to start
-		/*count lines*/
+		/*Return file to start*/
+		fseek(fp,0,SEEK_SET);	
+		/*Count lines*/
 		int ch;
 		while ((ch = fgetc(fp)) != EOF) 
 		{
 			if(ch == '\n') lines++;
 		}
-		printf("lines: %d\n",lines);
-		/*lines found*/
+		/*Lines found*/
 		if (strcmp(m,"@metriceuclidean") == 0)
 		{
 			tableSize = lines/16 + 1;
@@ -428,29 +412,33 @@ int main(int argc, char **argv)
 			tableSize = 1 << k;
 			flag = 2;
 		}		
-		for (i=0; i < L; i++)	//Allocate memory for tables
+		for (i=0; i < L; i++)	
 			init_table(k,&htable[i],tableSize);
 		if (strcmp(m,"@metriceuclidean") == 0)	
 		{
-			init_hash_Eucl(g,L,k,col);	//Euclidean metric
+			init_hash_Eucl(g,L,k,col);	
 		}
 		else 	
 		{
-			init_hash_Cos(g,L,k,col);	//Cosine metric
+			init_hash_Cos(g,L,k,col);	
 		}
 		/*Input phase*/
+		/*Go back to start and read first and second line of input_file*/
         fseek(fp,0,SEEK_SET);
-        fgets(eucldata,MAX_LINE,fp);	//Read first line of input_file
-		fgets(eucldata,MAX_LINE,fp);		//Read second line 
-		double *p = malloc(col * sizeof(double));	//Allocate array to store coordinates
-		while(fscanf(fp,"%s",item) != EOF)		//String returned is itemK
+        fgets(eucldata,MAX_LINE,fp);	
+		fgets(eucldata,MAX_LINE,fp);	
+		/*Allocate array to store coordinates*/	
+		double *p = malloc(col * sizeof(double));
+		/*Fscanf will return itemK in item*/
+		while(fscanf(fp,"%s",item) != EOF)		
 		{
+			/*Read coordinates*/
 			for(i=0; i < col; i++)
 			{
-				fscanf(fp,"%s",token);	//Read coordinates
-				p[i] = atof(token);		//Convert coordinates to type double
+				fscanf(fp,"%s",token);	
+				p[i] = atof(token);		
 			}
-			if (strcmp(m,"@metriceuclidean") == 0)	//Euclidean metric
+			if (strcmp(m,"@metriceuclidean") == 0)	
 			{
 				for(i = 0; i < L; i++)	
 				{
@@ -460,7 +448,7 @@ int main(int argc, char **argv)
 					insert_chain(item,p,&(htable[i].table[pos]),flag,col,euclID);
 				}	
 			}
-			else //Cosine metric
+			else 
 			{
 				for(i = 0; i < L; i++)	
 				{
@@ -470,13 +458,8 @@ int main(int argc, char **argv)
 			}
 		}
 		free(p);
-		/*End of Input phase*/
-		/*for(i = 0; i < L; i++)	
-		{
-			printf("TABLE %d\n",i);
-			print_table(htable[3]);	//Print tables for check
-		}*/
 		files = 1;
+		/*Search phase*/
 		do
 		{
 			if (files == 1) 	fq = fopen(argv[query],"r");
@@ -494,24 +477,24 @@ int main(int argc, char **argv)
 				perror("Error:");
 				return -1;
 			}
-			/*Search phase*/
-			fscanf(fq,"%s%lf[^\n]",radius,&rad);	//Read first line of query_file
-			printf("%s	'%lf'\n",radius,rad);
-			if (rad > 0)	valid = 1;		//If a positive Radius is given, then compute all neighbors
-			else if (rad == 0) valid = 0;	//If Radius equals to zero, then find only THE nearest neighbor
-			else 							//If Radius < 0, then report error
+			/*Read file, get radius*/
+			fscanf(fq,"%s%lf[^\n]",radius,&rad);	
+			if (rad > 0)	valid = 1;		
+			else if (rad == 0) valid = 0;	
+			else 							
 			{
 				printf("Negative radius found. Try again\n");
 				return -1;
 			}
 			double *q = malloc(col * sizeof(double));
-			while(fscanf(fq,"%s",qitem) != EOF)		//String returned is itemK
+			/*Fscanf will return itemK in item*/
+			while(fscanf(fq,"%s",qitem) != EOF)		
 			{
-				//itemid = make_item(qitem);
+				/*Read coordinates*/
 				for(i=0; i < col; i++)
 				{
-					fscanf(fq,"%s",token);	//Read coordinates
-					q[i] = atof(token);		//Convert coordinates to double
+					fscanf(fq,"%s",token);	
+					q[i] = atof(token);		
 				}
 				if (strcmp(m,"@metriceuclidean") == 0)
 				{
@@ -529,12 +512,10 @@ int main(int argc, char **argv)
 					{
 						for(i = 0; i < L; i++)	
 						{
-							//printf("TABLE %d\n",i);
 							euclID = hash_func_Eucl(g[i],q,k,col);
 							euclID = abs(euclID);
 							pos = mod(euclID , tableSize);
-							//printf("pos=%d\n",pos);
-							search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,euclID,col);		//Search for NNRs
+							search_table_NNR(pos,htable[i],q,rad,&nnrlist,flag,euclID,col);		
 						}
 						fprintf(fe,"Query: %s\nR-near neighbors:\n",qitem); 
 						destroy_nnrlist(&nnrlist,fe);	
@@ -621,7 +602,8 @@ int main(int argc, char **argv)
 		destroy_table(&htable[i],flag);	
 	free(htable);
 	/*Total memory was released*/
-	fclose(fp);		//Close Input File
+	/*Close Input File*/
+	fclose(fp);		
 	return 0;
 }
 

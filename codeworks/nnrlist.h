@@ -1,9 +1,8 @@
 
 typedef struct nnr_node *nnrp;
-
 typedef struct nnr_node
 {
-	char  key[15];
+	char key[15];
 	nnrp next;
 }nnr;
 

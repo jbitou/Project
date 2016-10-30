@@ -10,7 +10,8 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 	chainp temp;
 	int i;
 	temp = *pointer;
-	if (temp == NULL)		//if list is empty, put the first node
+	/*if list is empty, put the first node*/
+	if (temp == NULL)		
 	{
 		if (!flag)		//Hamming
 		{
@@ -42,22 +43,14 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 				*temp->value = strtoul(value,&end,2);
 			}
 		}
-		else if(flag == 3) //matrix
+		else if(flag == 3) //Matrix
 		{
 			int *value = (int *)v;
 			temp = malloc(sizeof(chain));
 			temp->p = NULL;
-			temp->id = d;
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->key ,key);
-			temp->value = NULL;
-			if(d != 0) 
-			{
-				temp->distances = malloc(d*sizeof(int));
-				for(i=0; i < d; i++)
-					temp->distances[i] = value[i];
-			}
-			
+			temp->value = NULL;	
 		}
 		else 	//Vectors
 		{
@@ -109,21 +102,14 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 				*temp->next->value = strtoul(value,&end,2);
 			}
 		}
-		else if(flag == 3) //matrix
+		else if(flag == 3) //Matrix
 		{
 			int *value = (int *)v;
 			temp->next = malloc(sizeof(chain));
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->next->key ,key);
-			temp->next->id = d;
 			temp->next->p = NULL;
 			temp->next->value = NULL;
-			if(d != 0) 
-			{
-				temp->next->distances = malloc(d*sizeof(int));
-				for(i=0; i < d; i++)
-					temp->next->distances[i] = value[i];
-			}
 		}
 		else 	//Vectors
 		{
@@ -170,9 +156,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			position = make_item(temp->key);
 			diff = q[position-1];
 			if (diff <= R)
-			{
 				insertnnrlist(temp->key,nnrlist);
-			}
 			temp = temp->next;
 		}
 	}
@@ -181,17 +165,18 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 		double diff;
 		double *q = (double *)qdata;
 		int exists = 0;
-		if(flag!=2) //only for euclidean metric
+		/*Only for euclidean metric, count items for which ID(p) = ID(q)*/
+		if(flag!=2) 
 		{
 			while (temp != NULL)
 			{
-				if(euclID == temp->id) { //ID(p) = ID(q)
+				if(euclID == temp->id) 	//ID(p) = ID(q)
 					exists++;
-				}
 				temp = temp->next;
 			}
 		}
 		temp = b;
+		/*For cosine metric or euclidean if exists=0*/
 		if(exists <= 1) 
 		{
 			while (temp != NULL)
@@ -200,7 +185,6 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 					diff = distance_Euclidean(temp->p,q,d);
 				else
 					diff = distance_Cosine(temp->p,q,d);
-				//printf("diff between %s and query is: %0.20f\n",temp->key,diff);
 				if (diff <= R)
 					insertnnrlist(temp->key,nnrlist);
 				temp = temp->next;
@@ -213,7 +197,6 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				if(euclID == temp->id)  //ID(p) = ID(q)
 				{
 					diff = distance_Euclidean(temp->p,q,d);
-					//printf("ID is:%d ----diff between %s and query is: %0.20f\n",euclID,temp->key,diff);
 					if (diff <= R)
 						insertnnrlist(temp->key,nnrlist);
 				}
@@ -236,7 +219,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		char key[ITEM_ID];
 		char *qdata = (char *)q;
 		num2 = strtoull(qdata,&end,2);
-		/*bucket is empty (only in brute force)*/
+		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
 			lshnn.distance = -1;
@@ -249,19 +232,20 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		temp = temp->next;
 		while (temp != NULL)
 		{
-			if (!bruflag)
+			/*If search is not brute check for trick*/
+			/*if (!bruflag)
 			{
-				if(*counter > 3*L)
+				if (*counter > 6*L)
 				{
 					strcpy(lshnn.key,key);
 					lshnn.distance = (double)diff;
 					return lshnn;
 				}
-			}
+			}*/
 			num1 = *(temp->value);   
 			diff1 = distance_Hamming(num1,num2);
-			if (!bruflag) *counter= *counter+1;
-			if(((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
+			//if (!bruflag) *counter= *counter+1;
+			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
 			{
 				diff = diff1;
 				strcpy(key,temp->key);
@@ -276,7 +260,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		int diff = 0, position, diff1;
 		char key[ITEM_ID];
 		int *qdata = (int *)q;
-		/*bucket is empty (only in brute force)*/
+		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
 			lshnn.distance = -1;
@@ -289,20 +273,19 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		temp = temp->next;
 		while (temp != NULL)
 		{
-			if (!bruflag)
+			/*if (!bruflag)
 			{
-				if (*counter > 3*L) 
+				if (*counter > 6*L) 
 				{
 					strcpy(lshnn.key,key);
 					lshnn.distance = (double)diff;
 					return lshnn;
 				}
-			}
+			}*/
 			position = make_item(temp->key);
 			diff1 = qdata[position-1];
-			//printf("2.key=%s  diff=%d--distance=%f\n",temp->key,diff,*distance);
-			if (!bruflag) *counter = *counter+1;
-			if(((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
+			//if (!bruflag) *counter = *counter+1;
+			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
 			{
 				diff = diff1;
 				strcpy(key,temp->key);
@@ -319,7 +302,7 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		char key[ITEM_ID];
 		double *qdata = (double *)q;
 		int i;
-		/*bucket is empty (only in brute force)*/
+		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
 			lshnn.distance = -1;
@@ -331,7 +314,6 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		{
 			while (tmp != NULL)
 			{
-				
 				if(euclID == tmp->id)  //ID(p) = ID(q)
 					exists++;
 				tmp = tmp->next;
@@ -339,13 +321,11 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		}
 		if(exists <= 1)  
 		{
-			
 			if(flag != 2)
 				diff = distance_Euclidean(qdata,temp->p,d);
 			else
 				diff = distance_Cosine(qdata,temp->p,d);	
 			strcpy(key,temp->key); 
-			/*apo panw kalutera??????*/
 			if (!bruflag)
 			{
 				*counter = *counter+1;
@@ -438,16 +418,17 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 int make_item(char *item)
 {
 	int key;
-	if (!isdigit(item[0]))	//If the first character of string is type of char
+	/*If the first character of string is type of char*/
+	if (!isdigit(item[0]))	
 	{	
 		char *id;
 		int s = strlen(item) - 4;
 		id = malloc(s+1);
 		strncpy(id,item+4,s);
-		key = atoi(id);		//keep only K of item_idK
+		key = atoi(id);		//Keep only K of item_idK
 		free(id);
 	}
-	else 	key = atoi(item);		//else, just convert type char* to int *
+	else 	key = atoi(item);
 	return key;
 }
 
@@ -455,33 +436,17 @@ void destroy_chain(chainp *l, int flag)
 {
 	chainp temp, curr;
 	curr = *l;
-	if (curr == NULL)		return;		//for safety
+	if (curr == NULL)		return;		
 	while (curr != NULL) 
 	{
 		temp = curr;
 		curr = curr->next;
 		free(temp->key);
-		if (flag == 0)	free(temp->value);	//Hamming 
-		else if(flag == 3) free(temp->distances);	//Matrix
-		else if ((flag == 1) || (flag == 2))	free(temp->p);	//Euclidean or Cosine
+		if (flag == 0)	free(temp->value);		//Hamming 
+		else if (flag == 3)	free(temp->distances);		//Matrix
+		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
 		free(temp);
 	}
-	*l = NULL;	//for safety
+	*l = NULL;	
 }
 
-void print_chain(chainp l)
-{
-	//uint64_t d;
-	int i;
-	while (l != NULL)
-	{
-		printf("key: %s, ",l->key);
-		/*for(i=0;i<l->id;i++)
-			printf("distance[%d]=%d ",i,l->distances[i]);
-		printf("\n");	*/
-		//printf("value: %" PRIu64 "\n",*(l->value));
-		//d = decimalToBinary(*(l->value));
-		//printf("value bits: %" PRIu64 "\n",d);
-		l=l->next;
-	}
-}
