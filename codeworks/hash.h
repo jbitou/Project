@@ -9,7 +9,7 @@ typedef struct hash_table
 typedef struct g_node * ghashp;
 typedef struct g_node
 {
-	int t, r , t1;
+	int t, r, t1;
 	double *v;
 }ghash;
 
