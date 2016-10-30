@@ -8,11 +8,9 @@
 
 int mod(int a, long long b)
 {
-	if(b<0)
-		return mod(a,-b);
-	int ret=a%b;
-	if(ret<0)
-		ret+=b;
+	if (b < 0) 		 return mod(a,-b);
+	int ret = a % b;
+	if(ret < 0) 	ret += b;
 	return ret;
 }
 
@@ -33,6 +31,7 @@ void init_hash_Ham(ghashp *g, int L, int k, char *data)
 	{
 		for (j=0; j < k; j++)
 		{ 
+			/*Choose uniformly an h function (position of a bit)*/
 			g[i][j].t = M + (rand() / (RAND_MAX + 1.0)) * (N-M+1);
 			g[i][j].v = NULL;
 		}
@@ -43,11 +42,14 @@ void init_hash_Eucl(ghashp * g, int L, int k, int d)
 {
 	int i,j,z, M = -1, N = 1, window = WINDOW_SIZE;
 	double x,y,w,u,v,mult,w1;
-	for (i=0; i < L; i++) //For each table
+	/*For each table*/
+	for (i=0; i < L; i++) 
 	{
-		for (j=0; j < k; j++)	//Create k times h()
+		/*Create k times h()*/
+		for (j=0; j < k; j++)	
 		{ 
 			g[i][j].v = malloc(d*sizeof(double));
+			/*Create a vector~N(0,1)*/
 			for (z=0; z < d; z++)
 			{ 
 				do
@@ -62,6 +64,7 @@ void init_hash_Eucl(ghashp * g, int L, int k, int d)
 				g[i][j].v[z] = x;
 			}
 			g[i][j].t = (rand() / (RAND_MAX + 1.0)) * window;
+			/*Choose r in range 0-128*/
 			g[i][j].r = (rand() / (RAND_MAX + 1.0)) * 128;
 		}
 	}
@@ -71,11 +74,14 @@ void init_hash_Cos(ghashp * g, int L, int k, int d)
 {
 	int i,j,z, M = -1, N = 1;
 	double x,y,w,u,v,mult,w1;
-	for (i=0; i < L; i++) 	//For each table
+	/*For each table*/
+	for (i=0; i < L; i++) 	
 	{
-		for (j=0; j < k; j++) 	//Create k times h()
+		/*Create k times h()*/
+		for (j=0; j < k; j++) 
 		{ 
-			g[i][j].v = malloc(d*sizeof(double));	//At cosine: v is r because r is real *
+			/*At cosine: v is r because r is real*/
+			g[i][j].v = malloc(d*sizeof(double));	
 			for (z=0; z < d; z++)
 			{ 
 				do
@@ -95,10 +101,13 @@ void init_hash_Cos(ghashp * g, int L, int k, int d)
 	}
 }
 
-void init_hash_matrix(ghashp * g, int **distances, int L, int k, int numofitems) {
+void init_hash_matrix(ghashp * g, int **distances, int L, int k, int numofitems) 
+{
 	int i, j, y, M = 0, N = numofitems-1, sum, total;
+	/*For each table*/
 	for (i=0; i < L; i++) 
 	{
+		/*Create k times h()*/
 		for (j=0; j < k; j++)
 		{ 
 			total = 0;
@@ -106,11 +115,10 @@ void init_hash_matrix(ghashp * g, int **distances, int L, int k, int numofitems)
 			g[i][j].r = M + (rand() / (RAND_MAX + 1.0)) * (N-M+1); //x2
 			while(g[i][j].r == g[i][j].t)
 				g[i][j].r = M + (rand() / (RAND_MAX + 1.0)) * (N-M+1); //x2
-		
-			for(y=0; y<numofitems; y++)
+			/*Calculate t1*/
+			for(y=0; y < numofitems; y++)
 			{
 				sum = 0;
-				//printf("y=%d--x1=%d--x2=%d\n",y,g[i][j].t,g[i][j].r);
 				if(y < g[i][j].t)  sum+=pow(distances[y][g[i][j].t-y-1],2);
 				else if(y > g[i][j].t) sum+=pow(distances[g[i][j].t][y-g[i][j].t-1],2);
 								
@@ -152,7 +160,8 @@ int hash_func_Eucl(ghashp g, double *p, int k, int d)
 	long long M;
 	double inner;
 	M = (1LL << 32) - 5;
-	for (i=0; i < k; i++)		//For each h()
+	/*For each h()*/
+	for (i=0; i < k; i++)	
 	{
 		inner = 0.0;
 		for (j=0; j < d; j++)	//Inner product
@@ -173,7 +182,8 @@ int hash_func_Cos(ghashp g, double *x, int k, int d)
 	int i,j,h;
 	char *end;
 	char *temp = malloc(k*sizeof(char));
-	for (i=0; i < k; i++)		//For each h()
+	/*For each h()*/
+	for (i=0; i < k; i++)	
 	{
 		inner = 0.0;
 		for (j=0; j < d; j++)	//Inner product
@@ -188,57 +198,55 @@ int hash_func_Cos(ghashp g, double *x, int k, int d)
 	return h;
 }
 
+/*Hash function for insert*/
 int hash_func_Matrix(ghashp g, int x, int **distances, int k, int numofitems)
 {
 	int i,j,h = 0,sum;
 	for (i=0; i < k; i++)		
 	{
 		sum = 0;
-		//printf("x=%d--x1=%d--x2=%d\n",x,g[i].t,g[i].r);
-		if(x < g[i].t)  sum+=pow(distances[x][g[i].t-x-1],2);
-		else if(x > g[i].t) sum+=pow(distances[g[i].t][x-g[i].t-1],2);
+		if(x < g[i].t)  sum += pow(distances[x][g[i].t-x-1],2);
+		else if(x > g[i].t) sum += pow(distances[g[i].t][x-g[i].t-1],2);
 		
-		if(x < g[i].r)   sum+=pow(distances[x][g[i].r-x-1],2);
-		else if(x > g[i].r)  sum+=pow(distances[g[i].r][x-g[i].r-1],2);
+		if(x < g[i].r)   sum += pow(distances[x][g[i].r-x-1],2);
+		else if(x > g[i].r)  sum += pow(distances[g[i].r][x-g[i].r-1],2);
 		
 		if(g[i].t < g[i].r)
 		{
-			sum-=pow(distances[g[i].t][g[i].r-g[i].t-1],2);
+			sum -= pow(distances[g[i].t][g[i].r-g[i].t-1],2);
 			sum = sum / (2*distances[g[i].t][g[i].r-g[i].t-1]);
 		}  
 		else if(g[i].t > g[i].r) 
 		{
-			sum-=pow(distances[g[i].r][g[i].t-g[i].r-1],2);
+			sum -= pow(distances[g[i].r][g[i].t-g[i].r-1],2);
 			sum = sum / (2*distances[g[i].r][g[i].t-g[i].r-1]);
 		}
-		//printf("sum is %d\n",sum);
 		if(sum >= g[i].t1)  h |= 1 << i;
 	}	
 	return h;
 }
 
+/*Hash function for search*/
 int hash_func_MSearch(ghashp g, int *qdata, int **distances, int k, int numofitems)
 {
 	int i,j,h = 0,sum;
 	for (i=0; i < k; i++)		
 	{
 		sum = 0;
-		//printf("--x1=%d--x2=%d\n",g[i].t,g[i].r);
-		sum+=pow(qdata[g[i].t],2);
+		sum += pow(qdata[g[i].t],2);
 		
-		sum+=pow(qdata[g[i].r],2);
+		sum += pow(qdata[g[i].r],2);
 		
 		if(g[i].t < g[i].r)
 		{
-			sum-=pow(distances[g[i].t][g[i].r-g[i].t-1],2);
+			sum -= pow(distances[g[i].t][g[i].r-g[i].t-1],2);
 			sum = sum / (2*distances[g[i].t][g[i].r-g[i].t-1]);
 		}  
 		else if(g[i].t > g[i].r) 
 		{
-			sum-=pow(distances[g[i].r][g[i].t-g[i].r-1],2);
+			sum -= pow(distances[g[i].r][g[i].t-g[i].r-1],2);
 			sum = sum / (2*distances[g[i].r][g[i].t-g[i].r-1]);
 		}
-		//printf("sum is %d\n",sum);
 		if(sum >= g[i].t1)  h |= 1 << i;
 	}	
 	return h;
@@ -253,6 +261,7 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 {
 	int i, counter = 0, bruflag = 0, euclID, pos;
 	nn lshnn, lshnn1;
+	/*Find position in hash table according to metric*/
 	if (!flag) pos = hash_func_Ham(g[0],qdata,k);
 	else if (flag == 1)
 	{
@@ -261,10 +270,13 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 		pos = mod(euclID, tableSize);
 	}
 	else if (flag == 2)  pos = hash_func_Cos(g[0],qdata,k,d);	
-	else if(flag == 3)	 pos = hash_func_MSearch(g[0],qdata,distances,k,d);
-	
-	lshnn = search_chain_NN(htable[0].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);
-	if (counter > 6*L) 	return lshnn;
+	else if(flag == 3)	 pos = hash_func_MSearch(g[0],qdata,distances,k,d);	
+	/*Bring the first as minimum*/
+	lshnn = search_chain_NN(htable[0].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);	
+	if ((flag == 1) || (flag == 2))
+	{
+		if (counter > 6*L) 	return lshnn;
+	}
 	for (i=1; i < L; i++)
 	{
 		if (!flag) pos = hash_func_Ham(g[i],qdata,k);
@@ -276,13 +288,17 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 		}
 		else if (flag == 2)  pos = hash_func_Cos(g[i],qdata,k,d);
 		else if(flag == 3)	 pos = hash_func_MSearch(g[i],qdata,distances,k,d);	
-		lshnn1 = search_chain_NN(htable[i].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);		//Search for NN
+		lshnn1 = search_chain_NN(htable[i].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);		
+		/*Compare to get the new min*/
 		if (((lshnn1.distance < lshnn.distance) && (lshnn1.distance != 0)) || (lshnn.distance == 0))
 		{
 			lshnn.distance = lshnn1.distance;	
 			strcpy(lshnn.key,lshnn1.key);
 		}
-		if(counter > 6*L) 	return lshnn;
+		if ((flag == 1) || (flag == 2))
+		{
+			if (counter > 6*L) 	return lshnn;
+		}
 	}
 	return lshnn;
 }
@@ -310,7 +326,7 @@ nn brute_force_table(hash_table htable, void *q, int flag, int bruflag, int eucl
 	else if (flag == 3)
 	{
 		int *qdata = (int *)q;
-		tnn.distance = -1;		
+		tnn.distance = -1;		//Initialize minimum distance as something invalid
 		for (i=0; i < htable.size; i++)
 		{
 			tnn1 = search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L);
@@ -326,19 +342,7 @@ nn brute_force_table(hash_table htable, void *q, int flag, int bruflag, int eucl
 	{
 		double *qdata = (double *)q;
 		int j = 0;
-		tnn.distance = -1;
-		//strcpy(tnn.key,"no");
-		/*while(tnn.distance <= 0) 
-		{
-			if (flag == 2)	euclID = -1;
-			tnn1 = search_chain_NN(htable.table[j],qdata,key,flag,bruflag,euclID,d,NULL,L);		//Keep the first item found as this with minimum distance
-			if (((tnn1.distance < tnn.distance) && (tnn1.distance > 0)) ||  (tnn.distance <= 0))
-			{
-				tnn.distance = tnn1.distance;
-				strcpy(tnn.key,tnn1.key);
-			}
-			j++;
-		}*/
+		tnn.distance = -1;		//Initialize minimum distance as something invalid
 		for (i=0; i<htable.size; i++)
 		{
 			tnn1 = search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L);
@@ -353,23 +357,15 @@ nn brute_force_table(hash_table htable, void *q, int flag, int bruflag, int eucl
 	return tnn;
 }
 
-void print_table(hash_table htable)
-{
-	int i;
-	for (i=0; i < htable.size; i++)
-	{
-		printf("Bucket: %d - ",i);
-		print_chain(htable.table[i]);
-		printf("\n");
-	}	
-}
-
 void destroy_table(hash_table *htable, int flag) 
 {
 	int i;
-	for(i=0; i < htable->size; i++) 	//For each bucket
+	/*For each bucket*/
+	for(i=0; i < htable->size; i++) 	
 	{
 		destroy_chain(&(htable->table[i]),flag);
 	}
 	free(htable->table);
 }
+
+

@@ -4,7 +4,8 @@
 #include <math.h>
 #include "distances.h"
   
-int distance_Hamming(uint64_t num1, uint64_t num2)		//Returns the different bits between two points
+/*Returns the different bits between two points*/
+int distance_Hamming(uint64_t num1, uint64_t num2)		
 {
 	int diff = 0;
 	uint64_t mask = 1;
@@ -18,7 +19,8 @@ int distance_Hamming(uint64_t num1, uint64_t num2)		//Returns the different bits
 	return diff;
 }
 
-double distance_Euclidean(double *v1, double *v2, int d)		//Returns the euclidean difference between two vectors
+/*Returns the euclidean difference between two vectors*/
+double distance_Euclidean(double *v1, double *v2, int d)		
 {
 	int i;
 	double distance = 0.0, diff = 0.0 ;
@@ -31,7 +33,8 @@ double distance_Euclidean(double *v1, double *v2, int d)		//Returns the euclidea
 	return distance;
 }
 
-double distance_Cosine(double *v1, double *v2, int d)	//Returns the cosine similarity between two vectors
+/*Returns the distance (1-cosine similarity) between two vectors*/
+double distance_Cosine(double *v1, double *v2, int d)	
 {
 	int i;
 	double inner = 0.0, normx = 0.0, normy = 0.0, cos = 0.0;

@@ -7,25 +7,26 @@ void insertnnrlist(char * key, nnrp *pointer)
 {
 	nnrp temp;
 	temp = *pointer;
-	if (temp == NULL)	//if list is empty, put the first node
+	/*If list is empty, put the first node*/
+	if (temp == NULL)	
 	{
 		temp = malloc(sizeof(nnr));
-		//temp->key = malloc((strlen(key)+1)*sizeof(char));
 		strcpy(temp->key ,key);
 		temp->next = NULL;
 		*pointer = temp;
 	}
+	/*If list isn't empty, put new node at the end*/
 	else
 	{
-		while(temp->next!=NULL)
+		while(temp->next != NULL)
 		{
-			if (strcmp(temp->key,key) == 0)	return;
+			/*Avoid duplicates*/
+			if (strcmp(temp->key,key) == 0)	return; 	
 			temp = temp->next;
 		}
 		if (strcmp(temp->key,key) == 0)	return;
 		temp->next = malloc(sizeof(nnr));
-		//temp->next->key = malloc((strlen(key)+1)*sizeof(char));
-		strcpy(temp->next->key ,key);
+		strcpy(temp->next->key,key);
 		temp->next->next = NULL;
 	}
 }
@@ -34,15 +35,13 @@ void destroy_nnrlist(nnrp *l, FILE *fe)
 {
 	nnrp temp, curr;
 	curr = *l;
-	if (curr == NULL)		return;		//for safety
+	if (curr == NULL)		return;		
 	while (curr != NULL) 
 	{
-		//printf("key is %s\n",curr->key);
-		fprintf(fe,"%s\n",curr->key);
+		fprintf(fe,"%s\n",curr->key);	//First print in file
 		temp = curr;
 		curr = curr->next;
-		//free(temp->key);
-		free(temp);
+		free(temp);		//Then free the node
 	}
 	*l = NULL;
 }
