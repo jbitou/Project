@@ -3,7 +3,7 @@
 #include <string.h>
 #include "nnrlist.h"
 
-void insertnnrlist(char * key, nnrp *pointer)
+void insert_nnrlist(char * key, nnrp *pointer)
 {
 	nnrp temp;
 	temp = *pointer;
@@ -11,7 +11,7 @@ void insertnnrlist(char * key, nnrp *pointer)
 	if (temp == NULL)	
 	{
 		temp = malloc(sizeof(nnr));
-		strcpy(temp->key ,key);
+		strcpy(temp->key,key);
 		temp->next = NULL;
 		*pointer = temp;
 	}
