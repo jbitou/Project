@@ -31,22 +31,48 @@ void insert_nnrlist(char * key, nnrp *pointer)
 	}
 }
 
-void destroy_nnrlist(nnrp *l, FILE *fe) 
+void print_nnrlist(nnrp *l, FILE *fe) 
 {
 	nnrp temp, curr;
 	curr = *l;
-	if (curr == NULL)		return;		
+	if (curr == NULL)		return;		//For safety
 	while (curr != NULL) 
 	{
-		fprintf(fe,"%s\n",curr->key);	//First print in file
+		fprintf(fe,"%s\n",curr->key);
 		temp = curr;
 		curr = curr->next;
-		free(temp);		//Then free the node
+		free(temp);
 	}
 	*l = NULL;
 }
 
-void print_nnrlist(nnrp l)
+void combine_nnrlist(nnrp *l1, nnrp *l2)
+{
+	nnrp temp;
+	while (*l2 != NULL)
+	{
+		insert_nnrlist((*l2)->key,l1);
+		temp = *l2;
+		(*l2) = (*l2)->next;
+		free(temp);
+	}
+}
+
+void destroy_nnrlist(nnrp *l) 
+{
+	nnrp temp, curr;
+	curr = *l;
+	if (curr == NULL)		return;		//For safety
+	while (curr != NULL) 
+	{
+		temp = curr;
+		curr = curr->next;
+		free(temp);
+	}
+	*l = NULL;
+}
+
+void display_nnrlist(nnrp l)
 {
 	while (l != NULL)
 	{
