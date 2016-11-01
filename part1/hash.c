@@ -268,10 +268,11 @@ void search_table_NNR(int pos, hash_table htable, void *qdata, double rad, nnrp 
 	search_chain_NNR(htable.table[pos],qdata,rad,nnrlist,flag,euclID,d);
 }
 
-nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances, int flag, int d, int k, int L, int tableSize)
+void search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances, int flag, int d, int k, int L, int tableSize, nnrp *list, double *diff)
 {
 	int i, counter = 0, bruflag = 0, euclID, pos;
-	nn lshnn, lshnn1;
+	nnrp lshnn = NULL;
+	double diff1;
 	/*Find position in hash table according to metric*/
 	if (!flag) pos = hash_func_Ham(g[0],qdata,k);
 	else if (flag == 1)
@@ -283,11 +284,11 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 	else if (flag == 2)  pos = hash_func_Cos(g[0],qdata,k,d);	
 	else if(flag == 3)	 pos = hash_func_MSearch(g[0],qdata,distances,k,d);	
 	/*Bring the first as minimum*/
-	lshnn = search_chain_NN(htable[0].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);	
+	search_chain_NN(htable[0].table[pos],qdata,flag,bruflag,euclID,d,&counter,L,list,diff);	
 	/*Heuristic choice for trick, Euclidean and Cosine*/
 	if ((flag == 1) || (flag == 2))
 	{
-		if (counter > TRICK*L) 	return lshnn;
+		if (counter > TRICK*L) 	return;
 	}
 	for (i=1; i < L; i++)
 	{
@@ -300,79 +301,92 @@ nn search_table_NN(ghashp *g, hash_table *htable, void *qdata, int ** distances,
 		}
 		else if (flag == 2)  pos = hash_func_Cos(g[i],qdata,k,d);
 		else if(flag == 3)	 pos = hash_func_MSearch(g[i],qdata,distances,k,d);	
-		lshnn1 = search_chain_NN(htable[i].table[pos],qdata,flag,bruflag,euclID,d,&counter,L);		
+		search_chain_NN(htable[i].table[pos],qdata,flag,bruflag,euclID,d,&counter,L,&lshnn,&diff1);		
 		/*Compare to get the new min*/
-		if (((lshnn1.distance < lshnn.distance) && (lshnn1.distance != 0)) || (lshnn.distance == 0))
+		if (((diff1 < *diff) && (diff1 > 0)) || (*diff == 0))
 		{
-			lshnn.distance = lshnn1.distance;	
-			strcpy(lshnn.key,lshnn1.key);
+			*diff = diff1;
+			destroy_nnrlist(list);
+			*list = lshnn;
+			lshnn = NULL;
 		}
+		else if((diff1 == *diff) && (*diff > 0)) combine_nnrlist(list,&lshnn);
+		else destroy_nnrlist(&lshnn);
 		/*Heuristic choice for trick, Euclidean and Cosine*/
 		if ((flag == 1) || (flag == 2))
 		{
-			if (counter > TRICK*L) 	return lshnn;
+			if (counter > TRICK*L) 	return;
 		}
 	}
-	return lshnn;
+	return;
 }
 
-nn brute_force_table(hash_table htable, void *q, int flag, int bruflag, int euclID, int d, int L)
+void brute_force_table(hash_table htable, void *q, int flag, int bruflag, int euclID, int d, int L, nnrp *list,double *diff)
 {
 	int i;
-	nn tnn, tnn1;
-	tnn.key = malloc(ITEM_ID);
+	nnrp tlist = NULL;
+	double diff1;
 	if (!flag)
 	{
 		char *qdata = (char *)q;
 		/*Initialize minimum distance as something very big*/
-		tnn.distance = 65;		
+		*diff= 65;		
 		/*For each bucket*/
 		for (i=0; i < htable.size; i++)
 		{
-			tnn1 = search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L);
-			if (((tnn1.distance < tnn.distance) && (tnn1.distance > 0)) ||  (tnn.distance <= 0))
+			search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L,&tlist,&diff1);
+			if ((diff1 < *diff) && (diff1 > 0))
 			{
-				tnn.distance = tnn1.distance;
-				strcpy(tnn.key,tnn1.key);
+				*diff = diff1;	
+				destroy_nnrlist(list);
+				*list = tlist;
+				tlist = NULL;
 			}
-			free(tnn1.key);
+			else if ((diff1 == *diff) && (*diff > 0)) 	combine_nnrlist(list,&tlist);
+			else	destroy_nnrlist(&tlist);
 		}
 	}
 	else if (flag == 3)
 	{
 		int *qdata = (int *)q;
 		/*Initialize minimum distance as something invalid*/
-		tnn.distance = -1;		
+		*diff = -1;		
 		/*For each bucket*/
 		for (i=0; i < htable.size; i++)
 		{
-			tnn1 = search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L);
-			if (((tnn1.distance < tnn.distance) && (tnn1.distance > 0)) ||  (tnn.distance <= 0))
+			search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L,&tlist,&diff1);
+			if (((diff1 < *diff) && (diff1 > 0)) ||  (*diff <= 0))
 			{
-				tnn.distance = tnn1.distance;
-				strcpy(tnn.key,tnn1.key);
+				*diff = diff1;	
+				destroy_nnrlist(list);
+				*list = tlist;
+				tlist = NULL;
 			}
-			free(tnn1.key);
+			else if ((diff1 == *diff) && (*diff > 0)) 	combine_nnrlist(list,&tlist);
+			else	destroy_nnrlist(&tlist);
 		}
 	}
 	else
 	{
 		double *qdata = (double *)q;
 		/*Initialize minimum distance as something invalid*/
-		tnn.distance = -1;		
+		*diff = -1;		
 		/*For each bucket*/
 		for (i=0; i < htable.size; i++)
 		{
-			tnn1 = search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L);
-			if (((tnn1.distance < tnn.distance) && (tnn1.distance > 0)) ||  (tnn.distance <= 0))
+			search_chain_NN(htable.table[i],qdata,flag,bruflag,euclID,d,NULL,L,&tlist,&diff1);
+			if (((diff1 < *diff) && (diff1 > 0)) ||  (*diff <= 0))
 			{
-				tnn.distance = tnn1.distance;
-				strcpy(tnn.key,tnn1.key);
+				*diff = diff1;	
+				destroy_nnrlist(list);
+				*list = tlist;
+				tlist = NULL;
 			}
-			free(tnn1.key);
+			else if ((diff1 == *diff) && (*diff > 0)) 	combine_nnrlist(list,&tlist);
+			else	destroy_nnrlist(&tlist);
 		}
 	}
-	return tnn;
+	return;
 }
 
 void destroy_table(hash_table *htable, int flag) 
