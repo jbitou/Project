@@ -208,73 +208,70 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 	}
 }
 
-nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, int *counter, int L)
+void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, int *counter, int L,  nnrp *list, double *distance)
 {
 	chainp temp,tmp;
-	nn lshnn;
-	lshnn.key = malloc(ITEM_ID);
 	if (!flag)
 	{
 		uint64_t num1, num2;
 		char *end;
-		int diff = 0, diff1;
-		char key[ITEM_ID];
+		int diff = 0;
 		char *qdata = (char *)q;
 		num2 = strtoull(qdata,&end,2);
 		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
-			lshnn.distance = -1;
-			return lshnn;
+			*distance = -1;
+			return;
 		}
 		temp = b;
 		num1 = *(temp->value);   
-		diff = distance_Hamming(num1,num2);
-		strcpy(key,temp->key);
+		*distance = distance_Hamming(num1,num2);
+		insert_nnrlist(temp->key,list);
 		temp = temp->next;
 		while (temp != NULL)
 		{
 			num1 = *(temp->value);   
-			diff1 = distance_Hamming(num1,num2);
-			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
+			diff = distance_Hamming(num1,num2);
+			if (((diff < *distance) && (diff > 0)) || (*distance <= 0)) 
 			{
-				diff = diff1;
-				strcpy(key,temp->key);
+				*distance = diff;
+				destroy_nnrlist(list);
+				insert_nnrlist(temp->key,list);
 			}
+			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
 			temp = temp->next;
 		}
-		strcpy(lshnn.key,key);
-		lshnn.distance = (double)diff;
 	}
 	else if(flag == 3)
 	{
-		int diff = 0, position, diff1;
+		int diff = 0, position;
 		char key[ITEM_ID];
 		int *qdata = (int *)q;
 		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
-			lshnn.distance = -1;
-			return lshnn;
+			*distance = -1;
+			return;
 		}
 		temp = b;
 		position = make_item(temp->key);
-		diff = qdata[position-1];
-		strcpy(key,temp->key);
+		*distance = qdata[position-1];
+		insert_nnrlist(temp->key,list);
 		temp = temp->next;
 		while (temp != NULL)
 		{
 			position = make_item(temp->key);
-			diff1 = qdata[position-1];
-			if (((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
+			diff = qdata[position-1];
+			if (((diff < *distance) && (diff > 0)) || (*distance <= 0)) 
 			{
-				diff = diff1;
-				strcpy(key,temp->key);
+				*distance = diff;
+				destroy_nnrlist(list);
+				insert_nnrlist(temp->key,list);
 			}
+			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
 			temp = temp->next;
 		}
-		strcpy(lshnn.key,key);
-		lshnn.distance = (double)diff;
 	}
 	else
 	{
@@ -286,13 +283,13 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		/*Bucket is empty (only in brute force)*/
 		if (b == NULL)
 		{
-			lshnn.distance = -1;
-			return lshnn;
+			*distance = -1;
+			return;
 		}
 		temp = b;
-		tmp = b;
-		if(flag != 2)
+		if(!bruflag && flag != 2)
 		{
+			tmp = b;
 			while (tmp != NULL)
 			{
 				if(euclID == tmp->id)  //ID(p) = ID(q)
@@ -303,37 +300,29 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 		if(exists <= 1)  
 		{
 			if(flag != 2)
-				diff = distance_Euclidean(qdata,temp->p,d);
+			{
+				*distance = distance_Euclidean(qdata,temp->p,d);
+				insert_nnrlist(temp->key,list);
+			}
 			else
-				diff = distance_Cosine(qdata,temp->p,d);	
-			strcpy(key,temp->key); 
+			{
+				*distance = distance_Cosine(qdata,temp->p,d);	
+				insert_nnrlist(temp->key,list);
+			}
 			if (!bruflag)
 			{
 				*counter = *counter+1;
-				if(*counter > TRICK*L)
-				{
-					strcpy(lshnn.key,key);
-					lshnn.distance = (double)diff;
-					return lshnn;
-				}
+				if(*counter > TRICK*L) 	return;
 			}
 		}
 		else 
 		{
 			if(euclID == temp->id)
 			{
-				diff = distance_Euclidean(qdata,temp->p,d);
-				strcpy(key,temp->key);
-				if (!bruflag)
-				{
-					*counter= *counter+1;
-					if(*counter > TRICK*L)
-					{
-						strcpy(lshnn.key,key);
-						lshnn.distance = (double)diff;
-						return lshnn;
-					}
-				}
+				*distance = distance_Euclidean(qdata,temp->p,d);
+				insert_nnrlist(temp->key,list);
+				*counter= *counter+1;
+				if(*counter > TRICK*L)  return;				
 			}
 		}	
 		temp = temp->next;
@@ -342,24 +331,20 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 			while (temp != NULL)
 			{ 
 				if(flag != 2)
-					diff1 = distance_Euclidean(qdata,temp->p,d);
+					diff = distance_Euclidean(qdata,temp->p,d);
 				else
-					diff1 = distance_Cosine(qdata,temp->p,d);
-				if(((diff1 < diff) && (diff1 > 0)) || (diff <= 0)) 
+					diff = distance_Cosine(qdata,temp->p,d);
+				if (((diff < *distance) && (diff > 0))) 
 				{
-					diff = diff1;
-					strcpy(key,temp->key);
-					
+					*distance = diff;
+					destroy_nnrlist(list);
+					insert_nnrlist(temp->key,list);
 				}
+				else if (((*distance == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
 				if (!bruflag)
 				{
 					*counter= *counter+1;
-					if(*counter > TRICK*L)
-					{
-						strcpy(lshnn.key,key);
-						lshnn.distance = (double)diff;
-						return lshnn;
-					}
+					if(*counter > TRICK*L)  return;
 				}
 				temp = temp->next;
 			}
@@ -371,29 +356,22 @@ nn search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, 
 				if(euclID == temp->id)
 				{
 					diff1 = distance_Euclidean(qdata,temp->p,d);
-					if(((diff1 < diff)  && (diff1 > 0)) || (diff <= 0))  
+					if (((diff1 < diff)  && (diff1 > 0)) || (diff <= 0))  
 					{
 						diff = diff1;
-						strcpy(key,temp->key);
+						*distance = diff;
+						destroy_nnrlist(list);
+						insert_nnrlist(temp->key,list);
 					}
-					if (!bruflag)
-					{
-						*counter= *counter+1;
-						if(*counter > TRICK*L)
-						{
-							strcpy(lshnn.key,key);
-							lshnn.distance = (double)diff;
-							return lshnn;
-						}
-					}
+					else if (((diff1 == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
+					*counter= *counter+1;
+					if(*counter > TRICK*L) return;
 				}
 				temp = temp->next;
 			}
 		}
-		strcpy(lshnn.key,key);
-		lshnn.distance = diff;
 	}
-	return lshnn;
+	return;
 }
 
 int make_item(char *item)
