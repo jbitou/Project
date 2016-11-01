@@ -603,6 +603,7 @@ int main (int argc, char **argv)
 			scanf("%s",answer);
 			files++;
 		}while (strcmp(answer,"Y") == 0);
+		free(eucldata);
 	}
 	/*Memory release*/
 	for (i = 0; i < L; i++)
