@@ -25,6 +25,6 @@ int hash_func_Cos(ghashp, double *, int, int);
 int hash_func_Matrix(ghashp, int, int **, int, int);
 int hash_func_MSearch(ghashp, int *, int **, int, int);
 void search_table_NNR(int, hash_table, void *, double, nnrp *, int, int, int);
-nn search_table_NN(ghashp *, hash_table *, void *, int **, int, int, int, int, int);
-nn brute_force_table(hash_table, void *, int, int, int, int, int);
+void search_table_NN(ghashp *, hash_table *, void *, int **, int, int, int, int, int, nnrp*, double *);
+void brute_force_table(hash_table, void *, int, int, int, int, int, nnrp*, double *);
 void destroy_table(hash_table *, int);
