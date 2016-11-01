@@ -6,6 +6,8 @@ typedef struct nnr_node
 	nnrp next;
 }nnr;
 
-void insertnnrlist(char *, nnrp *);
-void destroy_nnrlist(nnrp *,FILE *);
-void print_nnrlist(nnrp);
+void insert_nnrlist(char *, nnrp *);
+void destroy_nnrlist(nnrp *);
+void print_nnrlist(nnrp *,FILE *);
+void combine_nnrlist(nnrp *, nnrp *);
+void display_nnrlist(nnrp);
