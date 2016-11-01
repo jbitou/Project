@@ -22,5 +22,5 @@ typedef struct nn_node
 int make_item(char *item);
 void insert_chain(char *, void *, chainp *, int, int, int);
 void search_chain_NNR(chainp, void *, double, nnrp *, int, int, int);
-nn search_chain_NN(chainp, void *, int, int, int, int, int *, int);
+void search_chain_NN(chainp, void *, int, int, int, int, int *, int, nnrp*, double *);
 void destroy_chain(chainp *, int);
