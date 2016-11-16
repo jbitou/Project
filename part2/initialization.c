@@ -27,8 +27,8 @@ int binarySearch(int N, int search, int *array) {
 
 int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 	int k = 1, i, j, min, max, x;
-	int *centroids = malloc((info->k)*sizeof(int));
 	srand(time(NULL));
+	int *centroids = malloc((info->k)*sizeof(int)); 
 	centroids[0] = (rand() / (RAND_MAX + 1.0)) * N;
 	while (k < info->k) {
 		int *D = malloc((N-k)*sizeof(int));
