@@ -9,7 +9,7 @@ void matrix_medoid(FILE *fp, pinfo info) {
 	char itemsline[7],*allitems;
 	int numofitems, token, itemid, tableSize, i, j, pos;
 	hash_table *htable;
-	/**allocate memory for tables and g functions**/
+	/**Allocate memory for tables and g functions**/
 	htable = malloc(info->L * sizeof(hash_table));
 	ghashp *g = malloc(info->L * sizeof(ghashp));		
 	for(i = 0; i < info->L; i++) 
@@ -18,7 +18,7 @@ void matrix_medoid(FILE *fp, pinfo info) {
 	tableSize = 1 << (info->num_of_hash);
 	fscanf(fp,"%s",itemsline);
 	allitems = inputString(fp,MAX_LINE);
-	/**Read line with items to get the size of te matrix (numofitems x numofitems)**/
+	/**Read line with items to get the size of the matrix (numofitems x numofitems)**/
 	i = 0;
 	numofitems = 1;
 	while( allitems[i] != '\0')	{
@@ -61,8 +61,9 @@ void matrix_medoid(FILE *fp, pinfo info) {
 			insert_chain(itemID,NULL,&(htable[i].table[pos]),3,0,0);
 		}
 	}
-	/**End of input phase**/
-	int *centroids = matrix_init_kmedoids(p, info, numofitems);
+	/**End of input phase**/ 
+	int *centroids;
+	centroids = matrix_init_kmedoids(p, info, numofitems);
 	for(i=0; i < info->k; i++)
 			printf("centroids[%d]=%d\n",i+1,centroids[i]);
 }
