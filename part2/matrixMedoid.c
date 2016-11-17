@@ -4,7 +4,7 @@
 #include "matrixMedoid.h"
 #define ITEM_ID 15
 
-void print_chain(chainp );
+void print_chain(chainp);
 
 void matrix_medoid(FILE *fp, pinfo info) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
