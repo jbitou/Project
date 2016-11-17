@@ -10,7 +10,8 @@ int main (int argc, char **argv)
 	int i, input, config, output, ch, lines = -2, flag;
 	char ms[14], space[10], m[10], metric[20];
 	pinfo info;
-	
+	srand(time(NULL));
+		
 	if (command_processing(argc) == -1)	return -1;
 	input = config = output = -1;
 	for (i=1; i < (argc-1); i+=2)

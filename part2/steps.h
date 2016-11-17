@@ -1,4 +1,5 @@
-#include "inputProcessing.h" 
+#include "hash.h"
+#include "inputProcessing.h"
 
 typedef struct park_jun_info {
 	int index;
@@ -9,3 +10,5 @@ int binarySearch(int, int, int *);
 pj_info *sortArray(pj_info *, int);
 int *matrix_init_kmedoids(int **, pinfo, int);
 int *matrix_init_concentrate(int **, pinfo, int);
+
+hash_table *matrix_insert_hash(hash_table **, ghashp *, pinfo, int **, int);

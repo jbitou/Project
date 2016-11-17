@@ -1,6 +1,6 @@
-OBJS 	= medoids.o chain.o hash.o distances.o nnrlist.o matrixMedoid.o inputProcessing.o initialization.o
-SOURCE	= medoids.c chain.c hash.c distances.c nnrlist.c matrixMedoid.c inputProcessing.c initialization.c
-HEADER  = medoids.h chain.h hash.h distances.h nnrlist.h matrixMedoid.h inputProcessing.h initialization.h
+OBJS 	= medoids.o chain.o hash.o distances.o nnrlist.o matrixMedoid.o inputProcessing.o initialization.o assignment.o
+SOURCE	= medoids.c chain.c hash.c distances.c nnrlist.c matrixMedoid.c inputProcessing.c initialization.c assignment.c
+HEADER  = medoids.h chain.h hash.h distances.h nnrlist.h matrixMedoid.h inputProcessing.h initialization.h assignment.h
 OUT  	= medoids
 CC	    = gcc
 FLAGS   = -g -c 	
@@ -31,6 +31,9 @@ inputProcessing.o: inputProcessing.c inputProcessing.h
 	
 initialization.o: initialization.c initialization.h
 	$(CC) $(FLAGS) initialization.c
+	
+assignment.o: assignment.c assignment.h
+	$(CC) $(FLAGS) assignment.c	
 
 matrixMedoid.o: matrixMedoid.c matrixMedoid.h hash.h
 	$(CC) $(FLAGS) matrixMedoid.c		

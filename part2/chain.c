@@ -402,7 +402,6 @@ void destroy_chain(chainp *l, int flag)
 		curr = curr->next;
 		free(temp->key);
 		if (flag == 0)	free(temp->value);		//Hamming 
-		else if (flag == 3)	free(temp->distances);		//Matrix
 		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
 		free(temp);
 	}
