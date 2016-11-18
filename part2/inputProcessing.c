@@ -59,7 +59,6 @@ pinfo get_config_info(FILE *fc, int N) {
 		if (info->L == 0)  info->L = 5;
 		if (info->fraction == 0)  {
 			info->fraction = 0.12*info->k*(N-info->k);
-			printf("max=%d\n",info->fraction);
 			if (info->fraction < 250)	info->fraction = 250;
 		}
 		if (info->iterations == 0)  info->iterations = 2;

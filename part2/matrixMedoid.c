@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "matrixMedoid.h"
-#include "hash.h"
 #define ITEM_ID 15
 
+void print_chain(chainp);
+
 void matrix_medoid(FILE *fp, pinfo info) {
-	char itemsline[7],*allitems;
-	int numofitems, token, itemid, tableSize, i, j, pos;
+	char itemsline[7], *allitems, itemID[ITEM_ID];
+	int numofitems, token, itemid, tableSize, i, j, pos, *centroids, flag1, z, y, J;
 	hash_table *htable;
 	/**Allocate memory for tables and g functions**/
 	htable = malloc(info->L * sizeof(hash_table));
@@ -34,8 +35,7 @@ void matrix_medoid(FILE *fp, pinfo info) {
 		p[i] = malloc(j*sizeof(int));
 		j--;
 	}
-	int flag1,z,y;
-	i=0;
+	i = 0;
 	while(fscanf(fp,"%d",&token) != EOF) {
 		flag1 = 0;
 		z = 0;
@@ -52,18 +52,63 @@ void matrix_medoid(FILE *fp, pinfo info) {
 		i++;	
 	}
 	init_hash_matrix(g,p,info->L,info->num_of_hash,numofitems);
-	/**Start input**/
-	char itemID[ITEM_ID];
-	for(i = 0; i < info->L; i++) { 
-		for(j = 0; j < numofitems; j++)	{
-			sprintf(itemID,"item%d",j+1);
-			pos = hash_func_Matrix(g[i],j,p,info->num_of_hash,numofitems);
-			insert_chain(itemID,NULL,&(htable[i].table[pos]),3,0,0);
-		}
-	}
-	/**End of input phase**/ 
-	int *centroids;
+	/**Get centroids**/
+	/**k-medoids++**/
 	centroids = matrix_init_kmedoids(p, info, numofitems);
 	for(i=0; i < info->k; i++)
-			printf("centroids[%d]=%d\n",i+1,centroids[i]);
+			printf("centroids[%d]=%d\n",i,centroids[i]);
+	/**Park-Jun**/
+	/**centroids = matrix_init_concentrate(p, info, numofitems);
+	for(i=0; i < info->k; i++)
+			printf("centroids[%d]=%d\n",i+1,centroids[i]);**/	
+	/*j = numofitems-1;
+	int k;
+	for(i=0; i < numofitems-1; i++) 
+	{
+		for(k=0; k < j; k++) 
+			printf("p[%d][%d] = %d\n",i,k,p[i][k]);
+		j--;
+	} */
+	htable = matrix_insert_hash(htable,g,p,info->L,info->num_of_hash,numofitems);
+	/**Allocate memory for clusters**/
+	pcluster clusters = malloc((info->k)*sizeof(cluster));
+	/**Assignment**/
+	clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
+	for (i=0; i < info->k; i++) {
+		printf("Cluster %d :",(int)(intptr_t)clusters[i].centroid);
+		print_chain(clusters[i].items);
+		printf("\n");
+	}
+	J = compute_objective_function(clusters,p,info->k);
+	printf("J=%d\n",J);
+	/*for (i=0; i < info->L; i++) {
+		printf("Table %d:\n",i);
+		for (j=0; j < tableSize; j++) {
+			printf("Bucket %d:\n",j);
+			print_chain(htable[i].table[j]);
+			printf("\n");
+		}	
+	}*/
+	/**Free memory**/
+	for (i = 0; i < info->L; i++) 
+		free(g[i]);
+	free(g);
+	for (i=0; i < info->L; i++)
+		destroy_table(&htable[i],3);	
+	free(htable);		
+	free(allitems);
+	for(i=0; i < numofitems-1; i++)	
+		free(p[i]);	
+	free(p);
+	free(clusters);
+	free(centroids);
+}
+
+void print_chain(chainp l) 
+{
+	while (l != NULL) 
+	{
+		printf("key: %s,",l->key);
+		l = l->next;
+	}
 }

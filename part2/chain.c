@@ -46,7 +46,6 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 		}
 		else if(flag == 3) //Matrix
 		{
-			int *value = (int *)v;
 			temp = malloc(sizeof(chain));
 			temp->p = NULL;
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
@@ -106,7 +105,6 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 		}
 		else if(flag == 3) //Matrix
 		{
-			int *value = (int *)v;
 			temp->next = malloc(sizeof(chain));
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->next->key ,key);
@@ -402,7 +400,6 @@ void destroy_chain(chainp *l, int flag)
 		curr = curr->next;
 		free(temp->key);
 		if (flag == 0)	free(temp->value);		//Hamming 
-		else if (flag == 3)	free(temp->distances);		//Matrix
 		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
 		free(temp);
 	}

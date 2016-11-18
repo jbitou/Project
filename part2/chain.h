@@ -9,7 +9,6 @@ typedef struct chain_node
 	uint64_t *value;
 	double *p;
 	int id;
-	int *distances;
 	chainp next;
 }chain;
 
