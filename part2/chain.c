@@ -143,7 +143,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
 			if (diff <= R)
-				insert_nnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -156,7 +156,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			position = make_item(temp->key);
 			diff = q[position-1];
 			if (diff <= R)
-				insert_nnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -186,7 +186,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				else
 					diff = distance_Cosine(temp->p,q,d);
 				if (diff <= R)
-					insert_nnrlist(temp->key,nnrlist);
+					insert_nnrlist(temp,nnrlist);
 				temp = temp->next;
 			}
 		}
@@ -198,7 +198,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
-						insert_nnrlist(temp->key,nnrlist);
+						insert_nnrlist(temp,nnrlist);
 				}
 				temp = temp->next;
 			}
@@ -206,170 +206,77 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 	}
 }
 
-void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d, int *counter, int L,  nnrp *list, double *distance)
+void destroy_chain(chainp *l, int flag) 
 {
-	chainp temp,tmp;
-	if (!flag)
+	chainp temp, curr;
+	curr = *l;
+	if (curr == NULL)		return;		
+	while (curr != NULL) 
 	{
-		uint64_t num1, num2;
-		char *end;
-		int diff = 0;
-		char *qdata = (char *)q;
-		num2 = strtoull(qdata,&end,2);
-		/*Bucket is empty (only in brute force)*/
-		if (b == NULL)
-		{
-			*distance = -1;
-			return;
-		}
-		temp = b;
-		num1 = *(temp->value);   
-		*distance = distance_Hamming(num1,num2);
-		insert_nnrlist(temp->key,list);
-		temp = temp->next;
-		while (temp != NULL)
-		{
-			num1 = *(temp->value);   
-			diff = distance_Hamming(num1,num2);
-			if (((diff < *distance) && (diff > 0)) || (*distance <= 0)) 
-			{
-				*distance = diff;
-				destroy_nnrlist(list);
-				insert_nnrlist(temp->key,list);
-			}
-			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
-			temp = temp->next;
-		}
+		temp = curr;
+		curr = curr->next;
+		free(temp->key);
+		if (flag == 0)	free(temp->value);		//Hamming 
+		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
+		free(temp);
 	}
-	else if(flag == 3)
+	*l = NULL;	
+}
+
+void insert_nnrlist(chain *n, nnrp *pointer)
+{
+	nnrp temp;
+	temp = *pointer;
+	/*If list is empty, put the first node*/
+	if (temp == NULL)	
 	{
-		int diff = 0, position;
-		char key[ITEM_ID];
-		int *qdata = (int *)q;
-		/*Bucket is empty (only in brute force)*/
-		if (b == NULL)
-		{
-			*distance = -1;
-			return;
-		}
-		temp = b;
-		position = make_item(temp->key);
-		*distance = qdata[position-1];
-		insert_nnrlist(temp->key,list);
-		temp = temp->next;
-		while (temp != NULL)
-		{
-			position = make_item(temp->key);
-			diff = qdata[position-1];
-			if (((diff < *distance) && (diff > 0)) || (*distance <= 0)) 
-			{
-				*distance = diff;
-				destroy_nnrlist(list);
-				insert_nnrlist(temp->key,list);
-			}
-			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
-			temp = temp->next;
-		}
+		temp = malloc(sizeof(nnr));
+		temp->neighbor = malloc(sizeof(chain));
+		temp->neighbor = n;
+		temp->next = NULL;
+		*pointer = temp;
 	}
+	/*If list isn't empty, put new node at the end*/
 	else
 	{
-		double diff = 0.0, diff1;
-		int exists = 0;
-		char key[ITEM_ID];
-		double *qdata = (double *)q;
-		int i;
-		/*Bucket is empty (only in brute force)*/
-		if (b == NULL)
+		while(temp->next != NULL)
 		{
-			*distance = -1;
-			return;
+			/*Avoid duplicates*/
+			if (strcmp(temp->neighbor->key,n->key) == 0)	return; 	
+			temp = temp->next;
 		}
-		temp = b;
-		if(!bruflag && flag != 2)
-		{
-			tmp = b;
-			while (tmp != NULL)
-			{
-				if(euclID == tmp->id)  //ID(p) = ID(q)
-					exists++;
-				tmp = tmp->next;
-			}
-		}
-		if(exists <= 1)  
-		{
-			if(flag != 2)
-			{
-				*distance = distance_Euclidean(qdata,temp->p,d);
-				insert_nnrlist(temp->key,list);
-			}
-			else
-			{
-				*distance = distance_Cosine(qdata,temp->p,d);	
-				insert_nnrlist(temp->key,list);
-			}
-			if (!bruflag)
-			{
-				*counter = *counter+1;
-				if(*counter > TRICK*L) 	return;
-			}
-		}
-		else 
-		{
-			if(euclID == temp->id)
-			{
-				*distance = distance_Euclidean(qdata,temp->p,d);
-				insert_nnrlist(temp->key,list);
-				*counter= *counter+1;
-				if(*counter > TRICK*L)  return;				
-			}
-		}	
-		temp = temp->next;
-		if(exists <= 1)  
-		{
-			while (temp != NULL)
-			{ 
-				if(flag != 2)
-					diff = distance_Euclidean(qdata,temp->p,d);
-				else
-					diff = distance_Cosine(qdata,temp->p,d);
-				if (((diff < *distance) && (diff > 0))) 
-				{
-					*distance = diff;
-					destroy_nnrlist(list);
-					insert_nnrlist(temp->key,list);
-				}
-				else if (((*distance == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
-				if (!bruflag)
-				{
-					*counter= *counter+1;
-					if(*counter > TRICK*L)  return;
-				}
-				temp = temp->next;
-			}
-		}
-		else 
-		{
-			while (temp != NULL)
-			{ 
-				if(euclID == temp->id)
-				{
-					diff1 = distance_Euclidean(qdata,temp->p,d);
-					if (((diff1 < diff)  && (diff1 > 0)) || (diff <= 0))  
-					{
-						diff = diff1;
-						*distance = diff;
-						destroy_nnrlist(list);
-						insert_nnrlist(temp->key,list);
-					}
-					else if (((diff1 == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
-					*counter= *counter+1;
-					if(*counter > TRICK*L) return;
-				}
-				temp = temp->next;
-			}
-		}
+		if (strcmp(temp->neighbor->key,n->key) == 0)	return;
+		temp->next = malloc(sizeof(nnr));
+		temp->next->neighbor = malloc(sizeof(chain));
+		temp->next->neighbor = n;
+		temp->next->next = NULL;
 	}
-	return;
+}
+
+void print_nnrlist(nnrp *l, FILE *fe) 
+{
+	nnrp temp, curr;
+	curr = *l;
+	if (curr == NULL)		return;		//For safety
+	while (curr != NULL) 
+	{
+		fprintf(fe,"%s\n",curr->neighbor->key);
+		temp = curr;
+		curr = curr->next;
+		free(temp->neighbor);
+		free(temp);
+	}
+	*l = NULL;
+}
+
+void display_nnrlist(nnrp l)
+{
+	while (l != NULL)
+	{
+		printf("key: %s ",l->neighbor->key);
+		l=l->next;
+	}
+	printf("\n");
 }
 
 int make_item(char *item)
@@ -389,20 +296,4 @@ int make_item(char *item)
 	return key;
 }
 
-void destroy_chain(chainp *l, int flag) 
-{
-	chainp temp, curr;
-	curr = *l;
-	if (curr == NULL)		return;		
-	while (curr != NULL) 
-	{
-		temp = curr;
-		curr = curr->next;
-		free(temp->key);
-		if (flag == 0)	free(temp->value);		//Hamming 
-		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
-		free(temp);
-	}
-	*l = NULL;	
-}
 

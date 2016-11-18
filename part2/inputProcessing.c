@@ -4,19 +4,17 @@
 #include "inputProcessing.h"
 
 int command_processing(int argc) {
-	if (argc > 7)
-	{
+	/**Parameter -complete may be given alone at the end**/
+	if (argc > 8) {
 		printf("Too many arguments. Try again.\n");
 		return -1;
 	}
-	else if (argc < 7)
-	{
+	else if (argc < 7) {
 		printf("Too few arguments. Try again.\n");
 		return -1;
 	}
 	/**Every parameter has to be given after a recogniser**/
-	if ((argc % 2) == 0)
-	{
+	if (((argc % 2) == 0) && (argc != 8)) {
 		printf("Wrong arguments. Try again.\n");	
 		return -1;
 	}
@@ -66,14 +64,46 @@ pinfo get_config_info(FILE *fc, int N) {
 	return info;
 }
 
+void user_choice(int *ini, int *assi, int *upd) {
+	char answer[3];
+	int counter;
+	printf("Choose specific algorithms to be run? Y or N?  ");
+	scanf("%s",answer);
+	/**If user answered positively**/
+	if ((strcmp(answer,"Y") == 0) || (strcmp(answer,"y") == 0)) {
+		printf("\nChoose Initialization algorithm:\nFor K-medoids++ click 1.\nFor Park-Jun click 2.\n");
+		counter = 0;
+		do {
+			if (counter > 0)	printf("Try again:\nFor K-medoids++ click 1.\nFor Park-Jun click 2.\n");
+			scanf("%d",ini);
+			counter++;
+		}while ((*ini != 1) && (*ini != 2));
+		printf("\nChoose Assignment algorithm:\nFor PAM assignment click 1.\nFor assignment by LSH/DBH click 2.\n");
+		counter = 0;
+		do {
+			if (counter > 0)	printf("Try again:\nFor PAM assignment click 1.\nFor assignment by LSH/DBH click 2.\n");
+			scanf("%d",assi);
+			counter++;
+		}while ((*assi != 1) && (*assi != 2));
+		printf("\nChoose Update algorithm:\nFor Update a la Lloyd’s click 1.\nFor CLARANS click 2.\n");
+		counter = 0;
+		do {
+			if (counter > 0)	printf("Try again:\nFor Update a la Lloyd’s click 1.\nFor CLARANS click 2.\n");
+			scanf("%d",upd);
+			counter++;
+		}while ((*upd != 1) && (*upd != 2));
+	}
+	/**If user wants to see all combinations**/
+	else printf("\nRunning all combinations...\n");
+}
+
 char *inputString(FILE *fp, size_t size) {
 	char *str;
 	int ch;
 	size_t len = 0;
 	str = realloc(NULL,size*sizeof(char));
 	if(!str)  	return str;
-	while ((ch = fgetc(fp)) != EOF && ch != '\n') 
-	{
+	while ((ch = fgetc(fp)) != EOF && ch != '\n') {
 		str[len++] = ch;
 		if(len == size) 
 		{

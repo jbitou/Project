@@ -6,7 +6,7 @@
 
 void print_chain(chainp);
 
-void matrix_medoid(FILE *fp, pinfo info) {
+void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
 	int numofitems, token, itemid, tableSize, i, j, pos, *centroids, flag1, z, y, J;
 	hash_table *htable;

@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <inttypes.h>
-#include "nnrlist.h"
 
 typedef struct chain_node *chainp;
 typedef struct chain_node
@@ -12,14 +11,17 @@ typedef struct chain_node
 	chainp next;
 }chain;
 
-typedef struct nn_node
+typedef struct nnr_node *nnrp;
+typedef struct nnr_node
 {
-	char *key;
-	double distance;
-}nn;
+	chainp neighbor;
+	nnrp next;
+}nnr;
 
-int make_item(char *item);
 void insert_chain(char *, void *, chainp *, int, int, int);
 void search_chain_NNR(chainp, void *, double, nnrp *, int, int, int);
-void search_chain_NN(chainp, void *, int, int, int, int, int *, int, nnrp*, double *);
 void destroy_chain(chainp *, int);
+void insert_nnrlist(chainp, nnrp *);
+void print_nnrlist(nnrp *,FILE *);
+void display_nnrlist(nnrp);
+int make_item(char *);
