@@ -143,7 +143,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
 			if (diff <= R)
-				insert_nnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -156,7 +156,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			position = make_item(temp->key);
 			diff = q[position-1];
 			if (diff <= R)
-				insert_nnrlist(temp->key,nnrlist);
+				insert_nnrlist(temp,nnrlist);
 			temp = temp->next;
 		}
 	}
@@ -186,7 +186,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				else
 					diff = distance_Cosine(temp->p,q,d);
 				if (diff <= R)
-					insert_nnrlist(temp->key,nnrlist);
+					insert_nnrlist(temp,nnrlist);
 				temp = temp->next;
 			}
 		}
@@ -198,7 +198,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
-						insert_nnrlist(temp->key,nnrlist);
+						insert_nnrlist(temp,nnrlist);
 				}
 				temp = temp->next;
 			}
@@ -225,7 +225,7 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 		temp = b;
 		num1 = *(temp->value);   
 		*distance = distance_Hamming(num1,num2);
-		insert_nnrlist(temp->key,list);
+		insert_nnrlist(temp,list);
 		temp = temp->next;
 		while (temp != NULL)
 		{
@@ -235,9 +235,9 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 			{
 				*distance = diff;
 				destroy_nnrlist(list);
-				insert_nnrlist(temp->key,list);
+				insert_nnrlist(temp,list);
 			}
-			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
+			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp,list);
 			temp = temp->next;
 		}
 	}
@@ -255,7 +255,7 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 		temp = b;
 		position = make_item(temp->key);
 		*distance = qdata[position-1];
-		insert_nnrlist(temp->key,list);
+		insert_nnrlist(temp,list);
 		temp = temp->next;
 		while (temp != NULL)
 		{
@@ -265,9 +265,9 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 			{
 				*distance = diff;
 				destroy_nnrlist(list);
-				insert_nnrlist(temp->key,list);
+				insert_nnrlist(temp,list);
 			}
-			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp->key,list);
+			else if (((diff == *distance) && (*distance > 0))) insert_nnrlist(temp,list);
 			temp = temp->next;
 		}
 	}
@@ -300,12 +300,12 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 			if(flag != 2)
 			{
 				*distance = distance_Euclidean(qdata,temp->p,d);
-				insert_nnrlist(temp->key,list);
+				insert_nnrlist(temp,list);
 			}
 			else
 			{
 				*distance = distance_Cosine(qdata,temp->p,d);	
-				insert_nnrlist(temp->key,list);
+				insert_nnrlist(temp,list);
 			}
 			if (!bruflag)
 			{
@@ -318,7 +318,7 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 			if(euclID == temp->id)
 			{
 				*distance = distance_Euclidean(qdata,temp->p,d);
-				insert_nnrlist(temp->key,list);
+				insert_nnrlist(temp,list);
 				*counter= *counter+1;
 				if(*counter > TRICK*L)  return;				
 			}
@@ -336,9 +336,9 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 				{
 					*distance = diff;
 					destroy_nnrlist(list);
-					insert_nnrlist(temp->key,list);
+					insert_nnrlist(temp,list);
 				}
-				else if (((*distance == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
+				else if (((*distance == diff) && (diff > 0))) insert_nnrlist(temp,list);
 				if (!bruflag)
 				{
 					*counter= *counter+1;
@@ -359,9 +359,9 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 						diff = diff1;
 						*distance = diff;
 						destroy_nnrlist(list);
-						insert_nnrlist(temp->key,list);
+						insert_nnrlist(temp,list);
 					}
-					else if (((diff1 == diff) && (diff > 0))) insert_nnrlist(temp->key,list);
+					else if (((diff1 == diff) && (diff > 0))) insert_nnrlist(temp,list);
 					*counter= *counter+1;
 					if(*counter > TRICK*L) return;
 				}
@@ -370,6 +370,90 @@ void search_chain_NN(chainp b, void *q, int flag, int bruflag, int euclID, int d
 		}
 	}
 	return;
+}
+
+void insert_nnrlist(chain *n, nnrp *pointer)
+{
+	nnrp temp;
+	temp = *pointer;
+	/*If list is empty, put the first node*/
+	if (temp == NULL)	
+	{
+		temp = malloc(sizeof(nnr));
+		temp->neighbor = malloc(sizeof(chain));
+		temp->neighbor = n;
+		temp->next = NULL;
+		*pointer = temp;
+	}
+	/*If list isn't empty, put new node at the end*/
+	else
+	{
+		while(temp->next != NULL)
+		{
+			/*Avoid duplicates*/
+			if (strcmp(temp->neighbor->key,n->key) == 0)	return; 	
+			temp = temp->next;
+		}
+		if (strcmp(temp->neighbor->key,n->key) == 0)	return;
+		temp->next = malloc(sizeof(nnr));
+		temp->next->neighbor = malloc(sizeof(chain));
+		temp->next->neighbor = n;
+		temp->next->next = NULL;
+	}
+}
+
+void print_nnrlist(nnrp *l, FILE *fe) 
+{
+	nnrp temp, curr;
+	curr = *l;
+	if (curr == NULL)		return;		//For safety
+	while (curr != NULL) 
+	{
+		fprintf(fe,"%s\n",curr->neighbor->key);
+		temp = curr;
+		curr = curr->next;
+		free(temp->neighbor);
+		free(temp);
+	}
+	*l = NULL;
+}
+
+void combine_nnrlist(nnrp *l1, nnrp *l2)
+{
+	nnrp temp;
+	while (*l2 != NULL)
+	{
+		insert_nnrlist((*l2)->neighbor,l1);
+		temp = *l2;
+		(*l2) = (*l2)->next;
+		free(temp->neighbor);
+		free(temp);
+	}
+}
+
+void destroy_nnrlist(nnrp *l) 
+{
+	nnrp temp, curr;
+	curr = *l;
+	if (curr == NULL)		return;		//For safety
+	while (curr != NULL) 
+	{
+		temp = curr;
+		curr = curr->next;
+		free(temp->neighbor);
+		free(temp);
+	}
+	*l = NULL;
+}
+
+void display_nnrlist(nnrp l)
+{
+	while (l != NULL)
+	{
+		printf("key: %s ",l->neighbor->key);
+		l=l->next;
+	}
+	printf("\n");
 }
 
 int make_item(char *item)
