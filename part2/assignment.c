@@ -13,13 +13,14 @@ hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, i
 		for(j = 0; j < N; j++)	{
 			sprintf(itemID,"item%d",j+1);
 			pos = hash_func_Matrix(g[i],j,distances,num_of_hash,N);
+			//pos = mod(pos,htable[i].size); 	IF TABLESIZE = POINTS/8
 			insert_chain(itemID,NULL,&(htable[i].table[pos]),3,0,0);
 		}
 	}
 	return htable;
 }
 
-pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_table htable, int *centroids ,int k) {
+pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_table htable, int *centroids, int k) {
 	int i, j, distance, mindistance, mincentroid, id;
 	chainp temp;
 	/**For each Bucket**/
@@ -58,6 +59,31 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 	}
 	for (i=0; i < k; i++) 	clusters[i].centroid = (void *)(intptr_t)centroids[i];
 	return clusters;
+}
+
+pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, int *centroids, int k) {
+	int radii;
+	radii = compute_start_radius(distances,centroids,k);
+	printf("radius: %d\n",radii);
+	return clusters;
+}
+
+int compute_start_radius(int **distances, int *centroids, int k) {
+	int i, j, distance1, distance2, mindistance;
+	/**Suppose that at least two centroids exist! First, mindistance is distance of first two centroids 0,1**/
+	if (centroids[0] < centroids[1])  mindistance = distances[centroids[0]][centroids[1]-centroids[0]-1];
+	else if (centroids[0] > centroids[1])  mindistance = distances[centroids[1]][centroids[0]-centroids[1]-1];
+	for (i=0; i < (k - 1); i++) {
+		if (centroids[i+1] < centroids[i])  distance1 = distances[centroids[i+1]][centroids[i]-centroids[i+1]-1];
+		else if (centroids[i+1] > centroids[i])  distance1 = distances[centroids[i]][centroids[i+1]-centroids[i]-1];
+		if (distance1 < mindistance)   mindistance = distance1;
+		for (j=(i + 2); j < k; j++) {
+			if (centroids[i] < centroids[j])  	distance2 = distances[centroids[i]][centroids[j]-centroids[i]-1];
+			else if (centroids[i] > centroids[j])  distance2 = distances[centroids[j]][centroids[i]-centroids[j]-1];
+			if (distance2 < mindistance)  mindistance = distance2;
+		}
+	}
+	return (mindistance / 2);
 }
 
 int compute_objective_function(pcluster clusters, int **distances, int k) {

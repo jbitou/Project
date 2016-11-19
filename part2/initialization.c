@@ -38,9 +38,10 @@ pj_info *sortArray(pj_info *array, int N) {
 }
 
 int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
-	int k = 1, i, j, min, max, x, z, flag;
+	int k = 1, i, j, x, z, min, max, flag;
 	int *centroids = malloc((info->k)*sizeof(int)); 
 	centroids[0] = (rand() / (RAND_MAX + 1.0)) * N;
+	/**Create k centroids**/
 	while (k < info->k) {
 		int *D = malloc((N-k)*sizeof(int));
 		int *P = malloc((N-k+1)*sizeof(int));
@@ -74,6 +75,12 @@ int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 		}
 		x = (rand() / (RAND_MAX + 1.0)) * (P[N-k]+1);
 		centroids[k] = binarySearch(N - k, x, P); //r
+		for (i=0; i < k; i++) {
+			if (centroids[k] == centroids[i]) {
+				k--;
+				break;
+			}
+		}		
 		free(D);
 		free(P);
 		k++;
