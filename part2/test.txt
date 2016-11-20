@@ -1,0 +1,403 @@
+Choose specific algorithms to be run? Y or N?  
+Running all combinations...
+
+centroids[0]=0
+0	9	12	8	10	15	15	9	10	10	
+centroids[1]=6
+15	10	15	9	9	16	0	12	11	9	
+centroids[2]=2
+12	13	0	10	12	13	15	11	10	16	
+Table 0:
+Bucket 0:
+key: item4,key: item5,key: item8,key: item9,
+Bucket 1:
+
+Bucket 2:
+
+Bucket 3:
+
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+
+Bucket 11:
+
+Bucket 12:
+
+Bucket 13:
+
+Bucket 14:
+
+Bucket 15:
+key: item6,
+Bucket 16:
+
+Bucket 17:
+
+Bucket 18:
+
+Bucket 19:
+
+Bucket 20:
+key: item10,
+Bucket 21:
+
+Bucket 22:
+key: item2,
+Bucket 23:
+key: item7,
+Bucket 24:
+
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+
+Bucket 28:
+
+Bucket 29:
+
+Bucket 30:
+key: item1,
+Bucket 31:
+key: item3,
+Table 1:
+Bucket 0:
+key: item4,key: item8,key: item9,
+Bucket 1:
+key: item5,
+Bucket 2:
+
+Bucket 3:
+
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+
+Bucket 11:
+
+Bucket 12:
+
+Bucket 13:
+
+Bucket 14:
+
+Bucket 15:
+key: item10,
+Bucket 16:
+
+Bucket 17:
+
+Bucket 18:
+
+Bucket 19:
+
+Bucket 20:
+
+Bucket 21:
+
+Bucket 22:
+
+Bucket 23:
+
+Bucket 24:
+key: item2,
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+
+Bucket 28:
+
+Bucket 29:
+key: item1,
+Bucket 30:
+key: item3,
+Bucket 31:
+key: item6,key: item7,
+Table 2:
+Bucket 0:
+key: item4,key: item5,key: item8,key: item9,
+Bucket 1:
+
+Bucket 2:
+
+Bucket 3:
+
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+key: item3,
+Bucket 11:
+
+Bucket 12:
+
+Bucket 13:
+
+Bucket 14:
+
+Bucket 15:
+
+Bucket 16:
+
+Bucket 17:
+
+Bucket 18:
+
+Bucket 19:
+
+Bucket 20:
+
+Bucket 21:
+
+Bucket 22:
+
+Bucket 23:
+key: item10,
+Bucket 24:
+
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+
+Bucket 28:
+
+Bucket 29:
+key: item2,
+Bucket 30:
+key: item6,
+Bucket 31:
+key: item1,key: item7,
+Table 3:
+Bucket 0:
+key: item4,key: item5,
+Bucket 1:
+
+Bucket 2:
+
+Bucket 3:
+key: item10,
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+
+Bucket 11:
+
+Bucket 12:
+
+Bucket 13:
+key: item2,
+Bucket 14:
+
+Bucket 15:
+
+Bucket 16:
+key: item8,key: item9,
+Bucket 17:
+
+Bucket 18:
+
+Bucket 19:
+
+Bucket 20:
+
+Bucket 21:
+
+Bucket 22:
+
+Bucket 23:
+
+Bucket 24:
+
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+key: item7,
+Bucket 28:
+
+Bucket 29:
+
+Bucket 30:
+
+Bucket 31:
+key: item1,key: item3,key: item6,
+Table 4:
+Bucket 0:
+key: item4,key: item9,
+Bucket 1:
+
+Bucket 2:
+key: item5,
+Bucket 3:
+
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+key: item7,
+Bucket 11:
+
+Bucket 12:
+
+Bucket 13:
+
+Bucket 14:
+
+Bucket 15:
+key: item3,
+Bucket 16:
+
+Bucket 17:
+
+Bucket 18:
+key: item8,
+Bucket 19:
+
+Bucket 20:
+
+Bucket 21:
+
+Bucket 22:
+
+Bucket 23:
+key: item1,key: item2,
+Bucket 24:
+
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+key: item10,
+Bucket 28:
+
+Bucket 29:
+
+Bucket 30:
+key: item6,
+Bucket 31:
+
+Table 5:
+Bucket 0:
+key: item4,key: item9,
+Bucket 1:
+key: item8,
+Bucket 2:
+
+Bucket 3:
+
+Bucket 4:
+
+Bucket 5:
+
+Bucket 6:
+
+Bucket 7:
+
+Bucket 8:
+
+Bucket 9:
+
+Bucket 10:
+
+Bucket 11:
+
+Bucket 12:
+key: item5,
+Bucket 13:
+key: item10,
+Bucket 14:
+
+Bucket 15:
+
+Bucket 16:
+
+Bucket 17:
+
+Bucket 18:
+key: item3,
+Bucket 19:
+
+Bucket 20:
+
+Bucket 21:
+
+Bucket 22:
+
+Bucket 23:
+
+Bucket 24:
+
+Bucket 25:
+
+Bucket 26:
+
+Bucket 27:
+key: item2,
+Bucket 28:
+
+Bucket 29:
+
+Bucket 30:
+key: item7,
+Bucket 31:
+key: item1,key: item6,
+radius: 6
+Cluster 0 :key: item1,key: item7,key: item3,key: item6,key: item2,
+Cluster 6 :key: item7,key: item6,key: item1,
+Cluster 2 :key: item3,key: item1,key: item6,
