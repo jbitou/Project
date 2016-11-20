@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include "initialization.h"
+#include "structure.h"
 
 int binarySearch(int Nk, int search, int *array) {
 	int first = 0;
@@ -37,26 +37,28 @@ pj_info *sortArray(pj_info *array, int N) {
 	return array;
 }
 
-int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
-	int k = 1, i, j, x, z, min, max, flag;
-	int *centroids = malloc((info->k)*sizeof(int)); 
-	centroids[0] = (rand() / (RAND_MAX + 1.0)) * N;
+centroid *matrix_init_kmedoids(int **distances, pinfo info, int N) {
+	int k = 1, i, j, x, z, min, max, flag, *temp;
+	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
+	for (i=0; i < info->k; i++) 	centroids[i].info = malloc(N*sizeof(int));
+	centroids[0].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * N);
 	/**Create k centroids**/
 	while (k < info->k) {
 		int *D = malloc((N-k)*sizeof(int));
 		int *P = malloc((N-k+1)*sizeof(int));
 		z = 0;
+		/**For each item**/
 		for (i=0; i < N; i++) {
 			flag = 0;
 			for (j=0; j < k; j++) {
-				if (i == centroids[j]) flag = 1;
+				if (i == (int)(intptr_t)centroids[j].center) flag = 1;
 			}
 			if (flag == 1) continue;
-			if (i < centroids[0]) D[z] = distances[i][centroids[0]-i-1];
-			else if (i > centroids[0]) D[z] = distances[centroids[0]][i-centroids[0]-1];
+			if (i < (int)(intptr_t)centroids[0].center) 		D[z] = distances[i][(int)(intptr_t)centroids[0].center-i-1];
+			else if (i > (int)(intptr_t)centroids[0].center) 	D[z] = distances[(int)(intptr_t)centroids[0].center][i-(int)(intptr_t)centroids[0].center-1];
 			for (j=1; j < k; j++) {
-				if (i < centroids[j])	min = distances[i][centroids[j]-i-1];
-				else if (i > centroids[j]) min = distances[centroids[j]][i-centroids[j]-1];
+				if (i < (int)(intptr_t)centroids[j].center)			min = distances[i][(int)(intptr_t)centroids[j].center-i-1];
+				else if (i > (int)(intptr_t)centroids[j].center) 	min = distances[(int)(intptr_t)centroids[j].center][i-(int)(intptr_t)centroids[j].center-1];
 				if (min < D[z])	D[z] = min;
 			}
 			z++;
@@ -68,15 +70,13 @@ int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 		P[0] = 0;
 		for (i=1; i < N-k+1; i++) {
 			P[i] = 0;
-			for (j=0; j < i; j++) {
-				P[i] += pow(D[j],2);
-			}
+			for (j=0; j < i; j++)	P[i] += pow(D[j],2);
 			P[i] /= max;
 		}
 		x = (rand() / (RAND_MAX + 1.0)) * (P[N-k]+1);
-		centroids[k] = binarySearch(N - k, x, P); //r
+		centroids[k].center = (void *)(intptr_t)binarySearch(N - k, x, P); //r
 		for (i=0; i < k; i++) {
-			if (centroids[k] == centroids[i]) {
+			if (centroids[k].center == centroids[i].center) {
 				k--;
 				break;
 			}
@@ -85,11 +85,21 @@ int *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 		free(P);
 		k++;
 	}
+	/**For each centroid**/
+	for (i=0; i < info->k; i++) {
+		temp = (int *)centroids[i].info;
+		/**Create info line with distances**/
+		for (j=0; j < (int)(intptr_t)centroids[i].center; j++) 
+			temp[j] = distances[j][(int)(intptr_t)centroids[i].center-j-1];
+		temp[j] = 0;
+		for (j=((int)(intptr_t)centroids[i].center + 1); j < N; j++) 
+			temp[j] = distances[(int)(intptr_t)centroids[i].center][j-(int)(intptr_t)centroids[i].center-1];
+	}
 	return centroids;
 }
 
-int *matrix_init_concentrate(int **distances, pinfo info, int N) {
-	int i, j, t, denominator;
+centroid *matrix_init_concentrate(int **distances, pinfo info, int N) {
+	int i, j, t, denominator, *temp;
 	pj_info *v = malloc(N*sizeof(pj_info));
 	/**For each object**/
 	for (i=0; i < N; i++) {
@@ -110,8 +120,21 @@ int *matrix_init_concentrate(int **distances, pinfo info, int N) {
 		}
 	}
 	v = sortArray(v, N);
-	int *centroids = malloc((info->k)*sizeof(int));
-	for (i=0; i < info->k; i++)  centroids[i] = v[i].index;	
+	centroid *centroids = malloc((info->k)*sizeof(centroid));
+	for (i=0; i < info->k; i++) {
+		centroids[i].info = malloc(N*sizeof(int));
+		centroids[i].center = (void *)(intptr_t)v[i].index;
+	}
+	/**For each centroid**/
+	for (i=0; i < info->k; i++) {
+		temp = (int *)centroids[i].info;
+		/**Create info line with distances**/
+		for (j=0; j < (int)(intptr_t)centroids[i].center; j++) 
+			temp[j] = distances[j][(int)(intptr_t)centroids[i].center-j-1];
+		temp[j] = 0;
+		for (j=((int)(intptr_t)centroids[i].center + 1); j < N; j++) 
+			temp[j] = distances[(int)(intptr_t)centroids[i].center][j-(int)(intptr_t)centroids[i].center-1];
+	}	
 	free(v);
 	return centroids;
 }

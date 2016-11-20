@@ -223,7 +223,7 @@ void destroy_chain(chainp *l, int flag)
 	*l = NULL;	
 }
 
-void insert_nnrlist(chain *n, nnrp *pointer)
+void insert_nnrlist(chainp n, nnrp *pointer)
 {
 	nnrp temp;
 	temp = *pointer;
@@ -231,8 +231,7 @@ void insert_nnrlist(chain *n, nnrp *pointer)
 	if (temp == NULL)	
 	{
 		temp = malloc(sizeof(nnr));
-		temp->neighbor = malloc(sizeof(chain));
-		temp->neighbor = n;
+		temp->neighbor = *n;
 		temp->next = NULL;
 		*pointer = temp;
 	}
@@ -242,16 +241,27 @@ void insert_nnrlist(chain *n, nnrp *pointer)
 		while(temp->next != NULL)
 		{
 			/*Avoid duplicates*/
-			if (strcmp(temp->neighbor->key,n->key) == 0)	return; 	
+			if (strcmp(temp->neighbor.key,n->key) == 0)	return; 	
 			temp = temp->next;
 		}
-		if (strcmp(temp->neighbor->key,n->key) == 0)	return;
+		if (strcmp(temp->neighbor.key,n->key) == 0)	return;
 		temp->next = malloc(sizeof(nnr));
-		temp->next->neighbor = malloc(sizeof(chain));
-		temp->next->neighbor = n;
+		temp->next->neighbor = *n;
 		temp->next->next = NULL;
 	}
 }
+
+/*void combine_nnrlist(nnrp *l1, nnrp *l2)
+{
+	nnrp temp;
+	while (*l2 != NULL)
+	{
+		insert_nnrlist((*l2)->key,l1);
+		temp = *l2;
+		(*l2) = (*l2)->next;
+		free(temp);
+	}
+}*/
 
 void print_nnrlist(nnrp *l, FILE *fe) 
 {
@@ -260,10 +270,9 @@ void print_nnrlist(nnrp *l, FILE *fe)
 	if (curr == NULL)		return;		//For safety
 	while (curr != NULL) 
 	{
-		fprintf(fe,"%s\n",curr->neighbor->key);
+		fprintf(fe,"%s\n",curr->neighbor.key);
 		temp = curr;
 		curr = curr->next;
-		free(temp->neighbor);
 		free(temp);
 	}
 	*l = NULL;
@@ -273,7 +282,7 @@ void display_nnrlist(nnrp l)
 {
 	while (l != NULL)
 	{
-		printf("key: %s ",l->neighbor->key);
+		printf("key: %s ",l->neighbor.key);
 		l=l->next;
 	}
 	printf("\n");

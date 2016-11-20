@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "assignment.h"
+#include "structure.h"
 #define ITEM_ID 15
 
 hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, int L, int num_of_hash, int N) {
@@ -20,18 +20,18 @@ hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, i
 	return htable;
 }
 
-pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_table htable, int *centroids, int k) {
+pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_table htable, centroid *centroids, int k) {
 	int i, j, distance, mindistance, mincentroid, id;
 	chainp temp;
-	/**For each Bucket**/
+	/**For each bucket**/
 	for (i=0; i < htable.size; i++) {
 		temp = htable.table[i];
-		/**For each Item**/
+		/**For each item**/
 		while (temp != NULL) {
 			id = make_item(temp->key) - 1;
-			/**For each Centroid**/
-			if (id < centroids[0])  mindistance = distances[id][centroids[0]-id-1];
-			else if (id > centroids[0])  mindistance = distances[centroids[0]][id-centroids[0]-1];
+			/**For each centroid**/
+			if (id < (int)(intptr_t)centroids[0].center)  mindistance = distances[id][(int)(intptr_t)centroids[0].center-id-1];
+			else if (id > (int)(intptr_t)centroids[0].center)  mindistance = distances[(int)(intptr_t)centroids[0].center][id-(int)(intptr_t)centroids[0].center-1];
 			else {
 				/**Exclude centroids**/
 				temp = temp->next;
@@ -39,8 +39,8 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 			}
 			mincentroid = 0;
 			for (j=1; j < k; j++) {
-				if (id < centroids[j])  distance = distances[id][centroids[j]-id-1];
-				else if (id > centroids[j])  distance = distances[centroids[j]][id-centroids[j]-1];
+				if (id < (int)(intptr_t)centroids[j].center)  distance = distances[id][(int)(intptr_t)centroids[j].center-id-1];
+				else if (id > (int)(intptr_t)centroids[j].center)  distance = distances[(int)(intptr_t)centroids[j].center][id-(int)(intptr_t)centroids[j].center-1];
 				else {
 					/**Exclude centroids**/
 					mindistance = -1;
@@ -57,45 +57,64 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 		}
 		
 	}
-	for (i=0; i < k; i++) 	clusters[i].centroid = (void *)(intptr_t)centroids[i];
+	for (i=0; i < k; i++) 	clusters[i].center = centroids[i];
 	return clusters;
 }
 
-pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, int *centroids, int k) {
-	int radii;
-	radii = compute_start_radius(distances,centroids,k);
+pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
+	int i, j, radii, pos;
+	nnrp nnrlist = NULL;
+	radii = matrix_compute_start_radius(distances,centroids,k);
 	printf("radius: %d\n",radii);
+	/**For each cluster**/
+	for (i=0; i < k; i++) {
+		nnrlist = NULL;
+		/**For each table**/
+		for (j=0; j < L; j++) {
+			pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
+			search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&nnrlist,3,0,0);	
+		}
+		clusters[i].items = (chainp) nnrlist;
+		clusters[i].center = centroids[i];
+	}
 	return clusters;
 }
 
-int compute_start_radius(int **distances, int *centroids, int k) {
+int matrix_compute_start_radius(int **distances, centroid *centroids, int k) {
 	int i, j, distance1, distance2, mindistance;
 	/**Suppose that at least two centroids exist! First, mindistance is distance of first two centroids 0,1**/
-	if (centroids[0] < centroids[1])  mindistance = distances[centroids[0]][centroids[1]-centroids[0]-1];
-	else if (centroids[0] > centroids[1])  mindistance = distances[centroids[1]][centroids[0]-centroids[1]-1];
+	if (centroids[0].center < centroids[1].center)  
+		mindistance = distances[(int)(intptr_t)centroids[0].center][(int)(intptr_t)centroids[1].center-(int)(intptr_t)centroids[0].center-1];
+	else if (centroids[0].center > centroids[1].center)  
+		mindistance = distances[(int)(intptr_t)centroids[1].center][(int)(intptr_t)centroids[0].center-(int)(intptr_t)centroids[1].center-1];
 	for (i=0; i < (k - 1); i++) {
-		if (centroids[i+1] < centroids[i])  distance1 = distances[centroids[i+1]][centroids[i]-centroids[i+1]-1];
-		else if (centroids[i+1] > centroids[i])  distance1 = distances[centroids[i]][centroids[i+1]-centroids[i]-1];
+		if (centroids[i+1].center < centroids[i].center)  
+			distance1 = distances[(int)(intptr_t)centroids[i+1].center][(int)(intptr_t)centroids[i].center-(int)(intptr_t)centroids[i+1].center-1];
+		else if (centroids[i+1].center > centroids[i].center)  
+			distance1 = distances[(int)(intptr_t)centroids[i].center][(int)(intptr_t)centroids[i+1].center-(int)(intptr_t)centroids[i].center-1];
 		if (distance1 < mindistance)   mindistance = distance1;
 		for (j=(i + 2); j < k; j++) {
-			if (centroids[i] < centroids[j])  	distance2 = distances[centroids[i]][centroids[j]-centroids[i]-1];
-			else if (centroids[i] > centroids[j])  distance2 = distances[centroids[j]][centroids[i]-centroids[j]-1];
+			if (centroids[i].center < centroids[j].center)  	
+				distance2 = distances[(int)(intptr_t)centroids[i].center][(int)(intptr_t)centroids[j].center-(int)(intptr_t)centroids[i].center-1];
+			else if (centroids[i].center > centroids[j].center)  
+				distance2 = distances[(int)(intptr_t)centroids[j].center][(int)(intptr_t)centroids[i].center-(int)(intptr_t)centroids[j].center-1];
 			if (distance2 < mindistance)  mindistance = distance2;
 		}
 	}
 	return (mindistance / 2);
 }
 
-int compute_objective_function(pcluster clusters, int **distances, int k) {
-	int J = 0, i, id, centroid;
+int matrix_compute_objective_function(pcluster clusters, int **distances, int k) {
+	int J = 0, i, id; 
+	centroid center;
 	chainp temp;
 	for (i=0; i < k; i++) {
 		temp = clusters[i].items;
-		centroid = (int)(intptr_t)clusters[i].centroid;
+		center = clusters[i].center;
 		while (temp != NULL) {
 			id = make_item(temp->key) - 1;
-			if (id < centroid)  J += distances[id][centroid-id-1];
-			else if ( id > centroid)  J += distances[centroid][id-centroid-1];
+			if (id < (int)(intptr_t)center.center)  J += distances[id][(int)(intptr_t)center.center-id-1];
+			else if (id > (int)(intptr_t)center.center)  J += distances[(int)(intptr_t)center.center][id-(int)(intptr_t)center.center-1];
 			temp = temp->next;
 		}
 	}

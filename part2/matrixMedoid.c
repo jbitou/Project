@@ -8,7 +8,8 @@ void print_chain(chainp);
 
 void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
-	int numofitems, token, itemid, tableSize, i, j, pos, *centroids, flag1, z, y, J;
+	int numofitems, token, itemid, tableSize, i, j, pos, flag1, z, y, J;
+	centroid *centroids;
 	hash_table *htable;
 	/**Allocate memory for tables and g functions**/
 	htable = malloc(info->L * sizeof(hash_table));
@@ -55,20 +56,13 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Get centroids**/
 	/**k-medoids++**/
 	centroids = matrix_init_kmedoids(p, info, numofitems);
-	for(i=0; i < info->k; i++)
-			printf("centroids[%d]=%d\n",i,centroids[i]);
 	/**Park-Jun**/
-	/**centroids = matrix_init_concentrate(p, info, numofitems);
-	for(i=0; i < info->k; i++)
-			printf("centroids[%d]=%d\n",i+1,centroids[i]);**/	
-	/*j = numofitems-1;
-	int k;
-	for(i=0; i < numofitems-1; i++) 
-	{
-		for(k=0; k < j; k++) 
-			printf("p[%d][%d] = %d\n",i,k,p[i][k]);
-		j--;
-	} */
+	/**centroids = matrix_init_concentrate(p, info, numofitems);**/
+	for(i=0; i < info->k; i++) {
+		printf("\ncentroids[%d]=%d\n",i,(int)(intptr_t)centroids[i].center);
+		for (j=0; j < numofitems; j++) 	printf("%d\t",((int *)centroids[i].info)[j]);
+	}
+	printf("\n");
 	/**Insert data into hash tables**/
 	htable = matrix_insert_hash(htable,g,p,info->L,info->num_of_hash,numofitems);
 	/*for (i=0; i < info->L; i++) {
@@ -82,14 +76,14 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Allocate memory for clusters**/
 	pcluster clusters = malloc((info->k)*sizeof(cluster));
 	/**Assignment**/
-	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
+	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);**/
+	clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info->k,info->num_of_hash,numofitems,info->L);
 	for (i=0; i < info->k; i++) {
-		printf("Cluster %d :",(int)(intptr_t)clusters[i].centroid);
+		printf("Cluster %d :",(int)(intptr_t)clusters[i].center.center);
 		print_chain(clusters[i].items);
 		printf("\n");
-	}**/
-	clusters = matrix_reverse_approach(clusters,p,htable,centroids,info->k);
-	/**J = compute_objective_function(clusters,p,info->k);	
+	}
+	/**J = matrix_compute_objective_function(clusters,p,info->k);	
 	printf("J=%d\n",J);**/
 	/**Free memory**/
 	for (i = 0; i < info->L; i++) 
