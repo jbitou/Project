@@ -63,18 +63,18 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
 	int i, j, radii, pos;
-	nnrp nnrlist = NULL;
+	chainp list = NULL;
 	radii = matrix_compute_start_radius(distances,centroids,k);
 	printf("radius: %d\n",radii);
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
-		nnrlist = NULL;
+		list = NULL;
 		/**For each table**/
 		for (j=0; j < L; j++) {
 			pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
-			search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&nnrlist,3,0,0);	
+			search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&list,3,0,0);	
 		}
-		clusters[i].items = (chainp) nnrlist;
+		clusters[i].items = list;
 		clusters[i].center = centroids[i];
 	}
 	return clusters;
