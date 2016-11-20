@@ -127,7 +127,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 	}
 }
 
-void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, int euclID, int d)
+void search_chain_NNR(chainp b, void *qdata, double R, chainp *list, int flag, int euclID, int d)
 {
 	chainp temp;
 	temp = b;
@@ -143,7 +143,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
 			if (diff <= R)
-				insert_nnrlist(temp,nnrlist);
+				insert_list(temp->key,list,flag);
 			temp = temp->next;
 		}
 	}
@@ -156,7 +156,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 			position = make_item(temp->key);
 			diff = q[position-1];
 			if (diff <= R)
-				insert_nnrlist(temp,nnrlist);
+				insert_list(temp->key,list,flag);
 			temp = temp->next;
 		}
 	}
@@ -186,7 +186,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				else
 					diff = distance_Cosine(temp->p,q,d);
 				if (diff <= R)
-					insert_nnrlist(temp,nnrlist);
+					insert_list(temp->key,list,flag);
 				temp = temp->next;
 			}
 		}
@@ -198,11 +198,34 @@ void search_chain_NNR(chainp b, void *qdata, double R, nnrp *nnrlist, int flag, 
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
-						insert_nnrlist(temp,nnrlist);
+						insert_list(temp->key,list,flag);
 				}
 				temp = temp->next;
 			}
 		}
+	}
+}
+
+void insert_list(char *key, chainp *pointer, int flag)
+{
+	chainp temp;
+	temp = *pointer;
+	/**Avoid duplicates**/
+	while(temp != NULL)
+	{
+		if (strcmp(temp->key,key) == 0)	return; 	
+		temp = temp->next;
+	}
+	insert_chain(key,NULL,pointer,flag,0,0);
+}
+
+
+void print_chain(chainp l) 
+{
+	while (l != NULL) 
+	{
+		printf("key: %s,",l->key);
+		l = l->next;
 	}
 }
 
@@ -223,47 +246,7 @@ void destroy_chain(chainp *l, int flag)
 	*l = NULL;	
 }
 
-void insert_nnrlist(chainp n, nnrp *pointer)
-{
-	nnrp temp;
-	temp = *pointer;
-	/*If list is empty, put the first node*/
-	if (temp == NULL)	
-	{
-		temp = malloc(sizeof(nnr));
-		temp->neighbor = *n;
-		temp->next = NULL;
-		*pointer = temp;
-	}
-	/*If list isn't empty, put new node at the end*/
-	else
-	{
-		while(temp->next != NULL)
-		{
-			/*Avoid duplicates*/
-			if (strcmp(temp->neighbor.key,n->key) == 0)	return; 	
-			temp = temp->next;
-		}
-		if (strcmp(temp->neighbor.key,n->key) == 0)	return;
-		temp->next = malloc(sizeof(nnr));
-		temp->next->neighbor = *n;
-		temp->next->next = NULL;
-	}
-}
-
-/*void combine_nnrlist(nnrp *l1, nnrp *l2)
-{
-	nnrp temp;
-	while (*l2 != NULL)
-	{
-		insert_nnrlist((*l2)->key,l1);
-		temp = *l2;
-		(*l2) = (*l2)->next;
-		free(temp);
-	}
-}*/
-
-void print_nnrlist(nnrp *l, FILE *fe) 
+/*void print_nnrlist(nnrp *l, FILE *fe) 
 {
 	nnrp temp, curr;
 	curr = *l;
@@ -276,17 +259,7 @@ void print_nnrlist(nnrp *l, FILE *fe)
 		free(temp);
 	}
 	*l = NULL;
-}
-
-void display_nnrlist(nnrp l)
-{
-	while (l != NULL)
-	{
-		printf("key: %s ",l->neighbor.key);
-		l=l->next;
-	}
-	printf("\n");
-}
+}*/
 
 int make_item(char *item)
 {
