@@ -44,6 +44,7 @@ centroid *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 	centroids[0].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * N);
 	/**Create k centroids**/
 	while (k < info->k) {
+		/**For each (k < number of centroids) allocate new Distances and Probabilities array**/
 		int *D = malloc((N-k)*sizeof(int));
 		int *P = malloc((N-k+1)*sizeof(int));
 		z = 0;
@@ -63,18 +64,22 @@ centroid *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 			}
 			z++;
 		}
+		/**Compute maximum of D**/
 		max = D[0];
 		for (i=1; i < N-k; i++) {
 			if (D[i] > max)  max = D[i];
 		}
 		P[0] = 0;
+		/**Compute each P as summary of D^2**/
 		for (i=1; i < N-k+1; i++) {
 			P[i] = 0;
 			for (j=0; j < i; j++)	P[i] += pow(D[j],2);
+			/**Make probability < 1**/
 			P[i] /= max;
 		}
 		x = (rand() / (RAND_MAX + 1.0)) * (P[N-k]+1);
-		centroids[k].center = (void *)(intptr_t)binarySearch(N - k, x, P); //r
+		/**r is the new centroid center**/
+		centroids[k].center = (void *)(intptr_t)binarySearch(N - k, x, P);
 		for (i=0; i < k; i++) {
 			if (centroids[k].center == centroids[i].center) {
 				k--;
