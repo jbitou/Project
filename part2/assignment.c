@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "structure.h"
 #define ITEM_ID 15
 
@@ -62,21 +63,38 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
-	int i, j, radii, pos;
-	chainp list = NULL;
-	radii = matrix_compute_start_radius(distances,centroids,k);
-	printf("radius: %d\n",radii);
-	/**For each cluster**/
-	for (i=0; i < k; i++) {
-		list = NULL;
-		/**For each table**/
-		for (j=0; j < L; j++) {
-			pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
-			search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&list,3,0,0);	
-		}
-		clusters[i].items = list;
-		clusters[i].center = centroids[i];
+	int i, j, z, radii, pos, done, all;
+	chainp list = NULL, **barriers;
+	/**L tables of pointers**/
+	barriers = malloc(L*sizeof(chainp *));
+	for (i=0; i < L; i++) {
+		barriers[i] = malloc(pow(2,num_of_hash)*sizeof(chainp));
 	}
+	radii = matrix_compute_start_radius(distances,centroids,k);
+	do {
+		printf("radius: %d\n",radii);
+		/**For each cluster**/
+		done = all = 0;
+		for (i=0; i < k; i++) {
+			list = NULL;
+			/**For each table**/
+			for (j=0; j < L; j++) {
+				pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
+				done += search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&list,barriers[j],3,0,0,&all);
+				printf("all: %d	done: %d\n",all,done);			
+			}
+			clusters[i].items = list;
+			clusters[i].center = centroids[i];
+		}
+		radii *= 2;
+	}while ((done > 0) && (all == 0));
+	/*for (j=0; j < L; j++) {
+		printf("For table %d : \n",j);
+		for (z=0; z < pow(2,num_of_hash); z++) {
+			if (barriers[j][z] != NULL)
+				printf("Barrier for chain %d is %s\n",z,barriers[j][z]->key);
+		}
+	}*/
 	return clusters;
 }
 

@@ -127,9 +127,10 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 	}
 }
 
-void search_chain_NNR(chainp b, void *qdata, double R, chainp *list, int flag, int euclID, int d)
+int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barrier, int flag, int euclID, int d, int *all)
 {
 	chainp temp;
+	int done = 0;
 	temp = b;
 	if(!flag)
 	{
@@ -143,20 +144,29 @@ void search_chain_NNR(chainp b, void *qdata, double R, chainp *list, int flag, i
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
 			if (diff <= R)
-				insert_list(temp->key,list,flag);
+				insert_chain(temp->key,NULL,list,flag,0,0);
 			temp = temp->next;
 		}
 	}
 	else if(flag == 3)
 	{
 		int *q = (int *)qdata;
-		int diff = 0, position;
+		int diff = -1, position;
 		while (temp != NULL)
 		{
+			if (((*barrier) != NULL) && (strcmp(temp->key,(*barrier)->key) == 0)) {
+				if (diff == -1)	(*all)++;
+				break;
+			}
 			position = make_item(temp->key);
 			diff = q[position-1];
-			if (diff <= R)
-				insert_list(temp->key,list,flag);
+			if (diff <= R) 
+			{
+				if (done == 0)	done = 1;
+				insert_chain(temp->key,NULL,list,flag,0,0);
+				if ((*barrier) == NULL)	*barrier = temp;
+				b = move_chain_nodes(&b,temp);
+			}
 			temp = temp->next;
 		}
 	}
@@ -186,7 +196,7 @@ void search_chain_NNR(chainp b, void *qdata, double R, chainp *list, int flag, i
 				else
 					diff = distance_Cosine(temp->p,q,d);
 				if (diff <= R)
-					insert_list(temp->key,list,flag);
+					insert_chain(temp->key,NULL,list,flag,0,0);
 				temp = temp->next;
 			}
 		}
@@ -198,27 +208,40 @@ void search_chain_NNR(chainp b, void *qdata, double R, chainp *list, int flag, i
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
-						insert_list(temp->key,list,flag);
+						insert_chain(temp->key,NULL,list,flag,0,0);
 				}
 				temp = temp->next;
 			}
 		}
 	}
+	return done;
 }
 
-void insert_list(char *key, chainp *pointer, int flag)
-{
-	chainp temp;
-	temp = *pointer;
-	/**Avoid duplicates**/
-	while(temp != NULL)
-	{
-		if (strcmp(temp->key,key) == 0)	return; 	
-		temp = temp->next;
+chainp move_chain_nodes(chainp *b, chainp temp) {
+	chainp l = *b;
+	/**If list is empty or only one item inside, then return it**/
+	if ((l == NULL) || (l->next == NULL))	return *b;
+	/**If item wanted is the first node**/
+	if (l == temp) {
+		/**New start is the second item**/
+		*b = l->next;
+		/**Just go to last node**/
+		while (l->next != NULL) l = l->next;
 	}
-	insert_chain(key,NULL,pointer,flag,0,0);
+	/**If item wanted is after the first one**/
+	else {
+		while (l->next != NULL) {
+			if (l->next == temp) {
+				l->next = l->next->next;
+				if (l->next == NULL) break;
+			}
+			l = l->next;
+		}
+	}
+	l->next = temp;
+	l->next->next = NULL;
+    return *b; 
 }
-
 
 void print_chain(chainp l) 
 {

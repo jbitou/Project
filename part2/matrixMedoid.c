@@ -4,8 +4,6 @@
 #include "matrixMedoid.h"
 #define ITEM_ID 15
 
-void print_chain(chainp);
-
 void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
 	int numofitems, token, itemid, tableSize, i, j, pos, flag1, z, y, J;
@@ -98,13 +96,4 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	free(p);
 	free(clusters);
 	free(centroids);
-}
-
-void print_chain(chainp l) 
-{
-	while (l != NULL) 
-	{
-		printf("key: %s,",l->key);
-		l = l->next;
-	}
 }

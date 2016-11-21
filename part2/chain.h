@@ -12,9 +12,9 @@ typedef struct chain_node
 }chain;
 
 void insert_chain(char *, void *, chainp *, int, int, int);
-void search_chain_NNR(chainp, void *, double, chainp *, int, int, int);
+int search_chain_NNR(chainp, void *, double, chainp *, chainp *, int, int, int, int *);
+chainp move_chain_nodes(chainp *, chainp);
 void print_chain(chainp);
 void destroy_chain(chainp *, int);
-void insert_list(char *, chainp *, int);
 //void print_nnrlist(nnrp *,FILE *);
 int make_item(char *);

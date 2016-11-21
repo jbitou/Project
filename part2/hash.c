@@ -263,9 +263,9 @@ int hash_func_MSearch(ghashp g, int *qdata, int **distances, int k, int numofite
 	return h;
 }
 
-void search_table_NNR(int pos, hash_table htable, void *qdata, double rad, nnrp *nnrlist, int flag, int euclID, int d) 
+int search_table_NNR(int pos, hash_table htable, void *qdata, double rad, chainp *list, chainp *barriers, int flag, int euclID, int d, int *all) 
 {
-	search_chain_NNR(htable.table[pos],qdata,rad,nnrlist,flag,euclID,d);
+	return search_chain_NNR(htable.table[pos],qdata,rad,list,&(barriers[pos]),flag,euclID,d,all);
 }
 
 void destroy_table(hash_table *htable, int flag) 
