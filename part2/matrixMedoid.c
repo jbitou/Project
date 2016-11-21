@@ -56,14 +56,14 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	centroids = matrix_init_kmedoids(p, info, numofitems);
 	/**Park-Jun**/
 	/**centroids = matrix_init_concentrate(p, info, numofitems);**/
-	for(i=0; i < info->k; i++) {
+	/*for(i=0; i < info->k; i++) {
 		printf("\ncentroids[%d]=%d\n",i,(int)(intptr_t)centroids[i].center);
 		for (j=0; j < numofitems; j++) 	printf("%d\t",((int *)centroids[i].info)[j]);
 	}
-	printf("\n");
+	printf("\n");*/
 	/**Insert data into hash tables**/
 	htable = matrix_insert_hash(htable,g,p,info->L,info->num_of_hash,numofitems);
-	/*for (i=0; i < info->L; i++) {
+	/*for (i=0; i < L; i++) {
 		printf("Table %d:\n",i);
 		for (j=0; j < tableSize; j++) {
 			printf("Bucket %d:\n",j);

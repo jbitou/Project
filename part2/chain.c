@@ -127,11 +127,11 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 	}
 }
 
-int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barrier, int flag, int euclID, int d, int *all)
+int search_chain_NNR(chainp *b, void *qdata, double R, chainp *list, chainp *barrier, int flag, int euclID, int d, int *all)
 {
-	chainp temp;
-	int done = 0;
-	temp = b;
+	chainp temp, tmp;
+	int done = 0, duplicate;
+	temp = *b;
 	if(!flag)
 	{
 		uint64_t num1, num2;
@@ -154,6 +154,8 @@ int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barr
 		int diff = -1, position;
 		while (temp != NULL)
 		{
+			tmp = *list;
+			/**If barrier points to first chain node**/
 			if (((*barrier) != NULL) && (strcmp(temp->key,(*barrier)->key) == 0)) {
 				if (diff == -1)	(*all)++;
 				break;
@@ -162,10 +164,26 @@ int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barr
 			diff = q[position-1];
 			if (diff <= R) 
 			{
+				/**If this item is already in this cluster don't insert it again**/
+				duplicate = 0;
+				while (tmp != NULL) {
+					if (strcmp(temp->key, tmp->key) == 0) {
+						duplicate = 1;
+						break;
+					}
+					tmp = tmp->next;	
+				}
+				if (duplicate == 1) {
+					temp = temp->next;
+					continue;
+				}/**Done checking duplicate**/
 				if (done == 0)	done = 1;
+				/**Insert in cluster**/
 				insert_chain(temp->key,NULL,list,flag,0,0);
+				/**Add barrier**/
 				if ((*barrier) == NULL)	*barrier = temp;
-				b = move_chain_nodes(&b,temp);
+				/**Move inserted item to the end of the chain**/
+				move_chain_nodes(b,temp);
 			}
 			temp = temp->next;
 		}
@@ -185,7 +203,7 @@ int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barr
 				temp = temp->next;
 			}
 		}
-		temp = b;
+		temp = *b;
 		/*For cosine metric or euclidean if exists=0*/
 		if(exists <= 1) 
 		{
@@ -217,10 +235,10 @@ int search_chain_NNR(chainp b, void *qdata, double R, chainp *list, chainp *barr
 	return done;
 }
 
-chainp move_chain_nodes(chainp *b, chainp temp) {
+void move_chain_nodes(chainp *b, chainp temp) {
 	chainp l = *b;
 	/**If list is empty or only one item inside, then return it**/
-	if ((l == NULL) || (l->next == NULL))	return *b;
+	if ((l == NULL) || (l->next == NULL))	return;
 	/**If item wanted is the first node**/
 	if (l == temp) {
 		/**New start is the second item**/
@@ -240,7 +258,6 @@ chainp move_chain_nodes(chainp *b, chainp temp) {
 	}
 	l->next = temp;
 	l->next->next = NULL;
-    return *b; 
 }
 
 void print_chain(chainp l) 

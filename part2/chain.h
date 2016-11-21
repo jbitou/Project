@@ -6,14 +6,15 @@ typedef struct chain_node
 {
 	char *key;
 	uint64_t *value;
-	double *p;
+	/**distance: for part2, LSH assignment**/
+	double *p, distance;
 	int id;
 	chainp next;
 }chain;
 
 void insert_chain(char *, void *, chainp *, int, int, int);
-int search_chain_NNR(chainp, void *, double, chainp *, chainp *, int, int, int, int *);
-chainp move_chain_nodes(chainp *, chainp);
+int search_chain_NNR(chainp *, void *, double, chainp *, chainp *, int, int, int, int *);
+void move_chain_nodes(chainp *, chainp);
 void print_chain(chainp);
 void destroy_chain(chainp *, int);
 //void print_nnrlist(nnrp *,FILE *);

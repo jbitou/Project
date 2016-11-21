@@ -1,403 +1,596 @@
 Choose specific algorithms to be run? Y or N?  
 Running all combinations...
-
-centroids[0]=0
-0	9	12	8	10	15	15	9	10	10	
-centroids[1]=6
-15	10	15	9	9	16	0	12	11	9	
-centroids[2]=2
-12	13	0	10	12	13	15	11	10	16	
 Table 0:
 Bucket 0:
-key: item4,key: item5,key: item8,key: item9,
+key: item355,key: item375,key: item572,key: item975,key: item987,key: item989,key: item993,
 Bucket 1:
 
 Bucket 2:
-
+key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item768,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,
 Bucket 3:
-
+key: item55,key: item85,key: item454,key: item489,key: item497,key: item765,key: item772,key: item794,key: item795,
 Bucket 4:
-
+key: item79,key: item196,key: item366,key: item387,key: item584,key: item956,
 Bucket 5:
-
+key: item511,key: item585,key: item599,
 Bucket 6:
-
+key: item7,key: item78,key: item257,key: item300,key: item952,key: item958,key: item976,key: item995,key: item997,
 Bucket 7:
-
+key: item6,key: item17,key: item51,key: item53,key: item54,key: item57,key: item59,key: item66,key: item72,key: item74,key: item76,key: item77,key: item84,key: item89,key: item92,key: item97,key: item253,key: item255,key: item256,key: item259,key: item260,key: item264,key: item265,key: item267,key: item270,key: item271,key: item274,key: item279,key: item282,key: item284,key: item285,key: item286,key: item288,key: item289,key: item292,key: item293,key: item294,key: item298,key: item299,key: item766,key: item784,
 Bucket 8:
-
+key: item136,key: item145,key: item359,key: item362,key: item363,key: item383,key: item384,key: item534,key: item550,key: item569,key: item578,key: item582,key: item587,key: item591,key: item594,key: item602,key: item604,key: item608,key: item610,key: item615,key: item621,key: item622,key: item623,key: item624,key: item628,key: item633,key: item634,key: item635,key: item636,key: item641,key: item644,key: item647,key: item727,key: item738,key: item885,key: item973,
 Bucket 9:
-
+key: item554,key: item586,key: item595,key: item666,key: item670,key: item692,key: item696,
 Bucket 10:
-
+key: item101,key: item102,key: item106,key: item107,key: item109,key: item112,key: item113,key: item115,key: item120,key: item122,key: item123,key: item124,key: item130,key: item133,key: item134,key: item138,key: item139,key: item141,key: item142,key: item144,key: item146,key: item147,key: item148,key: item150,key: item601,key: item603,key: item605,key: item606,key: item607,key: item617,key: item618,key: item619,key: item625,key: item626,key: item627,key: item630,key: item631,key: item632,key: item637,key: item639,key: item640,key: item642,key: item643,key: item646,key: item648,key: item650,key: item702,key: item703,key: item707,key: item708,key: item726,key: item741,key: item746,key: item756,key: item759,key: item761,key: item763,key: item776,key: item787,key: item793,key: item798,key: item800,key: item865,
 Bucket 11:
-
+key: item65,key: item114,key: item125,key: item752,key: item757,key: item762,key: item764,key: item770,key: item771,key: item773,key: item779,key: item783,key: item785,key: item788,key: item792,
 Bucket 12:
-
+key: item128,key: item351,key: item352,key: item353,key: item354,key: item356,key: item360,key: item361,key: item364,key: item365,key: item367,key: item368,key: item369,key: item370,key: item371,key: item372,key: item373,key: item374,key: item377,key: item378,key: item379,key: item381,key: item382,key: item385,key: item386,key: item388,key: item389,key: item390,key: item391,key: item392,key: item393,key: item394,key: item396,key: item397,key: item398,key: item399,key: item506,key: item512,key: item514,key: item519,key: item544,key: item546,key: item552,key: item562,key: item563,key: item564,key: item570,key: item574,key: item576,key: item579,key: item600,key: item807,key: item967,key: item990,
 Bucket 13:
-
+key: item61,key: item99,key: item118,key: item203,key: item206,key: item217,key: item236,key: item243,key: item248,key: item330,key: item357,key: item358,key: item376,key: item380,key: item395,key: item400,key: item502,key: item505,key: item516,key: item529,key: item530,key: item539,key: item548,key: item549,key: item556,key: item560,key: item588,key: item651,key: item653,key: item654,key: item657,key: item659,key: item660,key: item667,key: item668,key: item669,key: item671,key: item672,key: item673,key: item674,key: item675,key: item678,key: item679,key: item680,key: item681,key: item682,key: item683,key: item685,key: item686,key: item690,key: item691,key: item693,key: item695,key: item697,key: item698,key: item855,key: item871,key: item878,key: item883,
 Bucket 14:
-
+key: item103,key: item104,key: item105,key: item108,key: item111,key: item116,key: item119,key: item121,key: item126,key: item129,key: item131,key: item135,key: item143,key: item276,key: item326,key: item796,key: item849,key: item864,key: item971,
 Bucket 15:
-key: item6,
+key: item110,key: item127,key: item132,key: item137,key: item149,key: item223,key: item230,key: item232,key: item239,key: item252,key: item275,key: item318,key: item321,key: item328,key: item336,key: item340,key: item350,key: item751,key: item754,key: item755,key: item758,key: item760,key: item767,key: item778,key: item780,key: item781,key: item789,key: item790,key: item791,key: item898,
 Bucket 16:
-
+key: item46,key: item555,key: item575,key: item583,key: item589,key: item978,key: item983,key: item988,
 Bucket 17:
-
+key: item829,
 Bucket 18:
-
+key: item23,key: item24,key: item32,key: item33,key: item39,key: item44,key: item80,key: item82,key: item164,key: item171,key: item174,key: item175,key: item181,key: item438,key: item443,key: item456,key: item468,key: item474,key: item477,key: item482,key: item494,key: item613,key: item953,key: item960,key: item961,key: item962,key: item963,key: item969,key: item977,key: item979,key: item980,key: item981,key: item984,key: item985,key: item986,key: item991,key: item999,
 Bucket 19:
-
+key: item63,key: item95,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item451,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,
 Bucket 20:
-key: item10,
+key: item30,key: item35,key: item47,key: item161,key: item515,key: item553,key: item571,
 Bucket 21:
-
+key: item36,key: item69,key: item202,key: item811,key: item848,
 Bucket 22:
-key: item2,
+key: item2,key: item3,key: item9,key: item10,key: item11,key: item13,key: item16,key: item18,key: item20,key: item21,key: item22,key: item25,key: item26,key: item28,key: item31,key: item38,key: item42,key: item49,key: item88,key: item98,key: item158,key: item165,key: item172,key: item173,key: item179,key: item182,key: item184,key: item187,key: item194,key: item198,key: item200,key: item401,key: item440,key: item802,key: item966,key: item968,
 Bucket 23:
-key: item7,
+key: item1,key: item4,key: item5,key: item8,key: item12,key: item14,key: item15,key: item19,key: item27,key: item29,key: item34,key: item37,key: item40,key: item41,key: item43,key: item45,key: item48,key: item50,key: item56,key: item58,key: item62,key: item64,key: item67,key: item68,key: item70,key: item71,key: item73,key: item75,key: item81,key: item86,key: item87,key: item93,key: item94,key: item96,key: item154,key: item155,key: item156,key: item157,key: item163,key: item168,key: item169,key: item170,key: item180,key: item183,key: item186,key: item188,key: item191,key: item193,key: item195,key: item197,key: item199,key: item201,key: item229,key: item235,key: item244,key: item258,key: item261,key: item262,key: item263,key: item266,key: item268,key: item269,key: item272,key: item273,key: item277,key: item278,key: item280,key: item281,key: item283,key: item287,key: item290,key: item296,key: item297,key: item314,key: item315,key: item316,key: item324,key: item403,key: item405,key: item409,key: item410,key: item412,key: item415,key: item416,key: item418,key: item419,key: item426,key: item427,key: item428,key: item429,key: item431,key: item435,key: item437,key: item439,key: item444,key: item446,key: item447,key: item448,key: item449,key: item818,key: item823,key: item824,key: item831,key: item832,key: item836,key: item843,key: item845,
 Bucket 24:
-
+key: item503,key: item509,key: item536,key: item538,key: item557,key: item567,key: item581,key: item593,key: item611,key: item616,key: item629,key: item704,key: item706,key: item711,key: item716,key: item722,key: item723,key: item742,
 Bucket 25:
-
+key: item335,key: item348,key: item532,key: item664,key: item833,key: item835,key: item950,
 Bucket 26:
-
+key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item701,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,
 Bucket 27:
-
+key: item404,key: item421,key: item422,key: item430,key: item433,key: item434,key: item441,key: item859,key: item872,key: item899,key: item901,key: item903,key: item904,key: item906,key: item907,key: item908,key: item910,key: item911,key: item912,key: item914,key: item917,key: item918,key: item919,key: item921,key: item922,key: item923,key: item924,key: item925,key: item926,key: item927,key: item928,key: item929,key: item933,key: item934,key: item935,key: item939,key: item941,key: item942,key: item943,key: item946,key: item947,key: item948,
 Bucket 28:
-
+key: item513,key: item517,key: item520,key: item521,key: item522,key: item523,key: item524,key: item528,key: item535,key: item537,key: item540,key: item551,key: item558,key: item565,key: item568,key: item573,key: item577,key: item580,key: item590,key: item597,key: item804,key: item856,key: item890,
 Bucket 29:
-
+key: item204,key: item207,key: item208,key: item210,key: item211,key: item212,key: item213,key: item214,key: item215,key: item219,key: item224,key: item225,key: item227,key: item231,key: item233,key: item234,key: item241,key: item242,key: item245,key: item246,key: item250,key: item303,key: item325,key: item329,key: item334,key: item339,key: item420,key: item501,key: item504,key: item507,key: item508,key: item510,key: item518,key: item525,key: item526,key: item527,key: item531,key: item533,key: item541,key: item542,key: item543,key: item545,key: item547,key: item559,key: item561,key: item566,key: item592,key: item598,key: item652,key: item655,key: item658,key: item661,key: item662,key: item663,key: item665,key: item676,key: item677,key: item684,key: item687,key: item688,key: item694,key: item699,key: item700,key: item803,key: item810,key: item813,key: item820,key: item821,key: item837,key: item841,key: item851,key: item853,key: item868,key: item873,key: item945,
 Bucket 30:
-key: item1,
+key: item100,key: item117,key: item153,key: item162,key: item166,key: item190,key: item313,key: item817,key: item854,key: item879,key: item884,key: item886,key: item972,key: item992,
 Bucket 31:
-key: item3,
-Table 1:
-Bucket 0:
-key: item4,key: item8,key: item9,
-Bucket 1:
-key: item5,
-Bucket 2:
-
-Bucket 3:
-
-Bucket 4:
-
-Bucket 5:
-
-Bucket 6:
-
-Bucket 7:
-
-Bucket 8:
-
-Bucket 9:
-
-Bucket 10:
-
-Bucket 11:
-
-Bucket 12:
-
-Bucket 13:
-
-Bucket 14:
-
-Bucket 15:
-key: item10,
-Bucket 16:
-
-Bucket 17:
-
-Bucket 18:
-
-Bucket 19:
-
-Bucket 20:
-
-Bucket 21:
-
-Bucket 22:
-
-Bucket 23:
-
-Bucket 24:
-key: item2,
-Bucket 25:
-
-Bucket 26:
-
-Bucket 27:
-
-Bucket 28:
-
-Bucket 29:
-key: item1,
-Bucket 30:
-key: item3,
-Bucket 31:
-key: item6,key: item7,
-Table 2:
-Bucket 0:
-key: item4,key: item5,key: item8,key: item9,
-Bucket 1:
-
-Bucket 2:
-
-Bucket 3:
-
-Bucket 4:
-
-Bucket 5:
-
-Bucket 6:
-
-Bucket 7:
-
-Bucket 8:
-
-Bucket 9:
-
-Bucket 10:
-key: item3,
-Bucket 11:
-
-Bucket 12:
-
-Bucket 13:
-
-Bucket 14:
-
-Bucket 15:
-
-Bucket 16:
-
-Bucket 17:
-
-Bucket 18:
-
-Bucket 19:
-
-Bucket 20:
-
-Bucket 21:
-
-Bucket 22:
-
-Bucket 23:
-key: item10,
-Bucket 24:
-
-Bucket 25:
-
-Bucket 26:
-
-Bucket 27:
-
-Bucket 28:
-
-Bucket 29:
-key: item2,
-Bucket 30:
-key: item6,
-Bucket 31:
-key: item1,key: item7,
-Table 3:
-Bucket 0:
-key: item4,key: item5,
-Bucket 1:
-
-Bucket 2:
-
-Bucket 3:
-key: item10,
-Bucket 4:
-
-Bucket 5:
-
-Bucket 6:
-
-Bucket 7:
-
-Bucket 8:
-
-Bucket 9:
-
-Bucket 10:
-
-Bucket 11:
-
-Bucket 12:
-
-Bucket 13:
-key: item2,
-Bucket 14:
-
-Bucket 15:
-
-Bucket 16:
-key: item8,key: item9,
-Bucket 17:
-
-Bucket 18:
-
-Bucket 19:
-
-Bucket 20:
-
-Bucket 21:
-
-Bucket 22:
-
-Bucket 23:
-
-Bucket 24:
-
-Bucket 25:
-
-Bucket 26:
-
-Bucket 27:
-key: item7,
-Bucket 28:
-
-Bucket 29:
-
-Bucket 30:
-
-Bucket 31:
-key: item1,key: item3,key: item6,
-Table 4:
-Bucket 0:
-key: item4,key: item9,
-Bucket 1:
-
-Bucket 2:
-key: item5,
-Bucket 3:
-
-Bucket 4:
-
-Bucket 5:
-
-Bucket 6:
-
-Bucket 7:
-
-Bucket 8:
-
-Bucket 9:
-
-Bucket 10:
-key: item7,
-Bucket 11:
-
-Bucket 12:
-
-Bucket 13:
-
-Bucket 14:
-
-Bucket 15:
-key: item3,
-Bucket 16:
-
-Bucket 17:
-
-Bucket 18:
-key: item8,
-Bucket 19:
-
-Bucket 20:
-
-Bucket 21:
-
-Bucket 22:
-
-Bucket 23:
-key: item1,key: item2,
-Bucket 24:
-
-Bucket 25:
-
-Bucket 26:
-
-Bucket 27:
-key: item10,
-Bucket 28:
-
-Bucket 29:
-
-Bucket 30:
-key: item6,
-Bucket 31:
-
-Table 5:
-Bucket 0:
-key: item4,key: item9,
-Bucket 1:
-key: item8,
-Bucket 2:
-
-Bucket 3:
-
-Bucket 4:
-
-Bucket 5:
-
-Bucket 6:
-
-Bucket 7:
-
-Bucket 8:
-
-Bucket 9:
-
-Bucket 10:
-
-Bucket 11:
-
-Bucket 12:
-key: item5,
-Bucket 13:
-key: item10,
-Bucket 14:
-
-Bucket 15:
-
-Bucket 16:
-
-Bucket 17:
-
-Bucket 18:
-key: item3,
-Bucket 19:
-
-Bucket 20:
-
-Bucket 21:
-
-Bucket 22:
-
-Bucket 23:
-
-Bucket 24:
-
-Bucket 25:
-
-Bucket 26:
-
-Bucket 27:
-key: item2,
-Bucket 28:
-
-Bucket 29:
-
-Bucket 30:
-key: item7,
-Bucket 31:
-key: item1,key: item6,
-radius: 6
-Cluster 0 :key: item1,key: item7,key: item3,key: item6,key: item2,
-Cluster 6 :key: item7,key: item6,key: item1,
-Cluster 2 :key: item3,key: item1,key: item6,
+key: item91,key: item140,key: item151,key: item152,key: item167,key: item177,key: item185,key: item192,key: item205,key: item209,key: item216,key: item218,key: item220,key: item221,key: item222,key: item226,key: item228,key: item237,key: item238,key: item240,key: item247,key: item249,key: item251,key: item254,key: item291,key: item295,key: item301,key: item302,key: item304,key: item305,key: item306,key: item307,key: item308,key: item309,key: item310,key: item311,key: item312,key: item317,key: item319,key: item320,key: item322,key: item323,key: item327,key: item331,key: item332,key: item333,key: item337,key: item338,key: item341,key: item342,key: item343,key: item344,key: item345,key: item346,key: item347,key: item349,key: item402,key: item407,key: item411,key: item413,key: item423,key: item425,key: item436,key: item450,key: item656,key: item689,key: item801,key: item805,key: item806,key: item808,key: item809,key: item812,key: item814,key: item815,key: item816,key: item826,key: item827,key: item828,key: item830,key: item834,key: item838,key: item839,key: item840,key: item842,key: item844,key: item846,key: item847,key: item850,key: item852,key: item857,key: item858,key: item861,key: item862,key: item863,key: item866,key: item867,key: item869,key: item870,key: item875,key: item876,key: item877,key: item880,key: item881,key: item882,key: item887,key: item888,key: item889,key: item891,key: item892,key: item893,key: item894,key: item895,key: item896,key: item897,key: item900,key: item902,key: item909,key: item916,key: item920,key: item931,key: item936,key: item937,key: item940,key: item944,key: item982,
+radius: 16
+FOR CLUSTER 0
+For bucket 26
+for point: item701
+/////
+key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item701,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,
+/////
+/////
+key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item451
+/////
+key: item63,key: item95,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item451,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,
+/////
+/////
+key: item63,key: item95,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item768
+/////
+key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item768,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,
+/////
+/////
+key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,
+/////
+radius: 32
+FOR CLUSTER 0
+For bucket 26
+for point: item60
+/////
+key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,
+/////
+/////
+key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item95
+/////
+key: item63,key: item95,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,
+/////
+/////
+key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item52
+/////
+key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,
+/////
+/////
+key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,
+/////
+radius: 64
+FOR CLUSTER 0
+For bucket 26
+for point: item159
+/////
+key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,
+/////
+/////
+key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item63
+/////
+key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,
+/////
+/////
+key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item83
+/////
+key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,
+/////
+/////
+key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,
+/////
+radius: 128
+FOR CLUSTER 0
+For bucket 26
+for point: item189
+/////
+key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,
+/////
+/////
+key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item160
+/////
+key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,
+/////
+/////
+key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item90
+/////
+key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,
+/////
+/////
+key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,
+/////
+radius: 256
+FOR CLUSTER 0
+For bucket 26
+for point: item424
+/////
+key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,
+/////
+/////
+key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item176
+/////
+key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,
+/////
+/////
+key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item596
+/////
+key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,
+/////
+/////
+key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,
+/////
+radius: 512
+FOR CLUSTER 0
+For bucket 26
+for point: item609
+/////
+key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,
+/////
+/////
+key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item178
+/////
+key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,
+/////
+/////
+key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item614
+/////
+key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,
+/////
+/////
+key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,
+/////
+radius: 1024
+FOR CLUSTER 0
+For bucket 26
+for point: item612
+/////
+key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,
+/////
+/////
+key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item406
+/////
+key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,
+/////
+/////
+key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item753
+/////
+key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,
+/////
+/////
+key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,
+/////
+radius: 2048
+FOR CLUSTER 0
+For bucket 26
+for point: item620
+/////
+key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,
+/////
+/////
+key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item408
+/////
+key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,
+/////
+/////
+key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item769
+/////
+key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,
+/////
+/////
+key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,
+/////
+radius: 4096
+FOR CLUSTER 0
+For bucket 26
+for point: item638
+/////
+key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,
+/////
+/////
+key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item414
+/////
+key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,
+/////
+/////
+key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item774
+/////
+key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,
+/////
+/////
+key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,
+/////
+radius: 8192
+FOR CLUSTER 0
+For bucket 26
+for point: item645
+/////
+key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,
+/////
+/////
+key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item417
+/////
+key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,
+/////
+/////
+key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item782
+/////
+key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,
+/////
+/////
+key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,
+/////
+radius: 16384
+FOR CLUSTER 0
+For bucket 26
+for point: item649
+/////
+key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,
+/////
+/////
+key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item432
+/////
+key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,
+/////
+/////
+key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item799
+/////
+key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,
+/////
+/////
+key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,
+/////
+radius: 32768
+FOR CLUSTER 0
+For bucket 26
+for point: item705
+/////
+key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,
+/////
+/////
+key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item442
+/////
+key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,
+/////
+/////
+key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item951
+/////
+key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,
+/////
+/////
+key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,
+/////
+radius: 65536
+FOR CLUSTER 0
+For bucket 26
+for point: item709
+/////
+key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,
+/////
+/////
+key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item445
+/////
+key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,
+/////
+/////
+key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item954
+/////
+key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,
+/////
+/////
+key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,
+/////
+radius: 131072
+FOR CLUSTER 0
+For bucket 26
+for point: item710
+/////
+key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,
+/////
+/////
+key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item452
+/////
+key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,
+/////
+/////
+key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item955
+/////
+key: item955,key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,
+/////
+/////
+key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,
+/////
+radius: 262144
+FOR CLUSTER 0
+For bucket 26
+for point: item712
+/////
+key: item712,key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,
+/////
+/////
+key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item453
+/////
+key: item453,key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,
+/////
+/////
+key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item959
+/////
+key: item959,key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,
+/////
+/////
+key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,
+/////
+radius: 524288
+FOR CLUSTER 0
+For bucket 26
+for point: item713
+/////
+key: item713,key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,
+/////
+/////
+key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item455
+/////
+key: item455,key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,
+/////
+/////
+key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item964
+/////
+key: item964,key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,
+/////
+/////
+key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,
+/////
+radius: 1048576
+FOR CLUSTER 0
+For bucket 26
+for point: item714
+/////
+key: item714,key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,
+/////
+/////
+key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item457
+/////
+key: item457,key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,
+/////
+/////
+key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item965
+/////
+key: item965,key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,
+/////
+/////
+key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,
+/////
+radius: 2097152
+FOR CLUSTER 0
+For bucket 26
+for point: item715
+/////
+key: item715,key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,
+/////
+/////
+key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item458
+/////
+key: item458,key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,
+/////
+/////
+key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,
+/////
+FOR CLUSTER 2
+For bucket 2
+for point: item974
+/////
+key: item974,key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,
+/////
+/////
+key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,
+/////
+radius: 4194304
+FOR CLUSTER 0
+For bucket 26
+for point: item717
+/////
+key: item717,key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,
+/////
+/////
+key: item718,key: item719,key: item720,key: item721,key: item724,key: item725,key: item728,key: item729,key: item730,key: item731,key: item732,key: item733,key: item734,key: item735,key: item736,key: item737,key: item739,key: item740,key: item743,key: item744,key: item745,key: item747,key: item748,key: item749,key: item750,key: item797,key: item860,key: item874,key: item905,key: item913,key: item915,key: item930,key: item932,key: item938,key: item949,key: item957,key: item970,key: item994,key: item996,key: item998,key: item1000,key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,
+/////
+FOR CLUSTER 1
+For bucket 19
+for point: item459
+/////
+key: item459,key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,
+/////
+/////
+key: item460,key: item461,key: item462,key: item463,key: item464,key: item465,key: item466,key: item467,key: item469,key: item470,key: item471,key: item472,key: item473,key: item475,key: item476,key: item478,key: item479,key: item480,key: item481,key: item483,key: item484,key: item485,key: item486,key: item487,key: item488,key: item490,key: item491,key: item492,key: item493,key: item495,key: item496,key: item498,key: item499,key: item500,key: item775,key: item777,key: item786,key: item819,key: item822,key: item825,key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,
+/////
+FOR CLUSTER 2
+For bucket 2
+barrier is item768
+Cluster 729 :key: item701,key: item60,key: item159,key: item189,key: item424,key: item609,key: item612,key: item620,key: item638,key: item645,key: item649,key: item705,key: item709,key: item710,key: item712,key: item713,key: item714,key: item715,key: item717,
+Cluster 495 :key: item451,key: item95,key: item63,key: item160,key: item176,key: item178,key: item406,key: item408,key: item414,key: item417,key: item432,key: item442,key: item445,key: item452,key: item453,key: item455,key: item457,key: item458,key: item459,
+Cluster 768 :key: item768,key: item52,key: item83,key: item90,key: item596,key: item614,key: item753,key: item769,key: item774,key: item782,key: item799,key: item951,key: item954,key: item955,key: item959,key: item964,key: item965,key: item974,

@@ -63,38 +63,53 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
-	int i, j, z, radii, pos, done, all;
-	chainp list = NULL, **barriers;
+	int i, j, z, radii, pos, done, all, previous;
+	chainp **barriers, temp1, temp2;
 	/**L tables of pointers**/
 	barriers = malloc(L*sizeof(chainp *));
-	for (i=0; i < L; i++) {
+	for (i=0; i < L; i++) 
 		barriers[i] = malloc(pow(2,num_of_hash)*sizeof(chainp));
-	}
 	radii = matrix_compute_start_radius(distances,centroids,k);
+	done = all = 0;
 	do {
-		printf("radius: %d\n",radii);
 		/**For each cluster**/
-		done = all = 0;
+		previous = done;
 		for (i=0; i < k; i++) {
-			list = NULL;
 			/**For each table**/
 			for (j=0; j < L; j++) {
 				pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
-				done += search_table_NNR(pos,htable[j],(int *)centroids[i].info,radii,&list,barriers[j],3,0,0,&all);
-				printf("all: %d	done: %d\n",all,done);			
+				done += search_table_NNR(pos,&(htable[j]),(int *)centroids[i].info,radii,&clusters[i].items,barriers[j],3,0,0,&all);			
 			}
-			clusters[i].items = list;
 			clusters[i].center = centroids[i];
 		}
 		radii *= 2;
-	}while ((done > 0) && (all == 0));
-	/*for (j=0; j < L; j++) {
-		printf("For table %d : \n",j);
-		for (z=0; z < pow(2,num_of_hash); z++) {
-			if (barriers[j][z] != NULL)
-				printf("Barrier for chain %d is %s\n",z,barriers[j][z]->key);
+	}while ((done - previous > 1) && (all < L));
+	/**If an item is in more than one clusters**/
+	int distance1,distance2;
+	/**For each cluster**/
+	for (i=0; i < k; i++) {
+		temp1 = clusters[i].items;
+		/**For each item inside the cluster**/
+		while (temp1 != NULL) {
+			int id = make_item(temp1->key);
+			/**For each item inside every other cluster**/
+			for (j=i+1; j < k; j++) {
+				temp2 = clusters[j].items;
+				while (temp2 != NULL) {
+					if (strcmp(temp1->key,temp2->key) == 0) {
+						if (id < (int)(intptr_t)centroids[i].center) 
+							distance1 =  distances[id][(int)(intptr_t)centroids[i].center-id-1];
+						if (id > (int)(intptr_t)centroids[i].center) 
+							distance1 =  distances[(int)(intptr_t)centroids[i].center][id-(int)(intptr_t)centroids[i].center-1];	
+						if (id < (int)(intptr_t)centroids[j].center) 
+							distance2 =  distances[id][(int)(intptr_t)centroids[j].center-id-1];
+						if (id > (int)(intptr_t)centroids[j].center) 
+							distance2 =  distances[(int)(intptr_t)centroids[j].center][id-(int)(intptr_t)centroids[j].center-1];
+					}
+				}
+			}
 		}
-	}*/
+	}
 	return clusters;
 }
 
