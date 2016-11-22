@@ -11,10 +11,10 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 	chainp temp;
 	int i;
 	temp = *pointer;
-	/*if list is empty, put the first node*/
+	/**if list is empty, put the first node**/
 	if (temp == NULL)		
 	{
-		if (!flag)		//Hamming
+		if (!flag)		/**Hamming**/
 		{
 			char *value = (char *)v;
 			int size = strlen(value);
@@ -44,7 +44,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 				*temp->value = strtoul(value,&end,2);
 			}
 		}
-		else if(flag == 3) //Matrix
+		else if(flag == 3) /**Matrix**/
 		{
 			temp = malloc(sizeof(chain));
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
@@ -53,7 +53,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 			temp->value = NULL;	
 			temp->p = NULL;
 		}
-		else 	//Vectors
+		else 	/**Vectors**/
 		{
 			double *value = (double *)v;
 			temp = malloc(sizeof(chain));
@@ -69,12 +69,12 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 		temp->next = NULL;
 		*pointer = temp;
 	}
-	/*If list isn't empty, put new node at the end*/
+	/**If list isn't empty, put new node at the end**/
 	else
 	{
 		while(temp->next!=NULL)
 			temp = temp->next;
-		if (!flag)		//Hamming
+		if (!flag)		/**Hamming**/
 		{
 			char *value = (char *)v;
 			int size = strlen(value);
@@ -104,7 +104,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 				*temp->next->value = strtoul(value,&end,2);
 			}
 		}
-		else if(flag == 3) //Matrix
+		else if(flag == 3) /**Matrix**/
 		{
 			temp->next = malloc(sizeof(chain));
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
@@ -113,7 +113,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 			temp->next->p = NULL;
 			temp->next->value = NULL;
 		}
-		else 	//Vectors
+		else 	/**Vectors**/
 		{
 			double *value = (double *)v;
 			temp->next = malloc(sizeof(chain));
@@ -195,18 +195,19 @@ int search_chain_NNR(chainp *b, void *qdata, double R, chainp *list, chainp *bar
 		double diff;
 		double *q = (double *)qdata;
 		int exists = 0;
-		/*Only for euclidean metric, count items for which ID(p) = ID(q)*/
+		/**Only for euclidean metric, count items for which ID(p) = ID(q)**/
 		if(flag != 2) 
 		{
 			while (temp != NULL)
 			{
-				if(euclID == temp->id) 	//ID(p) = ID(q)
+				/**ID(p) = ID(q)**/
+				if(euclID == temp->id) 
 					exists++;
 				temp = temp->next;
 			}
 		}
 		temp = *b;
-		/*For cosine metric or euclidean if exists=0*/
+		/**For cosine metric or euclidean if exists=0**/
 		if(exists <= 1) 
 		{
 			while (temp != NULL)
@@ -224,7 +225,8 @@ int search_chain_NNR(chainp *b, void *qdata, double R, chainp *list, chainp *bar
 		{
 			while (temp != NULL)
 			{
-				if(euclID == temp->id)  //ID(p) = ID(q)
+				/**ID(p) = ID(q)**/
+				if(euclID == temp->id)  
 				{
 					diff = distance_Euclidean(temp->p,q,d);
 					if (diff <= R)
@@ -281,48 +283,37 @@ void destroy_chain(chainp *l, int flag)
 		temp = curr;
 		curr = curr->next;
 		free(temp->key);
-		if (flag == 0)	free(temp->value);		//Hamming 
-		else if ((flag == 1) || (flag == 2))	free(temp->p);		//Euclidean or Cosine
+		/**Hamming **/
+		if (flag == 0)	free(temp->value);		
+		/**Euclidean or Cosine**/
+		else if ((flag == 1) || (flag == 2))	free(temp->p);		
 		free(temp);
 	}
 	*l = NULL;	
 }
 
-void delete_from_chain(chainp *list, chainp item) {
-	chainp temp = *list, delete = item;
-	/**If the list has only one element**/
-	if ((temp == item) && (temp->next == NULL))	{
-		printf("delete first and only\n");
-		free(delete->key);
-		free(delete);
-		*list = NULL;
-		return;
-	}
+void delete_from_chain(chainp *list, char *item) {
+	chainp temp = *list, previous;
+	if (temp == NULL) 	return;
 	/**If the item is the first element of the list**/
-	if (temp == item) {
-		printf("delete first\n");
-		free(delete->key);
-		free(delete);
+	if (strcmp(temp->key,item) == 0) {
 		*list = temp->next;	
+		free(temp->key);
+		free(temp);
 		return;
 	}
-	while (temp->next != NULL) {
-		printf("while delete\n");
-		if (temp->next == item) {
-			/**If the item is the last element**/
-			if (temp->next->next == NULL) {
-				free(delete->key);
-				free(delete);
-				temp->next = NULL;
-				break;
-			}
-			temp->next = temp->next->next;
-			free(delete->key);
-			free(delete);
+	previous = temp;
+	temp = temp->next;
+	while (temp != NULL) {
+		if (strcmp(temp->key,item) == 0) {
+			previous->next = temp->next;
+			free(temp->key);
+			free(temp);
+			return;
 		}
+		previous = temp;
 		temp = temp->next;
 	}
-	printf("end delete\n");
 }
 
 /*void print_nnrlist(nnrp *l, FILE *fe) 
@@ -343,14 +334,16 @@ void delete_from_chain(chainp *list, chainp item) {
 int make_item(char *item)
 {
 	int key;
-	/*If the first character of string is type of char*/
+	/**If the first character of string is type of char**/
 	if (!isdigit(item[0]))	
 	{	
 		char *id;
 		int s = strlen(item) - 4;
 		id = malloc(s+1);
 		strncpy(id,item+4,s);
-		key = atoi(id);		//Keep only K of item_idK
+		id[s] = '\0';
+		/**Keep only K of itemK**/
+		key = atoi(id);		
 		free(id);
 	}
 	else 	key = atoi(item);
