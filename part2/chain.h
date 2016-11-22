@@ -17,6 +17,6 @@ int search_chain_NNR(chainp *, void *, double, chainp *, chainp *, int, int, int
 void move_chain_nodes(chainp *, chainp);
 void print_chain(chainp);
 void destroy_chain(chainp *, int);
-void delete_from_chain(chainp *, chainp);
+void delete_from_chain(chainp *, char *);
 //void print_nnrlist(nnrp *,FILE *);
 int make_item(char *);
