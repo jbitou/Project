@@ -92,23 +92,25 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		/**For each item inside the cluster**/
 		while (temp1 != NULL) {
 			int jump = 0;
-			printf("Again1\n");
+			printf("new loop temp1 =%s\n",temp1->key);
 			/**For each item inside every other cluster**/
 			for (j=i+1; j < k; j++) {
-				printf("Again2\n");
 				temp2 = clusters[j].items;
 				while (temp2 != NULL) {
-					printf("Again3\n");
-					printf("temp1 =%s\n",temp1->key);
-					printf("temp2 =%s\n",temp2->key);
+					/*printf("temp1 =%s\n",temp1->key);
+					printf("temp2 =%s\n",temp2->key);*/
 					if (strcmp(temp1->key,temp2->key) == 0) {
-						if (temp1->distance < temp2->distance)	
+						printf("for temp1 =%s\n",temp1->key);
+						printf("distance from centroid %d=%.0f and from centroid %d=%.0f\n",(int)(intptr_t)centroids[i].center,temp1->distance,(int)(intptr_t)centroids[j].center,temp2->distance);
+						if (temp1->distance < temp2->distance) {	
 							delete_from_chain(&clusters[j].items,temp2);
+							//printf("new temp2 =%s\n",temp2->next->key);
+						}
 						else  {	
 							delete_from_chain(&clusters[i].items,temp1);
+							printf("new temp1 =%s\n",temp1->next->key);
 							jump = 1;
 						}
-						printf("Delete ended\n");
 						break;	
 					}
 					temp2 = temp2->next;
