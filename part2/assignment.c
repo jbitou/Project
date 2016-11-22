@@ -84,7 +84,6 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		}
 		radii *= 2;
 	}while ((done - previous > 1) && (all < L));
-	printf("done hashing\n");
 	/**If an item is in more than one clusters**/
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
@@ -92,23 +91,16 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		/**For each item inside the cluster**/
 		while (temp1 != NULL) {
 			int jump = 0;
-			printf("new loop temp1 =%s\n",temp1->key);
 			/**For each item inside every other cluster**/
 			for (j=i+1; j < k; j++) {
 				temp2 = clusters[j].items;
 				while (temp2 != NULL) {
-					/*printf("temp1 =%s\n",temp1->key);
-					printf("temp2 =%s\n",temp2->key);*/
 					if (strcmp(temp1->key,temp2->key) == 0) {
-						printf("for temp1 =%s\n",temp1->key);
-						printf("distance from centroid %d=%.0f and from centroid %d=%.0f\n",(int)(intptr_t)centroids[i].center,temp1->distance,(int)(intptr_t)centroids[j].center,temp2->distance);
-						if (temp1->distance < temp2->distance) {	
-							delete_from_chain(&clusters[j].items,temp2);
-							//printf("new temp2 =%s\n",temp2->next->key);
-						}
+						char *tkey = temp2->key;
+						if (temp1->distance < temp2->distance)	delete_from_chain(&(clusters[j].items),tkey);
 						else  {	
-							delete_from_chain(&clusters[i].items,temp1);
-							printf("new temp1 =%s\n",temp1->next->key);
+							temp1 = temp1->next;
+							delete_from_chain(&(clusters[i].items),tkey);
 							jump = 1;
 						}
 						break;	
@@ -117,10 +109,9 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 				}
 				if (jump == 1) break;
 			}
-			temp1 = temp1->next;
+			if (jump != 1)	temp1 = temp1->next;
 		}
 	}
-	printf("done deleting\n");
 	/**For all unassigned points, compute its distances to all centroids**/
 	/**For each bucket**/
 	/*for (i=0; i < htable->size; i++) {
