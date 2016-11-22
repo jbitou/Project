@@ -63,9 +63,9 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
-	int i, j, z, radii, pos, done, all, previous, id, distance, distance1, distance2, mincentroid, *qdata;
+	int i, j, z, radii, pos, done, all, previous, id, distance, distance1, distance2, mincentroid, *qdata, assigned;
 	double mindistance;
-	chainp **barriers, temp, temp1, temp2;
+	chainp **barriers, temp, temp1, temp2, check;
 	/**L tables of pointers**/
 	barriers = malloc(L*sizeof(chainp *));
 	for (i=0; i < L; i++)	barriers[i] = malloc(pow(2,num_of_hash)*sizeof(chainp));
@@ -130,19 +130,34 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 			/**Check if item is barrier through hash tables**/
 			qdata = malloc(N*sizeof(int));
 			/**Create info line with distances**/
-			for (z=0; z < id; z++) {
-				//printf("z = %d, id = %d\n",z,id);
-				qdata[z] = distances[z][id-z-1];
-			}
-			//printf("z=%d\n",z);
+			for (z=0; z < id; z++) qdata[z] = distances[z][id-z-1];
 			qdata[id] = 0;
 			for (z=(id+1); z < N; z++) qdata[z] = distances[id][z-id-1];
-			//for (z=0; z < N; z++)	printf("qdata[%d]=%d for %s\n",z,qdata[z],temp->key);
+			printf("DONE WITH QDATA\n");
+			assigned = 0;
+			/**Hash in all L tables**/
 			for (j=1; j < L; j++) {
-				//pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
+				pos = hash_func_MSearch(g[j],qdata,distances,num_of_hash,N);
+				check = barriers[j][pos];
+				while (check != NULL) {
+					/*if ((barriers[j][pos] != NULL) && (strcmp(check->key,barriers[j][pos]->key) == 0))  {
+						printf("table %d : mphka gia barrier: %s!!!!\n",j,barriers[j][pos]->key);
+						break;
+					}*/
+					if (strcmp(check->key,temp->key) == 0) {
+						assigned = 1;
+						break;
+					}
+					check = check->next;
+				}
+				if (assigned == 1) break;
 			}
 			free(qdata);
-			printf("DONE WITH QDATA\n");
+			if (assigned == 1) {
+				temp = temp->next;
+				continue;
+			}
+			printf("DONE WITH HASH\n");
 			/**For each centroid**/
 			if (id < (int)(intptr_t)centroids[0].center)  mindistance = distances[id][(int)(intptr_t)centroids[0].center-id-1];
 			else if (id > (int)(intptr_t)centroids[0].center)  mindistance = distances[(int)(intptr_t)centroids[0].center][id-(int)(intptr_t)centroids[0].center-1];
