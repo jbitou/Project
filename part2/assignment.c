@@ -15,7 +15,7 @@ hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, i
 			sprintf(itemID,"item%d",j+1);
 			pos = hash_func_Matrix(g[i],j,distances,num_of_hash,N);
 			//pos = mod(pos,htable[i].size); 	IF TABLESIZE = POINTS/8
-			insert_chain(itemID,NULL,&(htable[i].table[pos]),3,0,0);
+			insert_chain(itemID,NULL,&(htable[i].table[pos]),0,3,0,0);
 		}
 	}
 	return htable;
@@ -53,7 +53,7 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 				}
 			}
 			/**Exclude centroids**/
-			if (mindistance != -1)	insert_chain(temp->key,NULL,&(clusters[mincentroid].items),3,0,0);
+			if (mindistance != -1)	insert_chain(temp->key,NULL,&(clusters[mincentroid].items),0,3,0,0);
 			temp = temp->next;
 		}
 		
@@ -63,8 +63,8 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
-	int i, j, z, radii, pos, done, all, previous;
-	chainp **barriers, temp1, temp2;
+	int i, j, z, radii, pos, done, all, previous, id, distance, distance1, distance2, mindistance, mincentroid, *qdata;
+	chainp **barriers, temp, temp1, temp2;
 	/**L tables of pointers**/
 	barriers = malloc(L*sizeof(chainp *));
 	for (i=0; i < L; i++) 
@@ -84,32 +84,81 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		}
 		radii *= 2;
 	}while ((done - previous > 1) && (all < L));
+	printf("done hashing\n");
 	/**If an item is in more than one clusters**/
-	int distance1,distance2;
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
 		temp1 = clusters[i].items;
 		/**For each item inside the cluster**/
 		while (temp1 != NULL) {
-			int id = make_item(temp1->key);
+			int jump = 0;
+			printf("Again1\n");
 			/**For each item inside every other cluster**/
 			for (j=i+1; j < k; j++) {
+				printf("Again2\n");
 				temp2 = clusters[j].items;
 				while (temp2 != NULL) {
+					printf("Again3\n");
+					printf("temp1 =%s\n",temp1->key);
+					printf("temp2 =%s\n",temp2->key);
 					if (strcmp(temp1->key,temp2->key) == 0) {
-						if (id < (int)(intptr_t)centroids[i].center) 
-							distance1 =  distances[id][(int)(intptr_t)centroids[i].center-id-1];
-						if (id > (int)(intptr_t)centroids[i].center) 
-							distance1 =  distances[(int)(intptr_t)centroids[i].center][id-(int)(intptr_t)centroids[i].center-1];	
-						if (id < (int)(intptr_t)centroids[j].center) 
-							distance2 =  distances[id][(int)(intptr_t)centroids[j].center-id-1];
-						if (id > (int)(intptr_t)centroids[j].center) 
-							distance2 =  distances[(int)(intptr_t)centroids[j].center][id-(int)(intptr_t)centroids[j].center-1];
+						if (temp1->distance < temp2->distance)	
+							delete_from_chain(&clusters[j].items,temp2);
+						else  {	
+							delete_from_chain(&clusters[i].items,temp1);
+							jump = 1;
+						}
+						printf("Delete ended\n");
+						break;	
 					}
+					temp2 = temp2->next;
 				}
+				if (jump == 1) break;
 			}
+			temp1 = temp1->next;
 		}
 	}
+	printf("done deleting\n");
+	/**For all unassigned points, compute its distances to all centroids**/
+	/**For each bucket**/
+	/*for (i=0; i < htable->size; i++) {
+		printf("FOOOOOOOR\n");
+		temp = htable->table[i];
+		/**For each item**/
+		/*while (temp != NULL) {
+			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  {
+				printf("mphka gia barrier: %s!!!!\n",barriers[0][i]->key);
+				break;
+			}
+			id = make_item(temp->key) - 1;
+			/**Check if item is barrier through hash tables**/
+			/*qdata = malloc(N*sizeof(int));
+			/**Create info line with distances**/
+			/*for (z=0; z < id; z++) qdata[z] = distances[z][id-z-1];
+			qdata[id] = 0;
+			for (z=(id+1); z < N; z++) qdata[z] = distances[id][z-id-1];
+			for (z=0; z < N; z++)	printf("qdata[%d]=%d for %s\n",z,qdata[z],temp->key);
+			for (j=1; j < L; j++) {
+				//pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,num_of_hash,N);
+			}
+			/**For each centroid**/
+			/*if (id < (int)(intptr_t)centroids[0].center)  mindistance = distances[id][(int)(intptr_t)centroids[0].center-id-1];
+			else if (id > (int)(intptr_t)centroids[0].center)  mindistance = distances[(int)(intptr_t)centroids[0].center][id-(int)(intptr_t)centroids[0].center-1];
+			mincentroid = 0;
+			for (j=1; j < k; j++) {
+				if (id < (int)(intptr_t)centroids[j].center)  distance = distances[id][(int)(intptr_t)centroids[j].center-id-1];
+				else if (id > (int)(intptr_t)centroids[j].center)  distance = distances[(int)(intptr_t)centroids[j].center][id-(int)(intptr_t)centroids[j].center-1];
+				if (distance < mindistance) {
+					 mindistance = distance;
+					 mincentroid = j;
+				}
+			}
+			insert_chain(temp->key,NULL,&(clusters[mincentroid].items),mindistance,3,0,0);
+			temp = temp->next;
+		}
+	}*/
+	for (i=0; i < L; i++)	free(barriers[i]);
+	free(barriers);
 	return clusters;
 }
 
