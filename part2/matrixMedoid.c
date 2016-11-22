@@ -73,11 +73,13 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}*/
 	/**Allocate memory for clusters**/
 	pcluster clusters = malloc((info->k)*sizeof(cluster));
+	for (i=0; i < info->k; i++) 
+		clusters[i].items = NULL;
 	/**Assignment**/
 	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);**/
 	clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info->k,info->num_of_hash,numofitems,info->L);
 	for (i=0; i < info->k; i++) {
-		printf("Cluster %d :",(int)(intptr_t)clusters[i].center.center);
+		printf("\nCluster %d :",(int)(intptr_t)clusters[i].center.center);
 		print_chain(clusters[i].items);
 		printf("\n");
 	}
@@ -94,6 +96,10 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	for(i=0; i < numofitems-1; i++)	
 		free(p[i]);	
 	free(p);
+	for (i=0; i < info->k; i++) {
+		destroy_chain(&(clusters[i].items),3);
+		free(centroids[i].info);
+	}
 	free(clusters);
 	free(centroids);
 }
