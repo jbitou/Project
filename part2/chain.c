@@ -273,6 +273,17 @@ void print_chain(chainp l)
 	}
 }
 
+int chain_length(chainp l) 
+{
+	int length = 0;
+	while (l != NULL) 
+	{
+		length++;;
+		l = l->next;
+	}
+	return length;
+}
+
 void destroy_chain(chainp *l, int flag) 
 {
 	chainp temp, curr;

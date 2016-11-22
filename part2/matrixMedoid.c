@@ -78,11 +78,14 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Assignment**/
 	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);**/
 	clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info->k,info->num_of_hash,numofitems,info->L);
+	int totallen = 0;
 	for (i=0; i < info->k; i++) {
 		printf("\nCluster %d :",(int)(intptr_t)clusters[i].center.center);
 		print_chain(clusters[i].items);
+		totallen += chain_length(clusters[i].items);
 		printf("\n");
 	}
+	printf("total length = %d\n",totallen-3);
 	/**J = matrix_compute_objective_function(clusters,p,info->k);	
 	printf("J=%d\n",J);**/
 	/**Free memory**/

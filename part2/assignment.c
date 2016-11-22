@@ -68,7 +68,10 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 	chainp **barriers, temp, temp1, temp2, check;
 	/**L tables of pointers**/
 	barriers = malloc(L*sizeof(chainp *));
-	for (i=0; i < L; i++)	barriers[i] = malloc(pow(2,num_of_hash)*sizeof(chainp));
+	for (i=0; i < L; i++)	{
+		barriers[i] = malloc(pow(2,num_of_hash)*sizeof(chainp));
+		for (j=0; j < pow(2,num_of_hash); j++) barriers[i][j] = NULL;
+	}
 	radii = matrix_compute_start_radius(distances,centroids,k);
 	done = all = 0;
 	/**Range Search**/
@@ -114,37 +117,39 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		}
 	}
 	printf("DONE HERE\n");
+	for (i=0; i < k; i++) insert_chain("rest",NULL,&(clusters[i].items),0,3,0,0);
 	/**For all unassigned points, compute its distances to all centroids**/
 	/**For each bucket**/	
 	for (i=0; i < htable->size; i++) {
 		temp = htable[0].table[i];
 		/**For each item**/
 		while (temp != NULL) {
-			/**Assigned points begin in the chain when the barrier is found**/
 			printf("FOR %s\n",temp->key);
-			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  {
-				printf("mphka gia barrier: %s!!!!\n",barriers[0][i]->key);
+			/**Stop when the barrier is found(All assigned points are placed after the barrier)**/
+			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  
 				break;
-			}
 			id = make_item(temp->key) - 1;
-			/**Check if item is barrier through hash tables**/
-			qdata = malloc(N*sizeof(int));
 			/**Create info line with distances**/
+			qdata = malloc(N*sizeof(int));
 			for (z=0; z < id; z++) qdata[z] = distances[z][id-z-1];
 			qdata[id] = 0;
 			for (z=(id+1); z < N; z++) qdata[z] = distances[id][z-id-1];
+			//for (z=0; z < N; z++) printf("qdata[%d]=%d\n",z,qdata[z]);
 			printf("DONE WITH QDATA\n");
 			assigned = 0;
-			/**Hash in all L tables**/
+			/**Hash in all L tables to check if item is assigned**/
 			for (j=1; j < L; j++) {
 				pos = hash_func_MSearch(g[j],qdata,distances,num_of_hash,N);
 				check = barriers[j][pos];
+				//check = htable[j].table[pos];
 				while (check != NULL) {
 					/*if ((barriers[j][pos] != NULL) && (strcmp(check->key,barriers[j][pos]->key) == 0))  {
 						printf("table %d : mphka gia barrier: %s!!!!\n",j,barriers[j][pos]->key);
 						break;
 					}*/
+					printf("edwwww\n");
 					if (strcmp(check->key,temp->key) == 0) {
+						printf("Found %s assigned\n",temp->key);
 						assigned = 1;
 						break;
 					}
