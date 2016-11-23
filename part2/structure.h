@@ -26,10 +26,11 @@ pj_info *sortArray(pj_info *, int);
 centroid *matrix_init_kmedoids(int **, pinfo, int);
 centroid *matrix_init_concentrate(int **, pinfo, int);
 
-
 /**Assignment functions**/
 hash_table *matrix_insert_hash(hash_table *, ghashp *, int **, int, int, int);
 pcluster matrix_simplest_assignment(pcluster, int **, hash_table, centroid *, int);
 pcluster matrix_reverse_approach(pcluster, int **, hash_table *, ghashp *, centroid *, int, int, int, int);
+pcluster matrix_remove_clusters_duplicates(pcluster, int);
+pcluster matrix_assign_rest(pcluster, int **, hash_table *, ghashp *, chainp **, int, int, int, int);
 int matrix_compute_start_radius(int **, centroid *, int);
 int matrix_compute_objective_function(pcluster, int **, int);
