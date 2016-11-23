@@ -63,9 +63,8 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, int k, int num_of_hash, int N, int L) {
-	int i, j, z, radii, pos, done, all, previous, id, distance, distance1, distance2, mincentroid, *qdata, assigned;
-	double mindistance;
-	chainp **barriers, temp, temp1, temp2, check;
+	int i, j, radii, done, all, previous, pos;
+	chainp **barriers, temp;
 	/**L tables of pointers**/
 	barriers = malloc(L*sizeof(chainp *));
 	for (i=0; i < L; i++)	{
@@ -89,6 +88,17 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		radii *= 2;
 	}while ((done - previous > 1) && (all < L));
 	/**If an item is in more than one clusters**/
+	clusters = matrix_remove_clusters_duplicates(clusters,k);
+	/**Assign unassigned items**/
+	clusters = matrix_assign_rest(clusters,distances,htable,g,barriers,k,num_of_hash,N,L);
+	for (i=0; i < L; i++)	free(barriers[i]);
+	free(barriers);
+	return clusters;
+}
+
+pcluster matrix_remove_clusters_duplicates(pcluster clusters, int k) {
+	int i, j, jump;
+	chainp temp1, temp2;
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
 		temp1 = clusters[i].items;
@@ -116,40 +126,32 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 			if (jump != 1)	temp1 = temp1->next;
 		}
 	}
-	printf("DONE HERE\n");
-	for (i=0; i < k; i++) insert_chain("rest",NULL,&(clusters[i].items),0,3,0,0);
-	/**For all unassigned points, compute its distances to all centroids**/
-	/**For each bucket**/	
+	return clusters;
+}
+
+pcluster matrix_assign_rest(pcluster clusters, int **distances, hash_table *htable, ghashp *g, chainp **barriers, int k, int num_of_hash, int N, int L) {
+	int i, j, z, id, pos, assigned, *qdata, distance, mincentroid, center;
+	double mindistance;
+	chainp temp, check;
 	for (i=0; i < htable->size; i++) {
 		temp = htable[0].table[i];
 		/**For each item**/
 		while (temp != NULL) {
-			printf("FOR %s\n",temp->key);
-			/**Stop when the barrier is found(All assigned points are placed after the barrier)**/
-			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  
-				break;
+			/**Stop when the barrier is found (All assigned points are placed after the barrier)**/
+			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  	break;
 			id = make_item(temp->key) - 1;
 			/**Create info line with distances**/
 			qdata = malloc(N*sizeof(int));
 			for (z=0; z < id; z++) qdata[z] = distances[z][id-z-1];
 			qdata[id] = 0;
 			for (z=(id+1); z < N; z++) qdata[z] = distances[id][z-id-1];
-			//for (z=0; z < N; z++) printf("qdata[%d]=%d\n",z,qdata[z]);
-			printf("DONE WITH QDATA\n");
 			assigned = 0;
 			/**Hash in all L tables to check if item is assigned**/
 			for (j=1; j < L; j++) {
 				pos = hash_func_MSearch(g[j],qdata,distances,num_of_hash,N);
 				check = barriers[j][pos];
-				//check = htable[j].table[pos];
 				while (check != NULL) {
-					/*if ((barriers[j][pos] != NULL) && (strcmp(check->key,barriers[j][pos]->key) == 0))  {
-						printf("table %d : mphka gia barrier: %s!!!!\n",j,barriers[j][pos]->key);
-						break;
-					}*/
-					printf("edwwww\n");
 					if (strcmp(check->key,temp->key) == 0) {
-						printf("Found %s assigned\n",temp->key);
 						assigned = 1;
 						break;
 					}
@@ -162,14 +164,15 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 				temp = temp->next;
 				continue;
 			}
-			printf("DONE WITH HASH\n");
 			/**For each centroid**/
-			if (id < (int)(intptr_t)centroids[0].center)  mindistance = distances[id][(int)(intptr_t)centroids[0].center-id-1];
-			else if (id > (int)(intptr_t)centroids[0].center)  mindistance = distances[(int)(intptr_t)centroids[0].center][id-(int)(intptr_t)centroids[0].center-1];
+			center = (int)(intptr_t)clusters[0].center.center;
+			if (id < center)  mindistance = distances[id][center-id-1];
+			else if (id > center)  mindistance = distances[center][id-center-1];
 			mincentroid = 0;
 			for (j=1; j < k; j++) {
-				if (id < (int)(intptr_t)centroids[j].center)  distance = distances[id][(int)(intptr_t)centroids[j].center-id-1];
-				else if (id > (int)(intptr_t)centroids[j].center)  distance = distances[(int)(intptr_t)centroids[j].center][id-(int)(intptr_t)centroids[j].center-1];
+				center = (int)(intptr_t)clusters[j].center.center;
+				if (id < center)  distance = distances[id][center-id-1];
+				else if (id > center)  distance = distances[center][id-center-1];
 				if (distance < mindistance) {
 					 mindistance = distance;
 					 mincentroid = j;
@@ -179,8 +182,6 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 			temp = temp->next;
 		}
 	}
-	for (i=0; i < L; i++)	free(barriers[i]);
-	free(barriers);
 	return clusters;
 }
 

@@ -94,7 +94,7 @@ void user_choice(int *ini, int *assi, int *upd) {
 		}while ((*upd != 1) && (*upd != 2));
 	}
 	/**If user wants to see all combinations**/
-	else printf("\nRunning all combinations...\n");
+	else printf("\nRunning all combinations...\n\n");
 }
 
 char *inputString(FILE *fp, size_t size) {

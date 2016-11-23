@@ -12,8 +12,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Allocate memory for tables and g functions**/
 	htable = malloc(info->L * sizeof(hash_table));
 	ghashp *g = malloc(info->L * sizeof(ghashp));		
-	for(i = 0; i < info->L; i++) 
-		g[i] = malloc(info->num_of_hash * sizeof(ghash));		
+	for(i = 0; i < info->L; i++)  g[i] = malloc(info->num_of_hash * sizeof(ghash));		
 	fscanf(fp,"%s",itemsline);
 	allitems = inputString(fp,MAX_LINE);
 	/**Read line with items to get the size of the matrix (numofitems x numofitems)**/
@@ -25,8 +24,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}
 	tableSize = 1 << (info->num_of_hash);
 	//tableSize = numofitems / 8 + 1;
-	for (i=0; i < info->L; i++)	
-			init_table(info->num_of_hash,&htable[i],tableSize);
+	for (i=0; i < info->L; i++)	 init_table(info->num_of_hash,&htable[i],tableSize);
 	/**Read matrix**/
 	int **p = malloc((numofitems-1)*sizeof(int*));	
 	j = numofitems-1;
@@ -36,8 +34,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}
 	i = 0;
 	while(fscanf(fp,"%d",&token) != EOF) {
-		flag1 = 0;
-		z = 0;
+		flag1 = z = 0;
 		if (token == 0)  flag1 = 1;	
 		/**From now on, read next distance and store it**/
 		for(j=0; j < numofitems-1; j++) {
@@ -54,6 +51,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Get centroids**/
 	/**k-medoids++**/
 	centroids = matrix_init_kmedoids(p, info, numofitems);
+	printf("Initialization completed with success\n");
 	/**Park-Jun**/
 	/**centroids = matrix_init_concentrate(p, info, numofitems);**/
 	/*for(i=0; i < info->k; i++) {
@@ -63,6 +61,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	printf("\n");*/
 	/**Insert data into hash tables**/
 	htable = matrix_insert_hash(htable,g,p,info->L,info->num_of_hash,numofitems);
+	printf("Insertion completed with success\n");
 	/*for (i=0; i < L; i++) {
 		printf("Table %d:\n",i);
 		for (j=0; j < tableSize; j++) {
@@ -73,8 +72,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}*/
 	/**Allocate memory for clusters**/
 	pcluster clusters = malloc((info->k)*sizeof(cluster));
-	for (i=0; i < info->k; i++) 
-		clusters[i].items = NULL;
+	for (i=0; i < info->k; i++)	 clusters[i].items = NULL;
 	/**Assignment**/
 	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);**/
 	clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info->k,info->num_of_hash,numofitems,info->L);
@@ -85,7 +83,8 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 		totallen += chain_length(clusters[i].items);
 		printf("\n");
 	}
-	printf("total length = %d\n",totallen-3);
+	printf("total length = %d\n",totallen);
+	printf("Assignment completed with success\n");
 	/**J = matrix_compute_objective_function(clusters,p,info->k);	
 	printf("J=%d\n",J);**/
 	/**Free memory**/

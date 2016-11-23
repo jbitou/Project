@@ -60,9 +60,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->key ,key);
 			temp->p = malloc(d*sizeof(double));
-			for(i=0; i < d; i++)
-				temp->p[i] = value[i];
-			
+			for(i=0; i < d; i++)	temp->p[i] = value[i];		
 			if (flag != 2) 	temp->id = id;
 			temp->value = NULL;
 		}
@@ -72,8 +70,9 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 	/**If list isn't empty, put new node at the end**/
 	else
 	{
-		while(temp->next!=NULL)
+		while(temp->next!=NULL) {
 			temp = temp->next;
+		}
 		if (!flag)		/**Hamming**/
 		{
 			char *value = (char *)v;
@@ -122,8 +121,7 @@ void insert_chain(char * key, void *v, chainp *pointer, double distance, int fla
 			if (flag != 2) 	temp->next->id = id;
 			temp->next->value = NULL;
 			temp->next->p = malloc(d*sizeof(double));
-			for(i=0; i < d; i++)
-				temp->next->p[i] = value[i];
+			for(i=0; i < d; i++)	temp->next->p[i] = value[i];
 		}
 		temp->next->next = NULL;
 	}
@@ -268,7 +266,7 @@ void print_chain(chainp l)
 {
 	while (l != NULL) 
 	{
-		printf("\nkey: %s, distance from centroid: %.0f",l->key,l->distance);
+		printf("key: %s",l->key);
 		l = l->next;
 	}
 }
@@ -346,18 +344,14 @@ int make_item(char *item)
 {
 	int key;
 	/**If the first character of string is type of char**/
-	if (!isdigit(item[0]))	
-	{	
-		char *id;
-		int s = strlen(item) - 4;
-		id = malloc(s+1);
-		strncpy(id,item+4,s);
-		id[s] = '\0';
-		/**Keep only K of itemK**/
-		key = atoi(id);		
-		free(id);
-	}
-	else 	key = atoi(item);
+	char *id;
+	int s = strlen(item) - 4;
+	id = malloc(s+1);
+	strncpy(id,item+4,s);
+	id[s] = '\0';
+	/**Keep only K of itemK**/
+	key = atoi(id);		
+	free(id);
 	return key;
 }
 

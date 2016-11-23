@@ -147,9 +147,10 @@ int hash_func_Ham(ghashp g, char *data, int k)
 {
 	int i, h;
 	char *end;
-	char *temp = malloc(k*sizeof(char));
+	char *temp = malloc((k+1)*sizeof(char));
 	for (i=0; i < k; i++)
 		temp[i] = data[g[i].t];
+	temp[i] = '\0';	
 	h = strtol(temp,&end,2);
 	free(temp);
 	return h;
@@ -182,7 +183,7 @@ int hash_func_Cos(ghashp g, double *x, int k, int d)
 	double inner;
 	int i,j,h;
 	char *end;
-	char *temp = malloc(k*sizeof(char));
+	char *temp = malloc((k+1)*sizeof(char));
 	/*For each h()*/
 	for (i=0; i < k; i++)	
 	{
@@ -194,6 +195,7 @@ int hash_func_Cos(ghashp g, double *x, int k, int d)
 		else
 			temp[i] = '0';	
 	}
+	temp[i] = '\0';
 	h = strtol(temp,&end,2);
 	free(temp);
 	return h;
@@ -204,7 +206,7 @@ int hash_func_Matrix(ghashp g, int x, int **distances, int k, int numofitems)
 {
 	int i,h = 0,sum;
 	char *end;
-	char *temp = malloc(k*sizeof(char));
+	char *temp = malloc((k+1)*sizeof(char));
 	for (i=0; i < k; i++)		
 	{
 		sum = 0;
@@ -227,6 +229,7 @@ int hash_func_Matrix(ghashp g, int x, int **distances, int k, int numofitems)
 		if(sum >= g[i].t1)  temp[i]='1';
 		else temp[i]='0';
 	}	
+	temp[i] = '\0';
 	h = strtol(temp,&end,2);
 	free(temp);
 	return h;
@@ -237,7 +240,7 @@ int hash_func_MSearch(ghashp g, int *qdata, int **distances, int k, int numofite
 {
 	int i,h = 0,sum;
 	char *end;
-	char *temp = malloc(k*sizeof(char));
+	char *temp = malloc((k+1)*sizeof(char));
 	for (i=0; i < k; i++)		
 	{
 		sum = 0;
@@ -258,6 +261,7 @@ int hash_func_MSearch(ghashp g, int *qdata, int **distances, int k, int numofite
 		if(sum >= g[i].t1)  temp[i]='1';
 		else temp[i]='0';
 	}	
+	temp[i] ='\0';
 	h = strtol(temp,&end,2);
 	free(temp);
 	return h;
