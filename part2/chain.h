@@ -6,18 +6,34 @@ typedef struct chain_node
 {
 	char *key;
 	uint64_t *value;
-	/**distance: for part2, LSH assignment**/
-	double *p, distance;
+	double *p;
 	int id;
 	chainp next;
 }chain;
 
-void insert_chain(char *, void *, chainp *, double, int, int, int);
-int search_chain_NNR(chainp *, void *, double, chainp *, chainp *, int, int, int, int *);
+/**Centroids info**/
+typedef struct centroid_node {
+	void *center;
+	void *info;
+}centroid;
+
+typedef struct point_node *pointp;
+typedef struct point_node {
+	char *key;
+	int duplicate;
+	double mindistance, secdistance;
+	centroid second;
+	pointp next;
+}point;
+
+void insert_chain(char *, void *, chainp *, int, int, int);
+int search_chain_NNR(chainp *, void *, double, pointp *, chainp *, int, int, int, int *);
 void move_chain_nodes(chainp *, chainp);
 void print_chain(chainp);
-int chain_length(chainp) ;
 void destroy_chain(chainp *, int);
-void delete_from_chain(chainp *, char *);
-//void print_nnrlist(nnrp *,FILE *);
+int insert_points(pointp *, char *, double, double, centroid);
+int chain_length(pointp);
+void print_points(pointp);
+void delete_from_chain(pointp *, char *);
+void destroy_points(pointp *);
 int make_item(char *);
