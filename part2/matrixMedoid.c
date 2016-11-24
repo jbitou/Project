@@ -76,9 +76,9 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	for (i=0; i < info->k; i++)	 clusters[i].items = NULL;
 	/**Assignment**/
 	/**PAM**/
-	/**clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);**/
+	clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
 	/**LSH reverse approach**/
-	clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);
+	/**clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);**/
 	int totallen = 0;
 	for (i=0; i < info->k; i++) {
 		printf("\nCluster %d :",(int)(intptr_t)clusters[i].center.center);
@@ -92,7 +92,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	printf("J=%d\n",J);
 	/**Update**/
 	/**à la Lloyd’s**/
-	centroids = matrix_update_alaloyds(clusters,centroids,J,p,info);
+	centroids = matrix_update_alaloyds(clusters,centroids,htable[0],J,p,info);
 	/**Free memory**/
 	for (i = 0; i < info->L; i++) 
 		free(g[i]);
