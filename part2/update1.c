@@ -6,8 +6,8 @@
 
 centroid *matrix_update_alaloyds(pcluster clusters, centroid * centroids, hash_table htable, int J, int **distances, pinfo info) {
 	pointp medoid, temp, delete;
-	int i, j, z, s, ci, m, id, id1, id2, tdistance, SDj = 0, *qdata, jump;
-	centroid newcenter, mcenter;
+	int i, j, z, s, ci, m, id, id1, id2, tdistance, Dj, *qdata, jump;
+	centroid newcenter;
 	/**For each cluster**/
 	for (i=0; i < info->k; i++) {
 		printf("centroid is %d ",(int)(intptr_t)clusters[i].center.center);
@@ -23,17 +23,14 @@ centroid *matrix_update_alaloyds(pcluster clusters, centroid * centroids, hash_t
 		newcenter.center = (void *)(intptr_t)id1;
 		newcenter.info = (void *) qdata;
 		free(qdata);
-		mcenter = clusters[i].center;	
-		/**Store centroid where we are**/
 		m = (int)(intptr_t)clusters[i].center.center;
-		/**Swap m and t**/
-		clusters[i].center = newcenter;
-		/**Check all items using clusters**/
 		for (j=0; j < info->k; j++) {
-			ci = (int)(intptr_t)clusters[j].center.center;		
+			ci = (int)(intptr_t)clusters[j].center.center;
 			temp = clusters[j].items;
 			/**For each item in the cluster j**/
 			while (temp != NULL) {
+				jump = 0;
+				Dj = 0;
 				id2 = make_item(temp->key) - 1;
 				if (id1 == id2) {
 					temp = temp->next;
@@ -43,14 +40,43 @@ centroid *matrix_update_alaloyds(pcluster clusters, centroid * centroids, hash_t
 				else if (id1 > id2)  tdistance = distances[id2][id1-id2-1];
 				if (ci == m)  {
 					/**If dist(i,t) > dist(i,c')**/
-					if (tdistance > temp->secdistance)	SDj += temp->secdistance - temp->mindistance;
-					else  SDj += tdistance - temp->mindistance;
+					if (tdistance > temp->secdistance) {
+						Dj = temp->secdistance - temp->mindistance;
+						id = (int)(intptr_t)temp->second.center;
+						for (z=0; z < info->k; z++) {
+							if (id == (int)(intptr_t)centroids[z].center) {
+								s = z;
+								break;
+							}
+						}
+						/**Insert to second best cluster**/
+						printf("id=%d and s=%d\n",id,s);
+						printf("insert: %s with newcenter: %d\n",temp->key,(int)(intptr_t)newcenter.center);
+						insert_points(&(clusters[s].items),temp->key,temp->secdistance,tdistance,newcenter);
+						/**Remove from m**/
+						delete = temp;
+						temp = temp->next;
+						delete_from_chain(&(clusters[i].items),delete->key);
+						jump = 1;
+					}
+					else  Dj = tdistance - temp->mindistance;
 				}
 				else {
 					/**if dist(i,t) < dist(i,c(i))**/
-					if (tdistance < temp->mindistance)	SDj += tdistance - temp->mindistance;
+					if (tdistance < temp->mindistance) {
+						Dj = tdistance - temp->mindistance;
+						/**Insert to second best cluster**/
+						printf("insert: %s\n",temp->key);
+						insert_points(&(clusters[i].items),temp->key,tdistance,temp->mindistance,clusters[j].center);
+						/**Remove from m**/
+						delete = temp;
+						temp = temp->next;
+						delete_from_chain(&(clusters[j].items),delete->key);
+						jump = 1;
+					}
+					else Dj = 0;
 				}
-				temp = temp->next;
+				if (jump != 1) temp = temp->next;
 			}
 		}
 	}
