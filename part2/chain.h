@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+/**Chains info**/
 typedef struct chain_node *chainp;
 typedef struct chain_node
 {
@@ -17,6 +18,7 @@ typedef struct centroid_node {
 	void *info;
 }centroid;
 
+/**Points info**/
 typedef struct point_node *pointp;
 typedef struct point_node {
 	char *key;
@@ -25,6 +27,13 @@ typedef struct point_node {
 	centroid second;
 	pointp next;
 }point;
+
+/**Clarans pairs info**/
+typedef struct clarans_pair *cpair;
+typedef struct clarans_pair {
+	centroid m;
+	centroid t;
+}pair;
 
 void insert_chain(char *, void *, chainp *, int, int, int);
 int search_chain_NNR(chainp *, void *, double, pointp *, chainp *, int, int, int, int *);

@@ -30,26 +30,18 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 		/**For each item**/
 		while (temp != NULL) {
 			mindistance = 0;
+			mincentroid = 0;
 			id = make_item(temp->key) - 1;
 			center = (int)(intptr_t)centroids[0].center;
 			if (id < center)  mindistance = distances[id][center-id-1];
 			else if (id > center)  mindistance = distances[center][id-center-1];
-			else {
-				/**Exclude centroids**/
-				temp = temp->next;
-				continue;
-			}
-			mincentroid = 0;
-			secondcentroid = -1;
+			else  mindistance = 0;
+			secondcentroid = -1;			
 			for (j=1; j < k; j++) {
 				center = (int)(intptr_t)centroids[j].center;
 				if (id < center)  distance = distances[id][center-id-1];
 				else if (id > center)  distance = distances[center][id-center-1];
-				else {
-					/**Exclude centroids**/
-					mindistance = -1;
-					break;
-				}
+				else distance = 0;
 				if (distance < mindistance) {
 					seconddistance = mindistance;
 					secondcentroid = mincentroid;
@@ -58,7 +50,7 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 				}
 			}
 			/**If previous for loop didn't find second centroid**/
-			if ((mindistance != -1) && (secondcentroid == -1)) {
+			if (secondcentroid == -1) {
 				/**Typically store a second distance**/
 				for (j=0; j < k; j++) {
 					if (j != mincentroid) {
@@ -82,8 +74,7 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 					}
 				}
 			}
-			/**Exclude centroids**/
-			if (mindistance != -1)	insert_points(&(clusters[mincentroid].items),temp->key,mindistance,seconddistance,centroids[secondcentroid]);
+			insert_points(&(clusters[mincentroid].items),temp->key,mindistance,seconddistance,centroids[secondcentroid]);
 			temp = temp->next;
 		}	
 	}
