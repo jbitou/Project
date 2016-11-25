@@ -89,7 +89,7 @@ pointp matrix_calculate_medoid(pointp items, int **distances) {
 	int min, distance, sum, id1, id2;
 	pointp temp, curr, first, medoid;
 	temp = first = items;
-	if (temp == NULL) return;
+	if (temp == NULL) return NULL;
 	min = 0;
 	/**For each item calculate total distance from first item**/
 	id1 = make_item(first->key) - 1;
