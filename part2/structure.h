@@ -31,7 +31,8 @@ int matrix_compute_start_radius(int **, centroid *, int);
 int matrix_compute_objective_function(pcluster, int **, int);
 
 /**Update functions**/
-centroid *matrix_update_alaloyds(pcluster, centroid *, hash_table, int, int **, pinfo);
+centroid *matrix_update_alaloyds(pcluster, centroid *, int, int **, pinfo);
+centroid *matrix_update_clarans(pcluster, centroid *, cpair, int **, int, pinfo);
 pointp matrix_calculate_medoid(pointp, int **);
 int compare_centroids(centroid *, centroid *, int);
-cpair select_pairs(pinfo);
+cpair select_pairs(centroid *, int **, pinfo);

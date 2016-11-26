@@ -108,7 +108,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 		}
 		printf("total length = %d\n",totallen);
 		printf("////////////////////////////\n\n");
-		centroids = matrix_update_alaloyds(clusters,centroids,htable[0],J,p,info);
+		centroids = matrix_update_alaloyds(clusters,centroids,J,p,info);
 		diff = compare_centroids(centroids,previous,info->k);
 		printf("differences: %d\n",diff);
 		for (i=0; i < info->k; i++) free(previous[i].info);
@@ -122,24 +122,53 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 		for (j=0; j < info->k; j++)	 clusters[j].items = NULL;
 		/**Assignment**/
 		/**PAM**/
-		//clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
+		int totallen = 0;
+		printf("\nBEFORE ASSIGNMENT:\n");
+		for (z=0; z < info->k; z++) {
+			printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
+			print_points(clusters[z].items);
+			totallen += chain_length(clusters[z].items);
+			printf("\n");
+		}
+		printf("total length = %d\n",totallen);
+		clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
 		/**LSH reverse approach**/
-		clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);
-		printf("Assignment completed with success\n");
-		pairs = select_pairs(info);
+		//clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);
+		totallen = 0;
 		int z;
-		for (z=0; z < info->fraction; z++)	printf("pair[%d]: (%d,%d)\n",z,(int)(intptr_t)pairs[z].m.center,(int)(intptr_t)pairs[z].t.center);
+		printf("\nAFTER ASSIGNMENT:\n");
+		for (z=0; z < info->k; z++) {
+			printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
+			print_points(clusters[z].items);
+			totallen += chain_length(clusters[z].items);
+			printf("\n");
+		}
+		printf("total length = %d\n",totallen);
+		printf("Assignment completed with success\n");
 		J = matrix_compute_objective_function(clusters,p,info->k);	
 		printf("J=%d\n",J);
+		pairs = select_pairs(centroids,p,info);
+		for (z=0; z < info->fraction; z++)	printf("pair[%d]: (%d,%d)\n",z,(int)(intptr_t)pairs[z].m.center,(int)(intptr_t)pairs[z].t.center);
+		previous = malloc(info->k*sizeof(centroid));
+		for (j=0; j < info->k; j++) {
+			previous[j].center = centroids[j].center;
+			previous[j].info = malloc(info->N*sizeof(int));
+			arr = (int *)previous[j].info;
+			for (z=0; z < info->N; z++)  arr[z] = ((int *)centroids[j].info)[z];
+		}
+		centroids = matrix_update_clarans(clusters,centroids,pairs,p,J,info);
+		for (z=0; z < info->fraction; z++) {
+			free(pairs[z].m.info);
+			free(pairs[z].t.info);
+		}
+		free(pairs);
+		for (z=0; z < info->k; z++) free(previous[z].info);
+		free(previous);
+		if (i <= info->iterations - 2) {
+			for (z=0; z < info->k; z++) destroy_points(&(clusters[z].items));
+			free(clusters);
+		}
 	}
-	int totallen = 0;
-	for (i=0; i < info->k; i++) {
-		printf("\nCluster %d :",(int)(intptr_t)clusters[i].center.center);
-		print_points(clusters[i].items);
-		totallen += chain_length(clusters[i].items);
-		printf("\n");
-	}
-	printf("total length = %d\n",totallen);
 	/**Free memory**/
 	for (i = 0; i < info->L; i++) free(g[i]);
 	free(g);
