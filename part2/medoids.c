@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "matrixMedoid.h"
+#include "medoids.h"
 #define ITEM_ID 15
 
 int main (int argc, char **argv)
@@ -56,6 +56,7 @@ int main (int argc, char **argv)
 	if (strcmp(space,"hamming") == 0) 	flag = 0;
 	else if (strcmp(space,"matrix") == 0) flag = 3;
 	else {
+		/**Read second line of input_file**/
 		fscanf(fp,"%s %s[^\n]",m,metric);
 		if (strcmp(metric,"euclidean") == 0)	flag = 1;
 		else  flag = 2;	
@@ -64,6 +65,7 @@ int main (int argc, char **argv)
 	if (flag == 0) 	lines++;
 	info = get_config_info(fc, lines);
 	if (flag == 3) 	matrix_medoid(fp, info, ini, assi, upd);
+	else if ((flag == 1) || (flag == 2))	vector_medoid(fp, info, ini, assi, upd, flag);
 	free(info);
 	fclose(fp);
 	fclose(fc);

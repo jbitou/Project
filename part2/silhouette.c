@@ -4,21 +4,23 @@
 #include <math.h>
 #include "silhouette.h"
 
-void compute_silhouette(pcluster clusters, int **distances, pinfo info) {
-	int i, j, id1, id2, idnext, s, c;
-	double si, a, b, sum, suma, sumb, n, max, average;
+double compute_silhouette(pcluster clusters, void *dis, pinfo info, int flag) {
+	int i, j, **distances, id1, id2, idnext, s, c;
+	double **distancesv, si, a, b, sum, suma, sumb, n, max, average, total = 0.0;
 	pointp object, temp, second;
+	if ((flag == 3) || (flag == 0))		 distances = (int **)dis;
+	else if ((flag == 1) || (flag == 2)) distancesv = (double **)dis;
 	/**For every cluster**/
 	for (i=0; i < info->k; i++) {
 		object = clusters[i].items;
 		c = (int)(intptr_t)clusters[i].center.center;	
-		printf("for cluster %d\n",c);
 		sum = average = 0;
 		/**For each object of this cluster**/
 		while (object != NULL) {
 			temp = clusters[i].items;
 			/**For each object i (itemid1) of this cluster**/
-			id1 = make_item(object->key) - 1;
+			if ((flag == 3) || (flag == 0))			id1 = make_item(object->key) - 1;
+			else if ((flag == 1) || (flag == 2)) 	id1 = object->position;
 			/**Exclude centroid of cluster**/	
 			if (id1 == c) {
 				object = object->next;
@@ -27,13 +29,20 @@ void compute_silhouette(pcluster clusters, int **distances, pinfo info) {
 			suma = 0;
 			/**For each other object in same cluster (exclude distance from itself)**/
 			while (temp != NULL) {
-				id2 = make_item(temp->key) - 1;
+				if ((flag == 3) || (flag == 0))			id2 = make_item(temp->key) - 1;
+				else if ((flag == 1) || (flag == 2)) 	id2 = temp->position;
 				if (id1 == id2) {
 					temp = temp->next;
 					continue;
 				}
-				if (id1 < id2)  suma += distances[id1][id2-id1-1];
-				else if (id1 > id2)  suma += distances[id2][id1-id2-1];
+				if ((flag == 3) || (flag == 0)) {					
+					if (id1 < id2)  suma += distances[id1][id2-id1-1];
+					else if (id1 > id2)  suma += distances[id2][id1-id2-1];
+				}
+				else if ((flag == 1) || (flag == 2))  {
+					if (id1 < id2)  suma += distancesv[id1][id2-id1-1];
+					else if (id1 > id2)  suma += distancesv[id2][id1-id2-1];
+				}
 				temp = temp->next;
 			}
 			n = chain_length(clusters[i].items);
@@ -51,9 +60,16 @@ void compute_silhouette(pcluster clusters, int **distances, pinfo info) {
 			/**For each object in next best cluster**/
 			second = clusters[s].items;
 			while (second != NULL) {
-				id2 = make_item(second->key) - 1;
-				if (id1 < id2)  sumb += distances[id1][id2-id1-1];
-				else if (id1 > id2)  sumb += distances[id2][id1-id2-1];
+				if ((flag == 3) || (flag == 0)) 	 id2 = make_item(second->key) - 1;
+				else if ((flag == 1) || (flag == 2)) id2 = second->position;
+				if ((flag == 3) || (flag == 0)) {					
+					if (id1 < id2)  sumb += distances[id1][id2-id1-1];
+					else if (id1 > id2)  sumb += distances[id2][id1-id2-1];
+				}
+				else if ((flag == 1) || (flag == 2))  {
+					if (id1 < id2)  sumb += distancesv[id1][id2-id1-1];
+					else if (id1 > id2)  sumb += distancesv[id2][id1-id2-1];
+				}
 				second = second->next;
 			}
 			n = chain_length(clusters[s].items);
@@ -72,6 +88,9 @@ void compute_silhouette(pcluster clusters, int **distances, pinfo info) {
 		/**Average of points in cluster i**/
 		n = chain_length(clusters[i].items);
 		average = sum / n;
+		total += average;
 		printf("Average for cluster %.5lf\n",average);
 	}
+	return total;
 }
+

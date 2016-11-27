@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "matrixMedoid.h"
+#include "medoids.h"
 #define ITEM_ID 15
 
 void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
-	int numofitems, token, itemid, tableSize, i, j, pos, flag1, z, y, J, *arr, diff;
-	centroid *centroids, *previous;
+	int numofitems, token, itemid, tableSize, i, j, pos, flag1, z;
+	double totalS;
 	hash_table *htable;
 	pcluster clusters;
 	/**Allocate memory for tables and g functions**/
@@ -25,15 +25,14 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}
 	info->N = numofitems;
 	tableSize = 1 << (info->num_of_hash);
-	//tableSize = numofitems / 8 + 1;
-	for (i=0; i < info->L; i++)	 init_table(info->num_of_hash,&htable[i],tableSize);
-	/**Read matrix**/
-	int **p = malloc((numofitems-1)*sizeof(int*));	
+	/**Allocate memory for distance matrix**/
+	int **p = malloc((numofitems-1)*sizeof(int *));	
 	j = numofitems-1;
 	for(i=0; i < numofitems-1; i++)  {
 		p[i] = malloc(j*sizeof(int));
 		j--;
 	}
+	/**Read matrix**/
 	i = 0;
 	while(fscanf(fp,"%d",&token) != EOF) {
 		flag1 = z = 0;
@@ -49,138 +48,36 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 		}
 		i++;	
 	}
+	/**Init hash tables and lsh functions**/
+	for (i=0; i < info->L; i++)	 init_table(info->num_of_hash,&htable[i],tableSize);
+	/**Initialize hash**/
 	init_hash_matrix(g,p,info->L,info->num_of_hash,numofitems);
-	/**Get centroids: Initialization**/
-	/**k-medoids++**/
-	centroids = matrix_init_kmedoids(p, info, numofitems);
-	/**Park-Jun**/
-	/**centroids = matrix_init_concentrate(p, info, numofitems);**/
-	printf("Initialization completed with success\n");
-	/*for(i=0; i < info->k; i++) {
-		printf("\ncentroids[%d]=%d\n",i,(int)(intptr_t)centroids[i].center);
-		for (j=0; j < numofitems; j++) 	printf("%d\t",((int *)centroids[i].info)[j]);
-	}
-	printf("\n");*/
 	/**Insert data into hash tables**/
 	htable = matrix_insert_hash(htable,g,p,info);
 	printf("Insertion completed with success\n");
-	/*for (i=0; i < L; i++) {
-		printf("Table %d:\n",i);
-		for (j=0; j < tableSize; j++) {
-			printf("Bucket %d:\n",j);
-			print_chain(htable[i].table[j]);
-			printf("\n");
-		}	
-	}*/
-	/*diff = 0;
-	do {
-		if (diff != 0) {
-			for (i=0; i < info->k; i++) destroy_points(&(clusters[i].items));
-			free(clusters);
-		}
-		/**Allocate memory for clusters**/
-		/*clusters = malloc((info->k)*sizeof(cluster));
-		for (i=0; i < info->k; i++)	 clusters[i].items = NULL;
-		/**Assignment**/
-		/**PAM**/
-		//clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
-		/**LSH reverse approach**/
-		/*clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);
-		printf("Assignment completed with success\n");
-		J = matrix_compute_objective_function(clusters,p,info->k);	
-		printf("J=%d\n",J);
-		/**Store centroids as they are now**/
-		/*previous = malloc(info->k*sizeof(centroid));
-		for (i=0; i < info->k; i++) {
-			previous[i].center = centroids[i].center;
-			previous[i].info = malloc(info->N*sizeof(int));
-			arr = (int *)previous[i].info;
-			for (j=0; j < info->N; j++)  arr[j] = ((int *)centroids[i].info)[j];
-		}
-		/**Update**/
-		/**à la Lloyd’s**/
-		/*int totallen = 0;
-		for (i=0; i < info->k; i++) {
-			printf("\nCluster %d :",(int)(intptr_t)clusters[i].center.center);
-			print_points(clusters[i].items);
-			totallen += chain_length(clusters[i].items);
-			printf("\n");
-		}
-		printf("total length = %d\n",totallen);
-		printf("////////////////////////////\n\n");
-		centroids = matrix_update_alaloyds(clusters,centroids,J,p,info);
-		diff = compare_centroids(centroids,previous,info->k);
-		printf("differences: %d\n",diff);
-		for (i=0; i < info->k; i++) free(previous[i].info);
-		free(previous);
-	}while (diff > 0);
-	*/
-	/**CLARANS**/
-	cpair pairs;
-	for (i=0; i < info->iterations; i++) {
-		clusters = malloc((info->k)*sizeof(cluster));
-		for (j=0; j < info->k; j++)	 clusters[j].items = NULL;
-		/**Assignment**/
-		/**PAM**/
-		int totallen = 0;
-		printf("\nBEFORE ASSIGNMENT:\n");
-		for (z=0; z < info->k; z++) {
-			printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
-			print_points(clusters[z].items);
-			totallen += chain_length(clusters[z].items);
-			printf("\n");
-		}
-		printf("total length = %d\n",totallen);
-		clusters = matrix_simplest_assignment(clusters,p,htable[0],centroids,info->k);
-		/**LSH reverse approach**/
-		//clusters = matrix_reverse_approach(clusters,p,htable,g,centroids,info);
-		totallen = 0;
-		int z;
-		printf("\nAFTER ASSIGNMENT:\n");
-		for (z=0; z < info->k; z++) {
-			printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
-			print_points(clusters[z].items);
-			totallen += chain_length(clusters[z].items);
-			printf("\n");
-		}
-		printf("total length = %d\n",totallen);
-		printf("Assignment completed with success\n");
-		J = matrix_compute_objective_function(clusters,p,info->k);	
-		printf("J=%d\n",J);
-		pairs = select_pairs(centroids,p,info);
-		for (z=0; z < info->fraction; z++)	printf("pair[%d]: (%d,%d)\n",z,(int)(intptr_t)pairs[z].m.center,(int)(intptr_t)pairs[z].t.center);
-		previous = malloc(info->k*sizeof(centroid));
-		for (j=0; j < info->k; j++) {
-			previous[j].center = centroids[j].center;
-			previous[j].info = malloc(info->N*sizeof(int));
-			arr = (int *)previous[j].info;
-			for (z=0; z < info->N; z++)  arr[z] = ((int *)centroids[j].info)[z];
-		}
-		centroids = matrix_update_clarans(clusters,centroids,pairs,p,J,info);
-		for (z=0; z < info->fraction; z++) {
-			free(pairs[z].m.info);
-			free(pairs[z].t.info);
-		}
-		free(pairs);
-		for (z=0; z < info->k; z++) free(previous[z].info);
-		free(previous);
-		if (i <= info->iterations - 2) {
-			for (z=0; z < info->k; z++) destroy_points(&(clusters[z].items));
-			free(clusters);
-		}
+	if (upd == 1)		clusters = IAU1(htable,g,info,p,ini,assi,3);
+	else if (upd == 2)  clusters = IAU2(htable,g,info,p,ini,assi,3);
+	/**else {
+		
+	}**/
+	int totallen = 0;
+	for (z=0; z < info->k; z++) {
+		printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
+		print_points(clusters[z].items);
+		totallen += chain_length(clusters[z].items);
+		printf("\n");
 	}
+	printf("total length = %d\n",totallen);
+	totalS = compute_silhouette(clusters,p,info,3);
+	printf("Sum : %.6lf\n",totalS);
 	/**Free memory**/
-	for (i = 0; i < info->L; i++) free(g[i]);
+	for (i=0; i < info->L; i++) free(g[i]);
 	free(g);
 	for (i=0; i < info->L; i++) destroy_table(&htable[i],3);	
 	free(htable);		
 	free(allitems);
-	for(i=0; i < numofitems-1; i++)	free(p[i]);	
+	for(i=0; i < (info->N - 1); i++)	free(p[i]);	
 	free(p);
-	for (i=0; i < info->k; i++) {
-		destroy_points(&(clusters[i].items));
-		free(centroids[i].info);
-	}
+	for (i=0; i < info->k; i++) destroy_points(&(clusters[i].items));
 	free(clusters);
-	free(centroids);
 }

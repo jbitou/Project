@@ -267,9 +267,56 @@ int hash_func_MSearch(ghashp g, int *qdata, int **distances, int k, int numofite
 	return h;
 }
 
+double **create_distance_table(hash_table htable, int N, int d) {
+	double **distances;
+	chainp temp, other;
+	int i, j, id1, id2;
+	/**Allocate memory for vector matrix**/
+	distances = malloc((N-1)*sizeof(double *));	
+	j = N - 1;
+	for(i=0; i < (N - 1); i++)  {
+		distances[i] = malloc(j*sizeof(double));
+		j--;
+	}
+	/**Compute distances for each item inside hash table 0**/
+	for(i=0; i < htable.size; i++)  {
+		temp = htable.table[i];
+		while (temp != NULL) {
+			id1 = temp->position;
+			/**There is no line for last item**/
+			if (id1 == (N-1)) {
+				temp = temp->next;
+				continue;
+			}
+			for(j=0; j < htable.size; j++)  {
+				other = htable.table[j];
+				while (other != NULL) {
+					id2 = other->position;
+					if (id1 < id2) distances[id1][id2-id1-1] = distance_Euclidean(temp->p,other->p,d);
+					other = other->next;
+				}
+			}
+			temp = temp->next;
+		}
+	}
+	return distances;
+}
+
 int search_table_NNR(int pos, hash_table* htable, void *center, double rad, pointp *list, chainp *barriers, int flag, int euclID, int d, int *all) 
 {
 	return search_chain_NNR(&(htable->table[pos]),center,rad,list,&(barriers[pos]),flag,euclID,d,all);
+}
+
+double *find_vector_info(hash_table htable, int id) {
+	int i;
+	chainp temp;
+	for(i=0; i < htable.size; i++) {
+		temp = htable.table[i];
+		while (temp != NULL) {
+			if (id == temp->position) return temp->p;
+			temp = temp->next;
+		}
+	}
 }
 
 void destroy_table(hash_table *htable, int flag) 

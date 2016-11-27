@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "chain.h"
-#include "distances.h"
 #define ITEM_ID 15
 #define TRICK 6
 
-void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
+void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id, int position)
 {
 	chainp temp;
 	int i;
@@ -23,6 +22,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp-> p = NULL;
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->key,key);
+			temp->position = position;
 			if ((size>32) && (size<=64))
 			{
 				temp->value = malloc(sizeof(uint64_t));
@@ -58,6 +58,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp = malloc(sizeof(chain));
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->key ,key);
+			temp->position = position;
 			temp->p = malloc(d*sizeof(double));
 			for(i=0; i < d; i++)	temp->p[i] = value[i];		
 			if (flag != 2) 	temp->id = id;
@@ -79,6 +80,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			char *end;
 			temp->next = malloc(sizeof(chain));
 			temp->next->p = NULL;
+			temp->next->position = position;
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->next->key,key);
 			if ((size>32) && (size<=64))
@@ -116,6 +118,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id)
 			temp->next = malloc(sizeof(chain));
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->next->key ,key);
+			temp->next->position = position;
 			if (flag != 2) 	temp->next->id = id;
 			temp->next->value = NULL;
 			temp->next->p = malloc(d*sizeof(double));
@@ -143,7 +146,7 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 		{
 			num1 = *(temp->value);   
 			diff = distance_Hamming(num1,num2);
-			if (diff <= R) 	insert_points(list,temp->key,diff,-1,center);
+			if (diff <= R) 	insert_points(list,temp->key,diff,-1,center,0);
 			temp = temp->next;
 		}
 	}
@@ -164,7 +167,7 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 			{
 				if (done == 0)	done = 1;
 				/**Insert in cluster**/
-				duplicate = insert_points(list,temp->key,diff,-1,center);
+				duplicate = insert_points(list,temp->key,diff,-1,center,position-1);
 				/**If this item is already in this cluster don't insert it again**/
 				if (duplicate == 1) {
 					temp = temp->next;
@@ -180,17 +183,16 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 	}
 	else
 	{
-		double diff;
+		double diff = -1.0;
 		double *q = (double *)qdata;
-		int exists = 0;
+		int exists = 0, position;
 		/**Only for euclidean metric, count items for which ID(p) = ID(q)**/
 		if(flag != 2) 
 		{
 			while (temp != NULL)
 			{
 				/**ID(p) = ID(q)**/
-				if(euclID == temp->id) 
-					exists++;
+				if(euclID == temp->id) exists++;
 				temp = temp->next;
 			}
 		}
@@ -200,11 +202,27 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 		{
 			while (temp != NULL)
 			{
-				if(flag!=2)
-					diff = distance_Euclidean(temp->p,q,d);
-				else
-					diff = distance_Cosine(temp->p,q,d);
-				if (diff <= R)	insert_points(list,temp->key,diff,-1,center);
+				/**If barrier points to first chain node**/
+				if (((*barrier) != NULL) && (strcmp(temp->key,(*barrier)->key) == 0)) {
+					if (diff == -1.0)	(*all)++;
+					break;
+				}
+				position = temp->position;
+				diff = q[position];
+				if (diff <= R)	{
+					if (done == 0)	done = 1;
+					/**Insert in cluster**/
+					duplicate = insert_points(list,temp->key,diff,-1,center,temp->position);
+					/**If this item is already in this cluster don't insert it again**/
+					if (duplicate == 1) {
+						temp = temp->next;
+						continue;	
+					}/**Done checking duplicate**/
+					/**Add barrier**/
+					if ((*barrier) == NULL)	*barrier = temp;
+					/**Move inserted item to the end of the chain**/
+					move_chain_nodes(b,temp);
+				}
 				temp = temp->next;
 			}
 		}
@@ -215,8 +233,27 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 				/**ID(p) = ID(q)**/
 				if(euclID == temp->id)  
 				{
-					diff = distance_Euclidean(temp->p,q,d);
-					if (diff <= R)	insert_points(list,temp->key,diff,-1,center);
+					/**If barrier points to first chain node**/
+					if (((*barrier) != NULL) && (strcmp(temp->key,(*barrier)->key) == 0)) {
+						if (diff == -1)	(*all)++;
+						break;
+					}
+					position = temp->position;
+					diff = q[position];
+					if (diff <= R)	{
+						if (done == 0)	done = 1;
+						/**Insert in cluster**/
+						duplicate = insert_points(list,temp->key,diff,-1,center,temp->position);
+						/**If this item is already in this cluster don't insert it again**/
+						if (duplicate == 1) {
+							temp = temp->next;
+							continue;	
+						}/**Done checking duplicate**/
+						/**Add barrier**/
+						if ((*barrier) == NULL)	*barrier = temp;
+						/**Move inserted item to the end of the chain**/
+						move_chain_nodes(b,temp);
+					}
 				}
 				temp = temp->next;
 			}
@@ -278,7 +315,7 @@ void destroy_chain(chainp *l, int flag)
 	*l = NULL;	
 }
 
-int insert_points(pointp *list, char *key, double distance1, double distance2, centroid second) {
+int insert_points(pointp *list, char *key, double distance1, double distance2, centroid second, int position) {
 	pointp temp;
 	temp = *list;
 	/**If list is empty, put the first node**/
@@ -286,6 +323,7 @@ int insert_points(pointp *list, char *key, double distance1, double distance2, c
 		temp = malloc(sizeof(point));
 		temp->key = malloc((strlen(key)+1)*sizeof(char));
 		strcpy(temp->key,key);
+		temp->position = position;
 		temp->mindistance = distance1;
 		temp->secdistance = distance2;
 		temp->duplicate = 0;
@@ -304,6 +342,7 @@ int insert_points(pointp *list, char *key, double distance1, double distance2, c
 		temp->next = malloc(sizeof(point));
 		temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 		strcpy(temp->next->key,key);
+		temp->next->position = position;
 		temp->next->mindistance = distance1;
 		temp->next->secdistance = distance2;
 		temp->next->duplicate = 0;
@@ -386,6 +425,20 @@ void destroy_points(pointp *l)
 	}
 	*l = NULL;
 }*/
+
+pointp clone(pointp list) {
+    if (list == NULL) return NULL;
+    pointp result = malloc(sizeof(point));
+    result->key = malloc((strlen(list->key)+1)*sizeof(char));
+	strcpy(result->key,list->key);
+	result->mindistance = list->mindistance;
+	result->secdistance = list->secdistance;
+	result->duplicate = list->duplicate;
+	result->second = list->second;
+	result->position = list->position;
+    result->next = clone(list->next);
+    return result;
+}
 
 int make_item(char *item)
 {

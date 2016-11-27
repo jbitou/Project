@@ -24,5 +24,7 @@ int hash_func_Eucl(ghashp, double *, int, int);
 int hash_func_Cos(ghashp, double *, int, int);
 int hash_func_Matrix(ghashp, int, int **, int, int);
 int hash_func_MSearch(ghashp, int *, int **, int, int);
+double **create_distance_table(hash_table, int, int);
 int search_table_NNR(int, hash_table *, void *, double, pointp *, chainp *, int, int, int, int *);
+double *find_vector_info(hash_table, int);
 void destroy_table(hash_table *, int);

@@ -8,6 +8,7 @@ typedef struct config_info {
 	int fraction;
 	int iterations;
 	int N;
+	int d;
 }conf_info;
 
 int command_processing(int);
