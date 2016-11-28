@@ -65,6 +65,7 @@ int main (int argc, char **argv)
 	if (flag == 0) 	lines++;
 	info = get_config_info(fc, lines);
 	if (flag == 3) 	matrix_medoid(fp, info, ini, assi, upd);
+	else if (flag == 0) 	hamming_medoid(fp, info, ini, assi, upd);
 	else if ((flag == 1) || (flag == 2))	vector_medoid(fp, info, ini, assi, upd, flag);
 	free(info);
 	fclose(fp);

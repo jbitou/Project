@@ -6,7 +6,7 @@
 #define ITEM_ID 15
 #define MAX_LINE 1000
 
-hash_table *euclidean_insert_hash(hash_table *htable, ghashp *g, pinfo info, FILE *fp, int tableSize) {
+hash_table *vector_insert_hash(hash_table *htable, ghashp *g, pinfo info, FILE *fp, int flag) {
 	int i, pos, euclID, position = 0;
 	char *eucldata, token[100], item[ITEM_ID];
 	/**Go back to start and read first and second line of input_file**/
@@ -16,23 +16,48 @@ hash_table *euclidean_insert_hash(hash_table *htable, ghashp *g, pinfo info, FIL
 	/**Allocate array to store coordinates**/	
 	double *p = malloc(info->d * sizeof(double));
 	/**fscanf will return itemK in item**/
-	while(fscanf(fp,"%s",item) != EOF)	{
+	while(fscanf(fp,"%s",item) != EOF) {
 		/**Read coordinates**/
 		for(i=0; i < info->d; i++) {
 			fscanf(fp,"%s",token);	
 			p[i] = atof(token);		
 		}
-		for(i = 0; i < info->L; i++)	{
-			euclID = hash_func_Eucl(g[i],p,info->num_of_hash,info->d);
-			euclID = abs(euclID);
-			pos = mod(euclID,tableSize);
-			insert_chain(item,p,&(htable[i].table[pos]),1,info->d,euclID,position);
+		if (flag == 1) {
+			for(i = 0; i < info->L; i++) {
+				euclID = hash_func_Eucl(g[i],p,info->num_of_hash,info->d);
+				euclID = abs(euclID);
+				pos = mod(euclID,htable[0].size);
+				insert_chain(item,p,&(htable[i].table[pos]),flag,info->d,euclID,position);
+			}
+		}
+		else {
+			for(i = 0; i < info->L; i++) {
+				pos = hash_func_Cos(g[i],p,info->num_of_hash,info->d);
+				insert_chain(item,p,&(htable[i].table[pos]),flag,info->d,0,position);
+			}	
 		}	
 		position++;
 	}
 	free(p);
 	return htable;
 }
+
+hash_table *hamming_insert_hash(hash_table *htable, ghashp *g,  FILE *fp, pinfo info) {
+	int i, position = 0, pos;
+	char ms[14], space[10], item[ITEM_ID], data[65];
+	/**Go back to the start**/
+	fseek(fp,0,SEEK_SET);
+	fscanf(fp,"%s%s[^\n]",ms,space);
+	while (fscanf(fp,"%s %s[^\n]",item,data) != EOF) {   
+		for(i = 0; i < info->L; i++) {
+			pos = hash_func_Ham(g[i],data,info->num_of_hash);
+			insert_chain(item,data,&(htable[i].table[pos]),0,0,0,position);
+		}
+		position++;
+	}
+	return htable;
+}
+
 
 hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, pinfo info) {
 	int i, j, pos;
@@ -209,7 +234,7 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 	return clusters;
 }
 
-pcluster vector_reverse_approach(pcluster clusters, double **distances, hash_table *htable, ghashp *g, centroid *centroids, pinfo info) {
+pcluster vector_reverse_approach(pcluster clusters, double **distances, hash_table *htable, ghashp *g, centroid *centroids, pinfo info, int flag) {
 	int i, j, done, all, previous, pos, euclID;
 	double radii, **dimensions;
 	chainp **barriers;
@@ -221,10 +246,7 @@ pcluster vector_reverse_approach(pcluster clusters, double **distances, hash_tab
 	}
 	/**Get dimensions of each centroid (use in hash function)**/
 	dimensions = malloc((info->k)*sizeof(double *));
-	for (i=0; i < info->k; i++) {
-		dimensions[i] = find_vector_info(htable[0],(int)(intptr_t)centroids[i].center);
-		//printf("for centroid item%d p[0] is %f\n",(int)(intptr_t)centroids[i].center+1,dimensions[i][0]);
-	}
+	for (i=0; i < info->k; i++)  dimensions[i] = find_vector_info(htable[0],(int)(intptr_t)centroids[i].center);
 	radii = vector_compute_start_radius(distances,centroids,info->k);
 	done = all = 0;
 	/**Range Search**/
@@ -233,11 +255,19 @@ pcluster vector_reverse_approach(pcluster clusters, double **distances, hash_tab
 		previous = done;
 		for (i=0; i < info->k; i++) {
 			/**For each table**/
-			for (j=0; j < info->L; j++) {
-				euclID = hash_func_Eucl(g[j],dimensions[i],info->num_of_hash,info->d);
-				euclID = abs(euclID);
-				pos = mod(euclID , htable[j].size);
-				done += search_table_NNR(pos,&(htable[j]),(double *)centroids[i].info,radii,&(clusters[i].items),barriers[j],1,euclID,info->d,&all);			
+			if (flag == 1) {
+				for (j=0; j < info->L; j++) {
+					euclID = hash_func_Eucl(g[j],dimensions[i],info->num_of_hash,info->d);
+					euclID = abs(euclID);
+					pos = mod(euclID , htable[j].size);
+					done += search_table_NNR(pos,&(htable[j]),(double *)centroids[i].info,radii,&(clusters[i].items),barriers[j],flag,euclID,info->d,&all);			
+				}
+			}
+			else  {
+				for (j=0; j < info->L; j++) {
+					pos = hash_func_Cos(g[j],dimensions[i],info->num_of_hash,info->d);
+					done += search_table_NNR(pos,&(htable[j]),(double *)centroids[i].info,radii,&(clusters[i].items),barriers[j],flag,0,info->d,&all);			
+				}
 			}
 			clusters[i].center = centroids[i];
 		}
@@ -248,7 +278,7 @@ pcluster vector_reverse_approach(pcluster clusters, double **distances, hash_tab
 	/**Find second best cluster so far for lsh items**/
 	clusters = vector_lsh_second_cluster(clusters,distances,info->k);
 	/**Assign unassigned items**/
-	clusters = vector_assign_rest(clusters,distances,htable,g,barriers,info);
+	clusters = vector_assign_rest(clusters,distances,htable,g,barriers,info,flag);
 	for (i=0; i < info->L; i++)	free(barriers[i]);
 	free(barriers);
 	free(dimensions);
@@ -463,7 +493,7 @@ pcluster matrix_assign_rest(pcluster clusters, int **distances, hash_table *htab
 	return clusters;
 }
 
-pcluster vector_assign_rest(pcluster clusters, double **distances, hash_table *htable, ghashp *g, chainp **barriers, pinfo info) {
+pcluster vector_assign_rest(pcluster clusters, double **distances, hash_table *htable, ghashp *g, chainp **barriers, pinfo info, int flag) {
 	int i, j, z, id, euclID, pos, assigned, mincentroid, secondcentroid, center;
 	double distance, seconddistance, mindistance;
 	chainp temp, check;
@@ -477,9 +507,12 @@ pcluster vector_assign_rest(pcluster clusters, double **distances, hash_table *h
 			assigned = 0;
 			/**Hash in all L tables to check if item is assigned**/
 			for (j=1; j < info->L; j++) {
-				euclID = hash_func_Eucl(g[j],temp->p,info->num_of_hash,info->d);
-				euclID = abs(euclID);
-				pos = mod(euclID , htable[j].size);
+				if (flag == 1) {
+					euclID = hash_func_Eucl(g[j],temp->p,info->num_of_hash,info->d);
+					euclID = abs(euclID);
+					pos = mod(euclID , htable[j].size);
+				}
+				else pos = hash_func_Cos(g[j],temp->p,info->num_of_hash,info->d);
 				check = barriers[j][pos];
 				while (check != NULL) {
 					if (strcmp(check->key,temp->key) == 0) {

@@ -45,9 +45,9 @@ void vector_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int flag) {
 	if (flag == 1) 		init_hash_Eucl(g,info->L,info->num_of_hash,info->d);	
 	else if (flag == 2) init_hash_Cos(g,info->L,info->num_of_hash,info->d);	
 	/**Insert to hash tables**/
-	htable = euclidean_insert_hash(htable,g,info,fp,tableSize);
+	htable = vector_insert_hash(htable,g,info,fp,flag);
 	printf("Insertion completed with success\n");
-	distances = create_distance_table(htable[0],info->N,info->d);
+	distances = create_vector_distance_table(htable[0],info->N,info->d);
 	printf("Distance matrix created with success\n");
 	if (upd == 1)		clusters = IAU1(htable,g,info,distances,ini,assi,flag);
 	else if (upd == 2)  clusters = IAU2(htable,g,info,distances,ini,assi,flag);
@@ -64,19 +64,6 @@ void vector_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int flag) {
 	printf("total length = %d\n",totallen);*/
 	totalS = compute_silhouette(clusters,distances,info,flag);
 	printf("Sum : %.6lf\n",totalS);
-	/*for (i=0; i < info->L; i++) {
-		printf("Table %d:\n",i);
-		for (j=0; j < tableSize; j++) {
-			printf("Bucket %d:\n",j);
-			print_chain(htable[i].table[j]);
-			printf("\n");
-		}	
-	}*/
-	/*z = info->N - 1;
-	for (i=0; i < info->N-1; i++) {
-		for (j=0; j < z; j++) printf("distances[%d][%d]=%.10f\n",i,j,distances[i][j]);
-		z--;
-	}*/
 	free(eucldata);
 	for (i=0; i < info->L; i++)
 	{
