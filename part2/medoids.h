@@ -3,3 +3,4 @@
 
 void vector_medoid(FILE *, pinfo, int, int, int, int);
 void matrix_medoid(FILE *, pinfo, int, int, int);
+void hamming_medoid(FILE *fp, pinfo info, int, int, int);
