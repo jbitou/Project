@@ -64,13 +64,26 @@ pinfo get_config_info(FILE *fc, int N) {
 	return info;
 }
 
-void user_choice(int *ini, int *assi, int *upd) {
+void user_choice(int *ini, int *assi, int *upd, int *clara) {
 	char answer[3];
 	int counter;
 	printf("Choose specific algorithms to be run? Y or N?  ");
 	scanf("%s",answer);
 	/**If user answered positively**/
 	if ((strcmp(answer,"Y") == 0) || (strcmp(answer,"y") == 0)) {
+		printf("\nWould you like to run for CLARA algorithm?\nFor YES click 1.\nFor NO click 2.\n");
+		counter = 0;
+		do {
+			if (counter > 0)	printf("Try again:\nFor YES click 1.\nFor NO click 2.\n");
+			scanf("%d",clara);
+			counter++;
+		}while ((*clara != 1) && (*clara != 2));
+		if (*clara == 1) {
+			*ini = -1;
+			*upd = -1;
+			*assi = -1;
+			return;
+		}
 		printf("\nChoose Initialization algorithm:\nFor K-medoids++ click 1.\nFor Park-Jun click 2.\n");
 		counter = 0;
 		do {
@@ -94,7 +107,10 @@ void user_choice(int *ini, int *assi, int *upd) {
 		}while ((*upd != 1) && (*upd != 2));
 	}
 	/**If user wants to see all combinations**/
-	else printf("\nRunning all combinations...\n\n");
+	else {
+		printf("\nRunning all combinations...\n\n");
+		*upd = -1;
+	}
 }
 
 char *inputString(FILE *fp, size_t size) {

@@ -54,6 +54,26 @@ pj_info *sortArray(pj_info *array, int N) {
 	return array;
 }
 
+centroid *matrix_init_krandom(pinfo info) {
+	int i;
+	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
+	for (i=0; i < info->k; i++) {
+		centroids[i].info = malloc(info->N*sizeof(int));
+		centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * info->N);
+	}
+	return centroids;
+}
+
+centroid *vector_init_krandom(pinfo info) {
+	int i;
+	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
+	for (i=0; i < info->k; i++) {
+		centroids[i].info = malloc(info->N*sizeof(double));
+		centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * info->N);
+	}
+	return centroids;
+}
+
 centroid *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 	int k = 1, i, j, x, z, min, max, flag, *temp;
 	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
@@ -90,7 +110,7 @@ centroid *matrix_init_kmedoids(int **distances, pinfo info, int N) {
 		/**Compute each P as summary of D^2**/
 		for (i=1; i < N-k+1; i++) {
 			P[i] = 0;
-			for (j=0; j < i; j++)	P[i] += pow(D[j],2);
+			for (j=0; j < i; j++)	P[i] += D[j]*D[j];
 			/**Make probability < 1**/
 			P[i] /= max;
 		}
@@ -157,7 +177,7 @@ centroid *vector_init_kmedoids(double **distances, pinfo info, int N) {
 		/**Compute each P as summary of D^2**/
 		for (i=1; i < N-k+1; i++) {
 			P[i] = 0;
-			for (j=0; j < i; j++)	P[i] += pow(D[j],2);
+			for (j=0; j < i; j++)	P[i] += D[j]*D[j];
 			/**Make probability < 1**/
 			P[i] /= max;
 		}
@@ -188,24 +208,25 @@ centroid *vector_init_kmedoids(double **distances, pinfo info, int N) {
 }
 
 centroid *matrix_init_concentrate(int **distances, pinfo info, int N) {
-	int i, j, t, denominator, *temp;
+	int i, j, t, denominator, *temp, *sums;
 	pj_info *v = malloc(N*sizeof(pj_info));
+	/**Compute distances of each item with every other**/
+	sums = malloc(info->N*sizeof(int));
+	for (i=0; i < N; i++) {
+		sums[i] = 0;
+		for (j=0; j < N; j++) {
+			if (j < i)  sums[i] += distances[j][i-j-1];
+			else if (j > i)  sums[i] += distances[i][j-i-1];
+		}
+	}
 	/**For each object**/
 	for (i=0; i < N; i++) {
-		/**For outer Σ**/
 		v[i].v = 0;
 		v[i].index = i;
+		/**For outer Σ**/
 		for (j=0; j < N; j++) {
-			/**For inner Σ**/
-			denominator = 0;
-			for (t=0; t < N; t++) {
-				if (j < t)  denominator += distances[j][t-j-1];
-				else if (j > t)  denominator += distances[t][j-t-1];
-			}
-			if (i < j)  {
-				v[i].v += (double) distances[i][j-i-1] / denominator;
-			}
-			else if (i > j)  v[i].v += (double) distances[j][i-j-1] / denominator;
+			if (i < j) v[i].v += (double) distances[i][j-i-1] / sums[j];
+			else if (i > j)  v[i].v += (double) distances[j][i-j-1] / sums[j];
 		}
 	}
 	v = sortArray(v, N);
@@ -225,30 +246,32 @@ centroid *matrix_init_concentrate(int **distances, pinfo info, int N) {
 			temp[j] = distances[(int)(intptr_t)centroids[i].center][j-(int)(intptr_t)centroids[i].center-1];
 	}	
 	free(v);
+	free(sums);
 	return centroids;
 }
 
 
 centroid *vector_init_concentrate(double **distances, pinfo info, int N) {
 	int i, j, t;
-	double  denominator, *temp;
+	double  denominator, *temp, *sums;
 	pj_info *v = malloc(N*sizeof(pj_info));
+	/**Compute distances of each item with every other**/
+	sums = malloc(info->N*sizeof(double));
+	for (i=0; i < N; i++) {
+		sums[i] = 0;
+		for (j=0; j < N; j++) {
+			if (j < i)  sums[i] += distances[j][i-j-1];
+			else if (j > i)  sums[i] += distances[i][j-i-1];
+		}
+	}
 	/**For each object**/
 	for (i=0; i < N; i++) {
-		/**For outer Σ**/
 		v[i].v = 0;
 		v[i].index = i;
+		/**For outer Σ**/
 		for (j=0; j < N; j++) {
-			/**For inner Σ**/
-			denominator = 0;
-			for (t=0; t < N; t++) {
-				if (j < t)  denominator += distances[j][t-j-1];
-				else if (j > t)  denominator += distances[t][j-t-1];
-			}
-			if (i < j)  {
-				v[i].v += distances[i][j-i-1] / denominator;
-			}
-			else if (i > j)  v[i].v +=  distances[j][i-j-1] / denominator;
+			if (i < j) v[i].v += distances[i][j-i-1] / sums[j];
+			else if (i > j)  v[i].v +=  distances[j][i-j-1] / sums[j];
 		}
 	}
 	v = sortArray(v, N);
@@ -268,5 +291,6 @@ centroid *vector_init_concentrate(double **distances, pinfo info, int N) {
 			temp[j] = distances[(int)(intptr_t)centroids[i].center][j-(int)(intptr_t)centroids[i].center-1];
 	}	
 	free(v);
+	free(sums);
 	return centroids;
 }

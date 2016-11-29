@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "medoids.h"
 #define ITEM_ID 15
 
-void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
+void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int clara) {
 	char itemsline[7], *allitems, itemID[ITEM_ID];
 	int numofitems, token, itemid, tableSize, i, j, pos, flag1, z;
-	double totalS;
+	double totalS, total_t;
 	hash_table *htable;
 	pcluster clusters;
+	clock_t start_t, end_t;
 	/**Allocate memory for tables and g functions**/
 	htable = malloc(info->L * sizeof(hash_table));
 	ghashp *g = malloc(info->L * sizeof(ghashp));		
@@ -55,11 +57,14 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	/**Insert data into hash tables**/
 	htable = matrix_insert_hash(htable,g,p,info);
 	printf("Insertion completed with success\n");
+	start_t = clock();
 	if (upd == 1)		clusters = IAU1(htable,g,info,p,ini,assi,3);
 	else if (upd == 2)  clusters = IAU2(htable,g,info,p,ini,assi,3);
 	/**else {
 		
 	}**/
+	end_t = clock();
+	total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
 	int totallen = 0;
 	for (z=0; z < info->k; z++) {
 		printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);
@@ -69,6 +74,7 @@ void matrix_medoid(FILE *fp, pinfo info, int ini, int assi, int upd) {
 	}
 	printf("total length = %d\n",totallen);
 	totalS = compute_silhouette(clusters,p,info,3);
+	printf("Time_clustering : %.6lf\n",total_t);
 	printf("Sum : %.6lf\n",totalS);
 	/**Free memory**/
 	for (i=0; i < info->L; i++) free(g[i]);

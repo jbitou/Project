@@ -4,6 +4,81 @@
 #include <math.h>
 #include "structure.h"
 
+
+centroid *matrix_pam_update(pcluster clusters, centroid *centroids, double J, int **distances, pinfo info) {
+	int i, j, z, id, m, ci, t, flag, tdistance, *arr, *qdata;
+	double SDj, prevJ, J1;
+	pointp temp,temp1;
+	centroid newcenter;
+	/**For each centroid**/
+	for (i=0; i < info->k; i++) {
+		m = (int)(intptr_t) centroids[i].center;
+		/**Swap with all non-centroids**/
+		for (j=0; j < info->k; j++) {	
+			temp = clusters[j].items;
+			/**We swap  m with t**/
+			while (temp != NULL) {
+				prevJ = J1;
+				SDj = flag = 0; 
+				t = temp->position;
+				/**If t is a centroid break**/
+				for (z=0; z < info->k; z++) {
+					if (t == (int)(intptr_t)centroids[z].center) {
+						flag = 1;
+						break;
+					}
+				}
+				if (flag == 1) {
+					temp = temp->next;
+					continue;
+				}
+				/**Run for all items**/
+				for (z=0; z < info->k; z++) {	
+					temp1 = clusters[z].items;
+					ci = (int)(intptr_t)clusters[z].center.center;
+					/**For each item in the cluster j-if we swap it with m**/
+					while (temp1 != NULL) {
+						id = temp1->position;
+						if (id < t)  		tdistance = distances[id][t-id-1];
+						else if (id > t) 	tdistance = distances[t][id-t-1];
+						if (ci == m)  {
+							/**If dist(i,t) > dist(i,c')**/
+							if (tdistance > temp1->secdistance)	SDj += temp1->secdistance - temp1->mindistance;
+							else  SDj += tdistance - temp1->mindistance;
+						}
+						else {
+							/**if dist(i,t) < dist(i,c(i))**/
+							if (tdistance < temp1->mindistance)	SDj += tdistance - temp1->mindistance;
+						}
+						temp1 = temp1->next;
+					}
+				}
+				J1 = J + SDj;
+				if (J1 < prevJ) {
+					qdata = malloc((info->N)*sizeof(int));
+					for (z=0; z < t; z++) qdata[z] = distances[z][t-z-1];
+					qdata[t] = 0;
+					for (z=(t+1); z < info->N; z++) qdata[z] = distances[t][z-t-1];
+					/**Insert medoid's info to newcenter**/
+					newcenter.center = (void *)(intptr_t)t;
+					newcenter.info = malloc(info->N*sizeof(int));
+					arr = (int *)newcenter.info;
+					for (z=0; z < info->N; z++) arr[z] = qdata[z];
+					free(qdata);
+					/**Change centroid**/
+					centroids[i].center = newcenter.center;
+					arr = (int *)centroids[i].info;
+					for (z=0; z < info->N; z++) arr[z] = ((int *)newcenter.info)[z];
+					free(newcenter.info);
+				}
+				temp = temp->next;
+			}
+		}
+	}
+	return centroids;
+}
+
+
 centroid *matrix_update_alaloyds(pcluster clusters, centroid *centroids, double J, int **distances, pinfo info) {
 	pointp medoid, temp, delete;
 	int i, j, z, s, ci, m, id, id1, id2, tdistance, *qdata, jump, *arr;
@@ -14,7 +89,7 @@ centroid *matrix_update_alaloyds(pcluster clusters, centroid *centroids, double 
 		SDj = 0;
 		medoid = matrix_calculate_medoid(clusters[i].items,distances);
 		if (medoid == NULL) continue;
-		id1 = make_item(medoid->key) - 1;
+		id1 = medoid->position;
 		/**Create distances of medoid with all the items**/
 		qdata = malloc((info->N)*sizeof(int));
 		for (z=0; z < id1; z++) qdata[z] = distances[z][id1-z-1];
@@ -34,7 +109,7 @@ centroid *matrix_update_alaloyds(pcluster clusters, centroid *centroids, double 
 			temp = clusters[j].items;
 			/**For each item in the cluster j**/
 			while (temp != NULL) {
-				id2 = make_item(temp->key) - 1;
+				id2 = temp->position;
 				if (id1 == id2) {
 					temp = temp->next;
 					continue;
@@ -149,7 +224,8 @@ centroid *matrix_update_clarans(pcluster clusters, centroid *centroids, cpair pa
 	int i, j, z, y, SDj, J1, ci, m, t, id, pos, tdistance, *arr, Jc, newm, in,change;
 	pointp temp;
 	centroid newcenter;
-	pairs = sortPairs(pairs, info->fraction);
+	pairs = sortPairs(pairs, info->fraction);	
+	for (i=0; i< info->fraction; i++)	printf("pairs: (%d,%d)\n",(int)(intptr_t)pairs[i].m.center,(int)(intptr_t)pairs[i].t.center);
 	i = 0;
 	while (i < info->fraction) {
 		Jc  = J;
@@ -169,7 +245,7 @@ centroid *matrix_update_clarans(pcluster clusters, centroid *centroids, cpair pa
 				temp = clusters[j].items;
 				/**For each item in the cluster j**/
 				while (temp != NULL) {
-					id = make_item(temp->key) - 1;
+					id = temp->position;
 					if (t == id) {
 						temp = temp->next;
 						continue;
@@ -293,10 +369,10 @@ pointp matrix_calculate_medoid(pointp items, int **distances) {
 	if (temp == NULL) return NULL;
 	min = 0;
 	/**For each item calculate total distance from first item**/
-	id1 = make_item(first->key) - 1;
+	id1 = first->position;
 	medoid = temp;
 	while (temp != NULL) {
-		id2 = make_item(temp->key) - 1;
+		id2 = temp->position;
 		if (id1 < id2)  distance = distances[id1][id2-id1-1];
 		else if (id2 < id1) distance = distances[id2][id1-id2-1];
 		else 	distance = 0;
@@ -306,12 +382,12 @@ pointp matrix_calculate_medoid(pointp items, int **distances) {
 	/**For each item, beginning from second**/
 	temp = first->next;
 	while (temp != NULL) {
-		id1 = make_item(temp->key) - 1;
+		id1 = temp->position;
 		sum = 0;
 		curr = items;
 		/**For each item calculate sum**/
 		while (curr != NULL) {
-			id2 = make_item(curr->key) - 1;
+			id2 = curr->position;
 			if (id1 < id2)  distance = distances[id1][id2-id1-1];
 			else if (id2 < id1) distance = distances[id2][id1-id2-1];
 			else 	distance = 0;

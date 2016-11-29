@@ -13,5 +13,5 @@ typedef struct config_info {
 
 int command_processing(int);
 pinfo get_config_info(FILE *, int);
-void user_choice(int *, int *, int *);
+void user_choice(int *, int *, int *, int *);
 char *inputString(FILE *, size_t);

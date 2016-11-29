@@ -8,7 +8,7 @@
 int main (int argc, char **argv)
 {
 	FILE *fp, *fc, *fe;
-	int i, complete = 0, input, config, output, ini = 0, assi = 0, upd = 0, ch, lines = -2, flag;
+	int i, complete = 0, input, config, output, ini = 0, assi = 0, upd = 0, clara = 0, ch, lines = -2, flag;
 	char ms[14], space[10], m[10], metric[20];
 	pinfo info;
 	srand(time(NULL));
@@ -44,7 +44,7 @@ int main (int argc, char **argv)
 		return -1;
 	}
 	/**Ask user for combination of methods**/
-	user_choice(&ini,&assi,&upd);
+	user_choice(&ini,&assi,&upd,&clara);
 	/**Count lines of input file**/
 	while ((ch = fgetc(fp)) != EOF) {
 		if (ch == '\n') lines++;
@@ -64,9 +64,9 @@ int main (int argc, char **argv)
 	/**Get info from configuration file**/
 	if (flag == 0) 	lines++;
 	info = get_config_info(fc, lines);
-	if (flag == 3) 	matrix_medoid(fp, info, ini, assi, upd);
-	else if (flag == 0) 	hamming_medoid(fp, info, ini, assi, upd);
-	else if ((flag == 1) || (flag == 2))	vector_medoid(fp, info, ini, assi, upd, flag);
+	if (flag == 3) 	matrix_medoid(fp, info, ini, assi, upd, clara);
+	else if (flag == 0) 	hamming_medoid(fp, info, ini, assi, upd, clara);
+	else if ((flag == 1) || (flag == 2))	vector_medoid(fp, info, ini, assi, upd, clara, flag);
 	free(info);
 	fclose(fp);
 	fclose(fc);

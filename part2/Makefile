@@ -1,5 +1,5 @@
-OBJS 	= medoids.o chain.o hash.o distances.o matrixMedoid.o inputProcessing.o initialization.o assignment.o update.o silhouette.o algorithms.o vectorMedoid.o
-SOURCE	= medoids.c chain.c hash.c distances.c matrixMedoid.c inputProcessing.c initialization.c assignment.c update.c silhouette.c algorithms.c vectorMedoid.c
+OBJS 	= medoids.o chain.o hash.o distances.o matrixMedoid.o inputProcessing.o initialization.o assignment.o update.o silhouette.o algorithms.o vectorMedoid.o hammingMedoid.o
+SOURCE	= medoids.c chain.c hash.c distances.c matrixMedoid.c inputProcessing.c initialization.c assignment.c update.c silhouette.c algorithms.c vectorMedoid.c hammingMedoid.c
 HEADER  = medoids.h chain.h hash.h distances.h medoids.h inputProcessing.h structure.h silhouette.h algorithms.h
 OUT  	= medoids
 CC	    = gcc
@@ -40,6 +40,9 @@ silhouette.o : silhouette.c silhouette.h
 
 algorithms.o : algorithms.c algorithms.h
 	$(CC) $(FLAGS) algorithms.c
+
+hammingMedoid.o : hammingMedoid.c medoids.h
+	$(CC) $(FLAGS) hammingMedoid.c
 
 matrixMedoid.o: matrixMedoid.c medoids.h
 	$(CC) $(FLAGS) matrixMedoid.c	

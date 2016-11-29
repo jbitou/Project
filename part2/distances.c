@@ -12,8 +12,7 @@ int distance_Hamming(uint64_t num1, uint64_t num2)
 	uint64_t num = num1^num2;
 	while (num > 0)
 	{
-		if ((num & mask) == 1)
-			diff++;
+		if ((num & mask) == 1)	diff++;
 		num = num >> 1; 
 	}
 	return diff;
@@ -27,10 +26,9 @@ double distance_Euclidean(double *v1, double *v2, int d)
 	for (i=0; i < d; i++)
 	{
 		diff = v1[i] - v2[i];
-		distance += pow(diff,2);
+		distance += diff*diff;
 	}
-	distance = pow(distance,0.5);	
-	return distance;
+	return sqrt(distance);
 }
 
 /**Returns the distance (1-cosine similarity) between two vectors**/
@@ -44,12 +42,12 @@ double distance_Cosine(double *v1, double *v2, int d)
 		/**Numerator**/
 		inner += v1[i]*v2[i];
 		/**Euclidean norm x**/	
-		normx += pow(v1[i],2); 
+		normx += v1[i]*v1[i]; 
 		/**Euclidean norm y**/	
-		normy += pow(v2[i],2);	
+		normy += v2[i]*v2[i];	
 	}
-	normx = pow(normx,0.5);
-	normy = pow(normy,0.5);
+	normx = sqrt(normx);
+	normy = sqrt(normy);
 	cos = inner / (normx * normy);
 	return (1 - cos);
 }

@@ -28,4 +28,5 @@ int **create_ham_distance_table(hash_table, int);
 double **create_vector_distance_table(hash_table, int, int);
 int search_table_NNR(int, hash_table *, void *, double, pointp *, chainp *, int, int, int, int *);
 double *find_vector_info(hash_table, int);
+char *find_ham_info(hash_table, int);
 void destroy_table(hash_table *, int);

@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "medoids.h"
 #define ITEM_ID 15
 
-void vector_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int flag) {
+void vector_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int clara, int flag) {
 	int i, j, z, l, col = 1, lines = -2, c, t, itemid, euclID, ch, tableSize;
 	char metric[20], m[10], token[100], *eucldata, *ptr, delim[] = " \t", itemID[ITEM_ID], *pnt;
-	double **distances, totalS;
+	double **distances, totalS, total_t;
 	hash_table *htable;
 	pcluster clusters;
+	clock_t start_t, end_t;
 	/**Memory allocation for hash functions and tables**/
 	htable = malloc(info->L * sizeof(hash_table));
 	ghashp *g = malloc(info->L * sizeof(ghashp));		
@@ -49,11 +51,15 @@ void vector_medoid(FILE *fp, pinfo info, int ini, int assi, int upd, int flag) {
 	printf("Insertion completed with success\n");
 	distances = create_vector_distance_table(htable[0],info->N,info->d);
 	printf("Distance matrix created with success\n");
-	if (upd == 1)		clusters = IAU1(htable,g,info,distances,ini,assi,flag);
-	else if (upd == 2)  clusters = IAU2(htable,g,info,distances,ini,assi,flag);
+	start_t = clock();
+	if (upd == 1) 			clusters = IAU1(htable,g,info,distances,ini,assi,flag);
+	else if (upd == 2) 		clusters = IAU2(htable,g,info,distances,ini,assi,flag);
 	/**else {
 		
-	}**/
+	}*/
+	end_t = clock();
+	total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+	printf("Time_clustering : %.6lf\n",total_t);
 	/*int totallen = 0;
 	for (z=0; z < info->k; z++) {
 		printf("\nCluster %d :",(int)(intptr_t)clusters[z].center.center);

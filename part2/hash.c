@@ -148,8 +148,7 @@ int hash_func_Ham(ghashp g, char *data, int k)
 	int i, h;
 	char *end;
 	char *temp = malloc((k+1)*sizeof(char));
-	for (i=0; i < k; i++)
-		temp[i] = data[g[i].t];
+	for (i=0; i < k; i++)	temp[i] = data[g[i].t];
 	temp[i] = '\0';	
 	h = strtol(temp,&end,2);
 	free(temp);
@@ -308,12 +307,12 @@ double **create_vector_distance_table(hash_table htable, int N, int d) {
 	/**Allocate memory for vector matrix**/
 	distances = malloc((N-1)*sizeof(double *));	
 	j = N - 1;
-	for(i=0; i < (N - 1); i++)  {
+	for (i=0; i < (N - 1); i++)  {
 		distances[i] = malloc(j*sizeof(double));
 		j--;
 	}
 	/**Compute distances for each item inside hash table 0**/
-	for(i=0; i < htable.size; i++)  {
+	for (i=0; i < htable.size; i++)  {
 		temp = htable.table[i];
 		while (temp != NULL) {
 			id1 = temp->position;
@@ -322,7 +321,7 @@ double **create_vector_distance_table(hash_table htable, int N, int d) {
 				temp = temp->next;
 				continue;
 			}
-			for(j=0; j < htable.size; j++)  {
+			for (j=0; j < htable.size; j++)  {
 				other = htable.table[j];
 				while (other != NULL) {
 					id2 = other->position;
@@ -344,10 +343,32 @@ int search_table_NNR(int pos, hash_table* htable, void *center, double rad, poin
 double *find_vector_info(hash_table htable, int id) {
 	int i;
 	chainp temp;
-	for(i=0; i < htable.size; i++) {
+	for (i=0; i < htable.size; i++) {
 		temp = htable.table[i];
 		while (temp != NULL) {
 			if (id == temp->position) return temp->p;
+			temp = temp->next;
+		}
+	}
+}
+
+char *find_ham_info(hash_table htable, int id) {
+	int i, c;
+	char *array;
+	chainp temp;
+	array = malloc(65);
+	for (i=0; i < htable.size; i++) {
+		temp = htable.table[i];
+		while (temp != NULL) {
+			if (id == temp->position) {
+				for (i = 0; i < 64; i++) {
+					c = (*temp->value) & (1LL << i) ? 1 : 0;
+					if (!c)	array[63-i] = '0';
+					else 	array[63-i] = '1';
+				}
+				array[64] = '\0';
+				return array;
+			}
 			temp = temp->next;
 		}
 	}

@@ -8,7 +8,7 @@
 
 hash_table *vector_insert_hash(hash_table *htable, ghashp *g, pinfo info, FILE *fp, int flag) {
 	int i, pos, euclID, position = 0;
-	char *eucldata, token[100], item[ITEM_ID];
+	char eucldata[MAX_LINE], token[100], item[ITEM_ID];
 	/**Go back to start and read first and second line of input_file**/
 	fseek(fp,0,SEEK_SET);
     fgets(eucldata,MAX_LINE,fp);	
@@ -42,7 +42,7 @@ hash_table *vector_insert_hash(hash_table *htable, ghashp *g, pinfo info, FILE *
 	return htable;
 }
 
-hash_table *hamming_insert_hash(hash_table *htable, ghashp *g,  FILE *fp, pinfo info) {
+hash_table *hamming_insert_hash(hash_table *htable, ghashp *g, FILE *fp, pinfo info) {
 	int i, position = 0, pos;
 	char ms[14], space[10], item[ITEM_ID], data[65];
 	/**Go back to the start**/
@@ -52,6 +52,25 @@ hash_table *hamming_insert_hash(hash_table *htable, ghashp *g,  FILE *fp, pinfo 
 		for(i = 0; i < info->L; i++) {
 			pos = hash_func_Ham(g[i],data,info->num_of_hash);
 			insert_chain(item,data,&(htable[i].table[pos]),0,0,0,position);
+		}
+		position++;
+	}
+	return htable;
+}
+
+hash_table hamming_one_hash(hash_table htable, ghashp *g, FILE *fp, pinfo info, int *insert, int n) {
+	int i, position = 0, pos;
+	char ms[14], space[10], item[ITEM_ID], data[65];
+	/**Go back to the start**/
+	fseek(fp,0,SEEK_SET);
+	fscanf(fp,"%s%s[^\n]",ms,space);
+	while (fscanf(fp,"%s %s[^\n]",item,data) != EOF) {   
+		for (i=0; i < n; i++) {
+			if(insert[i] == position) {
+				pos = hash_func_Ham(g[i],data,info->num_of_hash);
+				insert_chain(item,data,&(htable.table[pos]),0,0,0,position);
+				break;
+			}
 		}
 		position++;
 	}
@@ -84,7 +103,7 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 		while (temp != NULL) {
 			mindistance = 0;
 			mincentroid = 0;
-			id = make_item(temp->key) - 1;
+			id = temp->position;
 			center = (int)(intptr_t)centroids[0].center;
 			if (id < center)  mindistance = distances[id][center-id-1];
 			else if (id > center)  mindistance = distances[center][id-center-1];
@@ -127,7 +146,7 @@ pcluster matrix_simplest_assignment(pcluster clusters, int **distances, hash_tab
 					}
 				}
 			}
-			insert_points(&(clusters[mincentroid].items),temp->key,mindistance,seconddistance,centroids[secondcentroid],id);
+			insert_points(&(clusters[mincentroid].items),temp->key,mindistance,seconddistance,centroids[secondcentroid],temp->position);
 			temp = temp->next;
 		}	
 	}
@@ -198,15 +217,28 @@ pcluster vector_simplest_assignment(pcluster clusters, double **distances, hash_
 	return clusters;
 }
 
-pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, pinfo info) {
-	int i, j, radii, done, all, previous, pos;
+pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, pinfo info, int flag) {
+	int i, j, radii, done, all, previous, pos, size;
+	char **bits, *tempc;
 	chainp **barriers;
 	/**L tables of pointers**/
 	barriers = malloc((info->L)*sizeof(chainp *));
+	size = pow(2,info->num_of_hash);
 	for (i=0; i < info->L; i++)	{
-		barriers[i] = malloc(pow(2,info->num_of_hash)*sizeof(chainp));
-		for (j=0; j < pow(2,info->num_of_hash); j++) barriers[i][j] = NULL;
+		barriers[i] = malloc(size*sizeof(chainp));
+		for (j=0; j < size; j++) barriers[i][j] = NULL;
 	}
+	if (flag == 0) {
+		/**Get centroids' info**/
+		bits = malloc((info->k)*sizeof(char *));
+		for (i=0; i < info->k; i++)  {
+			bits[i] = malloc(65);
+			tempc = find_ham_info(htable[0],(int)(intptr_t)centroids[i].center);
+			strcpy(bits[i],tempc);
+			free(tempc);
+		}
+	}
+	/**Compute first radius**/
 	radii = matrix_compute_start_radius(distances,centroids,info->k);
 	done = all = 0;
 	/**Range Search**/
@@ -215,9 +247,17 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 		previous = done;
 		for (i=0; i < info->k; i++) {
 			/**For each table**/
-			for (j=0; j < info->L; j++) {
-				pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,info->num_of_hash,info->N);
-				done += search_table_NNR(pos,&(htable[j]),(int *)centroids[i].info,radii,&(clusters[i].items),barriers[j],3,0,0,&all);			
+			if (flag == 3) {
+				for (j=0; j < info->L; j++) {
+					pos = hash_func_MSearch(g[j],(int *)centroids[i].info,distances,info->num_of_hash,info->N);
+					done += search_table_NNR(pos,&(htable[j]),(int *)centroids[i].info,radii,&(clusters[i].items),barriers[j],3,0,0,&all);			
+				}
+			}
+			if (flag == 0) {
+				for (j=0; j < info->L; j++) {
+					pos = hash_func_Ham(g[j],bits[i],info->num_of_hash);
+					done += search_table_NNR(pos,&(htable[j]),(int *)centroids[i].info,radii,&(clusters[i].items),barriers[j],0,0,0,&all);			
+				}
 			}
 			clusters[i].center = centroids[i];
 		}
@@ -228,9 +268,13 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 	/**Find second best cluster so far for lsh items**/
 	clusters = matrix_lsh_second_cluster(clusters,distances,info->k);
 	/**Assign unassigned items**/
-	clusters = matrix_assign_rest(clusters,distances,htable,g,barriers,info);
+	clusters = matrix_assign_rest(clusters,distances,htable,g,barriers,info,flag);
 	for (i=0; i < info->L; i++)	free(barriers[i]);
 	free(barriers);
+	if (flag == 0) {
+		for (i=0; i < info->k; i++) free(bits[i]);
+		free(bits);
+	}
 	return clusters;
 }
 
@@ -291,7 +335,7 @@ pcluster matrix_lsh_second_cluster(pcluster clusters, int **distances, int k) {
 	for (i=0; i < k; i++) {
 		temp = clusters[i].items;
 		while (temp != NULL) {
-			id = make_item(temp->key) - 1;
+			id = temp->position;
 			for (j=0; j < k; j++) {
 				if (i != j) {
 					center = (int)(intptr_t)clusters[j].center.center;
@@ -356,7 +400,8 @@ pcluster vector_lsh_second_cluster(pcluster clusters, double **distances, int k)
 }
 
 pcluster remove_clusters_duplicates(pcluster clusters, int k) {
-	int i, j, jump;
+	int i, j, jump, jump1;
+	char str[ITEM_ID];
 	pointp temp, temp1, temp2;
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
@@ -403,32 +448,45 @@ pcluster remove_clusters_duplicates(pcluster clusters, int k) {
 	for (i=0; i < k; i++) {
 		temp = clusters[i].items;
 		while (temp != NULL) {
-			if (temp->duplicate == 1)	delete_from_chain(&(clusters[i].items),temp->key);
-			temp = temp->next;
+			jump1 = 0;
+			if (temp->duplicate == 1) {
+				strcpy(str,temp->key);
+				temp = temp->next;
+				delete_from_chain(&(clusters[i].items),str);
+				jump1 = 1;
+			}
+			if (jump1 != 1) temp = temp->next;
 		}
 	}
 	return clusters;
 }
 
-pcluster matrix_assign_rest(pcluster clusters, int **distances, hash_table *htable, ghashp *g, chainp **barriers, pinfo info) {
+pcluster matrix_assign_rest(pcluster clusters, int **distances, hash_table *htable, ghashp *g, chainp **barriers, pinfo info, int flag) {
 	int i, j, z, id, pos, assigned, *qdata, distance, mincentroid, secondcentroid, seconddistance, center, mindistance;
 	chainp temp, check;
+	char bits[65], *tempc;
 	for (i=0; i < htable->size; i++) {
 		temp = htable[0].table[i];
 		/**For each item**/
 		while (temp != NULL) {
 			/**Stop when the barrier is found (All assigned points are placed after the barrier)**/
 			if ((barriers[0][i] != NULL) && (strcmp(temp->key,barriers[0][i]->key) == 0))  	break;
-			id = make_item(temp->key) - 1;
+			id = temp->position;
 			/**Create info line with distances**/
 			qdata = malloc((info->N)*sizeof(int));
 			for (z=0; z < id; z++) qdata[z] = distances[z][id-z-1];
 			qdata[id] = 0;
 			for (z=(id+1); z < info->N; z++) qdata[z] = distances[id][z-id-1];
 			assigned = 0;
+			if (flag == 0) {
+				tempc = find_ham_info(htable[0],temp->position);
+				strcpy(bits,tempc);
+				free(tempc);
+			}
 			/**Hash in all L tables to check if item is assigned**/
 			for (j=1; j < info->L; j++) {
-				pos = hash_func_MSearch(g[j],qdata,distances,info->num_of_hash,info->N);
+				if (flag == 3) 	pos = hash_func_MSearch(g[j],qdata,distances,info->num_of_hash,info->N);
+				else 			pos = hash_func_Ham(g[j],bits,info->num_of_hash);
 				check = barriers[j][pos];
 				while (check != NULL) {
 					if (strcmp(check->key,temp->key) == 0) {
@@ -583,17 +641,20 @@ int matrix_compute_start_radius(int **distances, centroid *centroids, int k) {
 		mindistance = distances[(int)(intptr_t)centroids[0].center][(int)(intptr_t)centroids[1].center-(int)(intptr_t)centroids[0].center-1];
 	else if (centroids[0].center > centroids[1].center)  
 		mindistance = distances[(int)(intptr_t)centroids[1].center][(int)(intptr_t)centroids[0].center-(int)(intptr_t)centroids[1].center-1];
+	else mindistance = 0;
 	for (i=0; i < (k - 1); i++) {
 		if (centroids[i+1].center < centroids[i].center)  
 			distance1 = distances[(int)(intptr_t)centroids[i+1].center][(int)(intptr_t)centroids[i].center-(int)(intptr_t)centroids[i+1].center-1];
 		else if (centroids[i+1].center > centroids[i].center)  
 			distance1 = distances[(int)(intptr_t)centroids[i].center][(int)(intptr_t)centroids[i+1].center-(int)(intptr_t)centroids[i].center-1];
+		else distance1 = 0;
 		if (distance1 < mindistance)   mindistance = distance1;
 		for (j=(i + 2); j < k; j++) {
 			if (centroids[i].center < centroids[j].center)  	
 				distance2 = distances[(int)(intptr_t)centroids[i].center][(int)(intptr_t)centroids[j].center-(int)(intptr_t)centroids[i].center-1];
 			else if (centroids[i].center > centroids[j].center)  
 				distance2 = distances[(int)(intptr_t)centroids[j].center][(int)(intptr_t)centroids[i].center-(int)(intptr_t)centroids[j].center-1];
+			else distance2 = 0;
 			if (distance2 < mindistance)  mindistance = distance2;
 		}
 	}
@@ -635,7 +696,7 @@ double matrix_compute_objective_function(pcluster clusters, int **distances, int
 		center = clusters[i].center;
 		/**For each item in cluster**/
 		while (temp != NULL) {
-			id = make_item(temp->key) - 1;
+			id = temp->position;
 			if (id < (int)(intptr_t)center.center)  J += distances[id][(int)(intptr_t)center.center-id-1];
 			else if (id > (int)(intptr_t)center.center)  J += distances[(int)(intptr_t)center.center][id-(int)(intptr_t)center.center-1];
 			temp = temp->next;

@@ -49,6 +49,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id,
 			temp = malloc(sizeof(chain));
 			temp->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->key,key);
+			temp->position = position;
 			temp->value = NULL;	
 			temp->p = NULL;
 		}
@@ -109,6 +110,7 @@ void insert_chain(char * key, void *v, chainp *pointer, int flag, int d, int id,
 			temp->next = malloc(sizeof(chain));
 			temp->next->key = malloc((strlen(key)+1)*sizeof(char));
 			strcpy(temp->next->key ,key);
+			temp->next->position = position;
 			temp->next->p = NULL;
 			temp->next->value = NULL;
 		}
@@ -135,23 +137,7 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 	centroid center;
 	center.center = (void *)-1;
 	temp = *b;
-	if(!flag)
-	{
-		uint64_t num1, num2;
-		char *end;
-		char *q = (char *)qdata;
-		int diff = 0;
-		num2 = strtoull(q,&end,2);
-		while (temp != NULL)
-		{
-			num1 = *(temp->value);   
-			diff = distance_Hamming(num1,num2);
-			if (diff <= R) 	insert_points(list,temp->key,diff,-1,center,0);
-			temp = temp->next;
-		}
-	}
-	else if(flag == 3)
-	{
+	if((flag == 0) || (flag == 3)) {
 		int *q = (int *)qdata;
 		int diff = -1, position;
 		while (temp != NULL)
@@ -161,13 +147,12 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 				if (diff == -1)	(*all)++;
 				break;
 			}
-			position = make_item(temp->key);
-			diff = q[position-1];
-			if (diff <= R) 
-			{
+			position = temp->position;
+			diff = q[position];
+			if (diff <= R) {
 				if (done == 0)	done = 1;
 				/**Insert in cluster**/
-				duplicate = insert_points(list,temp->key,diff,-1,center,position-1);
+				duplicate = insert_points(list,temp->key,diff,-1,center,position);
 				/**If this item is already in this cluster don't insert it again**/
 				if (duplicate == 1) {
 					temp = temp->next;
@@ -181,8 +166,7 @@ int search_chain_NNR(chainp *b, void * qdata, double R, pointp *list, chainp *ba
 			temp = temp->next;
 		}
 	}
-	else
-	{
+	else {
 		double diff = -1.0;
 		double *q = (double *)qdata;
 		int exists = 0, position;
