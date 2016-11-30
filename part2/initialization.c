@@ -6,34 +6,26 @@
 #include "structure.h"
 
 int intbinarySearch(int Nk, int search, int *array) {
-	int first = 0;
-	int last = Nk;
-	int middle = (first+last)/2;
+	int first = 0, last = Nk, middle;
+	middle = (first+last)/2;
 	if (search == 0)  return search;
 	while (first <= last) {
-		if (array[middle] < search)
-			first = middle + 1;    
-		else if (array[middle-1] < search && search <= array[middle])
-			break;
-		else
-			last = middle - 1;
+		if (array[middle] < search) first = middle + 1;    
+		else if (array[middle-1] < search && search <= array[middle]) break;
+		else last = middle - 1;
 		middle = (first + last)/2;
 	}
 	return middle; 
 }
 
 int doublebinarySearch(int Nk, double search, double *array) {
-	int first = 0;
-	int last = Nk;
-	int middle = (first+last)/2;
+	int first = 0, last = Nk, middle;
+	middle = (first+last)/2;
 	if (search == 0)  return search;
 	while (first <= last) {
-		if (array[middle] < search)
-			first = middle + 1;    
-		else if (array[middle-1] < search && search <= array[middle])
-			break;
-		else
-			last = middle - 1;
+		if (array[middle] < search) first = middle + 1;    
+		else if (array[middle-1] < search && search <= array[middle]) break;
+		else last = middle - 1;
 		middle = (first + last)/2;
 	}
 	return middle; 
@@ -54,22 +46,49 @@ pj_info *sortArray(pj_info *array, int N) {
 	return array;
 }
 
-centroid *matrix_init_krandom(pinfo info) {
-	int i;
+centroid *matrix_init_krandom(pinfo info, int **distances, int n) {
+	int i, j, id, *qdata, flag;
 	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
 	for (i=0; i < info->k; i++) {
+		flag = 1;
+		while (flag == 1) {
+			flag = 0;
+			centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * n);
+			for (j=0; j < i; j++) {
+				if (centroids[i].center == centroids[j].center) flag = 1;
+			}
+			if (flag == 0)  break;
+		}
 		centroids[i].info = malloc(info->N*sizeof(int));
-		centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * info->N);
+		id = (int)(intptr_t)centroids[i].center;
+		qdata = (int *)centroids[i].info;
+		for (j=0; j < id; j++) qdata[j] = distances[j][id-j-1];
+		qdata[id] = 0;
+		for (j=(id+1); j < n; j++) qdata[j] = distances[id][j-id-1];
 	}
 	return centroids;
 }
 
-centroid *vector_init_krandom(pinfo info) {
-	int i;
+centroid *vector_init_krandom(pinfo info, double **distances, int n) {
+	int i, j, id, flag;
+	double *qdata;
 	centroid *centroids = malloc((info->k)*sizeof(centroid)); 
 	for (i=0; i < info->k; i++) {
+		flag = 1;
+		while (flag == 1) {
+			flag = 0;
+			centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * n);
+			for (j=0; j < i; j++) {
+				if (centroids[i].center == centroids[j].center) flag = 1;
+			}
+			if (flag == 0)  break;
+		}
 		centroids[i].info = malloc(info->N*sizeof(double));
-		centroids[i].center = (void *)(intptr_t)((rand() / (RAND_MAX + 1.0)) * info->N);
+		id = (int)(intptr_t)centroids[i].center;
+		qdata = (double *)centroids[i].info;
+		for (j=0; j < id; j++) qdata[j] = distances[j][id-j-1];
+		qdata[id] = 0;
+		for (j=(id+1); j < n; j++) qdata[j] = distances[id][j-id-1];
 	}
 	return centroids;
 }

@@ -48,10 +48,10 @@ pinfo get_config_info(FILE *fc, int N) {
 	else {
 		for (i=0; i<(lines-1); i++) {
 			fscanf(fc, "%s %d", infoword, &temp);
-			if (strcmp(infoword,"number_of_hash_functions:") == 0) info->num_of_hash = temp;
-			else if (strcmp(infoword,"number_of_hash_tables:") == 0) info->L = temp;
-			else if (strcmp(infoword,"clarans_set_fraction:") == 0) info->fraction = temp;
-			else if (strcmp(infoword,"clarans_iterations:") == 0) info->iterations = temp;
+			if (strcmp(infoword,"number_of_hash_functions:") == 0) 		info->num_of_hash = temp;
+			else if (strcmp(infoword,"number_of_hash_tables:") == 0) 	info->L = temp;
+			else if (strcmp(infoword,"clarans_set_fraction:") == 0) 	info->fraction = temp;
+			else if (strcmp(infoword,"clarans_iterations:") == 0) 		info->iterations = temp;
 		}
 		if (info->num_of_hash == 0)  info->num_of_hash = 4;
 		if (info->L == 0)  info->L = 5;
@@ -67,7 +67,7 @@ pinfo get_config_info(FILE *fc, int N) {
 void user_choice(int *ini, int *assi, int *upd, int *clara) {
 	char answer[3];
 	int counter;
-	printf("Choose specific algorithms to be run? Y or N?  ");
+	printf("Choose specific algorithms? Y or N?  ");
 	scanf("%s",answer);
 	/**If user answered positively**/
 	if ((strcmp(answer,"Y") == 0) || (strcmp(answer,"y") == 0)) {
@@ -118,11 +118,10 @@ char *inputString(FILE *fp, size_t size) {
 	int ch;
 	size_t len = 0;
 	str = realloc(NULL,size*sizeof(char));
-	if(!str)  	return str;
+	if(!str)  return str;
 	while ((ch = fgetc(fp)) != EOF && ch != '\n') {
 		str[len++] = ch;
-		if(len == size) 
-		{
+		if(len == size) {
 			str = realloc(str,(size += (MAX_LINE / 2))*sizeof(char));
 			if(!str) 	return str;
 		}

@@ -42,6 +42,66 @@ hash_table *vector_insert_hash(hash_table *htable, ghashp *g, pinfo info, FILE *
 	return htable;
 }
 
+hash_table vector_one_hash(hash_table htable, ghashp *g, pinfo info, FILE *fp, int n, int *insert, int flag) {
+	int i, pos, euclID, position = 0, position1 = 0;
+	char eucldata[MAX_LINE], token[100], item[ITEM_ID];
+	/**Go back to start and read first and second line of input_file**/
+	fseek(fp,0,SEEK_SET);
+    fgets(eucldata,MAX_LINE,fp);	
+	fgets(eucldata,MAX_LINE,fp);	
+	/**Allocate array to store coordinates**/	
+	double *p = malloc(info->d * sizeof(double));
+	/**fscanf will return itemK in item**/
+	while(fscanf(fp,"%s",item) != EOF) {
+		/**Read coordinates**/
+		for(i=0; i < info->d; i++) {
+			fscanf(fp,"%s",token);	
+			p[i] = atof(token);		
+		}
+		if (flag == 1) {
+			if (n > 0) {
+				for (i=0; i < n; i++) {
+					if (insert[i] == position) {
+						euclID = hash_func_Eucl(g[0],p,info->num_of_hash,info->d);
+						euclID = abs(euclID);
+						pos = mod(euclID,htable.size);
+						insert_chain(item,p,&(htable.table[pos]),flag,info->d,euclID,position1);
+						position1++;
+						break;
+					}
+				}
+				if (n == (position1 - 1)) break;
+			}
+			else {
+				euclID = hash_func_Eucl(g[0],p,info->num_of_hash,info->d);
+				euclID = abs(euclID);
+				pos = mod(euclID,htable.size);
+				insert_chain(item,p,&(htable.table[pos]),flag,info->d,euclID,position);
+			}
+		}
+		else {
+			if (n > 0) {
+				for (i=0; i < n; i++) {
+					if (insert[i] == position) {
+						pos = hash_func_Cos(g[0],p,info->num_of_hash,info->d);
+						insert_chain(item,p,&(htable.table[pos]),flag,info->d,0,position1);
+						position1++;
+						break;
+					}
+				}
+				if (n == (position1 - 1)) break;
+			}
+			else {
+				pos = hash_func_Cos(g[0],p,info->num_of_hash,info->d);
+				insert_chain(item,p,&(htable.table[pos]),flag,info->d,0,position);
+			}
+		}
+		position++;
+	}
+	free(p);
+	return htable;
+}
+
 hash_table *hamming_insert_hash(hash_table *htable, ghashp *g, FILE *fp, pinfo info) {
 	int i, position = 0, pos;
 	char ms[14], space[10], item[ITEM_ID], data[65];
@@ -59,24 +119,61 @@ hash_table *hamming_insert_hash(hash_table *htable, ghashp *g, FILE *fp, pinfo i
 }
 
 hash_table hamming_one_hash(hash_table htable, ghashp *g, FILE *fp, pinfo info, int *insert, int n) {
-	int i, position = 0, pos;
+	int i, position1 = 0, position2 = 0, position3 = 0, pos;
 	char ms[14], space[10], item[ITEM_ID], data[65];
 	/**Go back to the start**/
 	fseek(fp,0,SEEK_SET);
 	fscanf(fp,"%s%s[^\n]",ms,space);
-	while (fscanf(fp,"%s %s[^\n]",item,data) != EOF) {   
-		for (i=0; i < n; i++) {
-			if(insert[i] == position) {
-				pos = hash_func_Ham(g[i],data,info->num_of_hash);
-				insert_chain(item,data,&(htable.table[pos]),0,0,0,position);
-				break;
+	while (fscanf(fp,"%s %s[^\n]",item,data) != EOF) { 
+		if (n > 0) {  
+			for (i=0; i < n; i++) {
+				if (insert[i] == position3) {
+					pos = hash_func_Ham(g[0],data,info->num_of_hash);
+					insert_chain(item,data,&(htable.table[pos]),0,0,0,position1);
+					position1++;
+					break;
+				}
 			}
+			if (n == (position1 - 1)) break;
+			position3++;
 		}
-		position++;
+		else {
+			pos = hash_func_Ham(g[0],data,info->num_of_hash);
+			insert_chain(item,data,&(htable.table[pos]),0,0,0,position2);
+			position2++;
+		}
 	}
 	return htable;
 }
 
+
+hash_table matrix_one_hash(hash_table htable, ghashp *g, int **distances, int *insert, pinfo info, int n) {
+	int i, j, pos, position = 0;
+	char itemID[ITEM_ID];
+	if (n > 0) {
+		/**For each item**/
+		for(i=0; i < info->N; i++) {
+			for (j=0; j < n; j++) {
+				if (insert[j] == i) {
+					sprintf(itemID,"item%d",i+1);
+					pos = hash_func_Matrix(g[0],position,distances,info->num_of_hash,info->N);
+					insert_chain(itemID,NULL,&(htable.table[pos]),3,0,0,position);
+					position++;
+					break;
+				}
+			}
+			if (n == (position - 1)) break;
+		}
+	}
+	else {
+		for(i=0; i < info->N; i++) {
+			sprintf(itemID,"item%d",i+1);
+			pos = hash_func_Matrix(g[0],i,distances,info->num_of_hash,info->N);
+			insert_chain(itemID,NULL,&(htable.table[pos]),3,0,0,i);
+		}
+	}
+	return htable;
+}
 
 hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, pinfo info) {
 	int i, j, pos;
@@ -84,7 +181,7 @@ hash_table *matrix_insert_hash(hash_table *htable, ghashp *g, int **distances, p
 	/**For each hash table**/
 	for(i = 0; i < info->L; i++) { 
 		/**For each item**/
-		for(j = 0; j < info->N; j++)	{
+		for(j = 0; j < info->N; j++) {
 			sprintf(itemID,"item%d",j+1);
 			pos = hash_func_Matrix(g[i],j,distances,info->num_of_hash,info->N);
 			insert_chain(itemID,NULL,&(htable[i].table[pos]),3,0,0,j);
@@ -218,7 +315,7 @@ pcluster vector_simplest_assignment(pcluster clusters, double **distances, hash_
 }
 
 pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table *htable, ghashp *g, centroid *centroids, pinfo info, int flag) {
-	int i, j, radii, done, all, previous, pos, size;
+	int i, j, radii, done, all, previous, pos, size, diff, previousdiff;
 	char **bits, *tempc;
 	chainp **barriers;
 	/**L tables of pointers**/
@@ -243,6 +340,7 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 	done = all = 0;
 	/**Range Search**/
 	do {
+		previousdiff = diff;
 		/**For each cluster**/
 		previous = done;
 		for (i=0; i < info->k; i++) {
@@ -262,7 +360,8 @@ pcluster matrix_reverse_approach(pcluster clusters, int **distances, hash_table 
 			clusters[i].center = centroids[i];
 		}
 		radii *= 2;
-	}while ((done - previous > 1) && (all < info->L));
+		diff = done-previous;
+	}while ((done - previous > info->L) && (all < 1) && (diff != previousdiff));
 	/**If an item is in more than one clusters**/
 	clusters = remove_clusters_duplicates(clusters,info->k);
 	/**Find second best cluster so far for lsh items**/

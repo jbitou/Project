@@ -4,15 +4,16 @@
 #include <math.h>
 #include "structure.h"
 
-
-centroid *matrix_pam_update(pcluster clusters, centroid *centroids, double J, int **distances, pinfo info) {
-	int i, j, z, id, m, ci, t, flag, tdistance, *arr, *qdata;
-	double SDj, prevJ, J1;
+centroid *vector_pam_update(pcluster clusters, centroid *centroids, double J, double **distances, pinfo info, int n) {
+	int i, j, z, id, m, ci, t, flag, exists;
+	double SDj, prevJ, J1, tdistance, *arr, *qdata;
 	pointp temp,temp1;
-	centroid newcenter;
+	centroid *newcenter = malloc(info->k*sizeof(centroid));
 	/**For each centroid**/
 	for (i=0; i < info->k; i++) {
 		m = (int)(intptr_t) centroids[i].center;
+		newcenter[i].info = malloc(n*sizeof(double));
+		newcenter[i].center = (void *)(intptr_t)-1;
 		/**Swap with all non-centroids**/
 		for (j=0; j < info->k; j++) {	
 			temp = clusters[j].items;
@@ -55,26 +56,125 @@ centroid *matrix_pam_update(pcluster clusters, centroid *centroids, double J, in
 				}
 				J1 = J + SDj;
 				if (J1 < prevJ) {
-					qdata = malloc((info->N)*sizeof(int));
-					for (z=0; z < t; z++) qdata[z] = distances[z][t-z-1];
-					qdata[t] = 0;
-					for (z=(t+1); z < info->N; z++) qdata[z] = distances[t][z-t-1];
-					/**Insert medoid's info to newcenter**/
-					newcenter.center = (void *)(intptr_t)t;
-					newcenter.info = malloc(info->N*sizeof(int));
-					arr = (int *)newcenter.info;
-					for (z=0; z < info->N; z++) arr[z] = qdata[z];
-					free(qdata);
-					/**Change centroid**/
-					centroids[i].center = newcenter.center;
-					arr = (int *)centroids[i].info;
-					for (z=0; z < info->N; z++) arr[z] = ((int *)newcenter.info)[z];
-					free(newcenter.info);
+					exists = 0;
+					for (z=0; z < info->k; z++) {
+						if (newcenter[z].center == (void *)(intptr_t)t) {
+							exists = 1;
+							break;
+						}
+					}
+					if (exists == 0) {
+						qdata = malloc((n)*sizeof(double));
+						for (z=0; z < t; z++) qdata[z] = distances[z][t-z-1];
+						qdata[t] = 0;
+						for (z=(t+1); z < n; z++) qdata[z] = distances[t][z-t-1];
+						/**Insert medoid's info to newcenter**/
+						newcenter[i].center = (void *)(intptr_t)t;
+						arr = (double *)newcenter[i].info;
+						for (z=0; z < n; z++) arr[z] = qdata[z];
+						free(qdata);
+					}
 				}
 				temp = temp->next;
 			}
 		}
 	}
+	/**Change centroid**/
+	for (i=0; i < info->k; i++) {
+		if (newcenter[i].center == (void *)(intptr_t)-1) continue;
+		centroids[i].center = newcenter[i].center;
+		arr = (double *)centroids[i].info;
+		for (z=0; z < n; z++) arr[z] = ((double *)newcenter[i].info)[z];
+	}
+	for (i=0; i < info->k; i++) free(newcenter[i].info);
+	free(newcenter);
+	return centroids;
+}
+
+centroid *matrix_pam_update(pcluster clusters, centroid *centroids, double J, int **distances, pinfo info, int n) {
+	int i, j, z, id, m, ci, t, flag, tdistance, *arr, *qdata, exists;
+	double SDj, prevJ, J1;
+	pointp temp,temp1;
+	centroid *newcenter = malloc(info->k*sizeof(centroid));
+	/**For each centroid**/
+	for (i=0; i < info->k; i++) {
+		m = (int)(intptr_t) centroids[i].center;
+		newcenter[i].info = malloc(n*sizeof(int));
+		newcenter[i].center = (void *)(intptr_t)-1;
+		/**Swap with all non-centroids**/
+		for (j=0; j < info->k; j++) {	
+			temp = clusters[j].items;
+			/**We swap  m with t**/
+			while (temp != NULL) {
+				prevJ = J1;
+				SDj = flag = 0; 
+				t = temp->position;
+				/**If t is a centroid break**/
+				for (z=0; z < info->k; z++) {
+					if (t == (int)(intptr_t)centroids[z].center) {
+						flag = 1;
+						break;
+					}
+				}
+				if (flag == 1) {
+					temp = temp->next;
+					continue;
+				}
+				/**Run for all items**/
+				for (z=0; z < info->k; z++) {	
+					temp1 = clusters[z].items;
+					ci = (int)(intptr_t)clusters[z].center.center;
+					/**For each item in the cluster j-if we swap it with m**/
+					while (temp1 != NULL) {
+						id = temp1->position;
+						if (id < t)  		tdistance = distances[id][t-id-1];
+						else if (id > t) 	tdistance = distances[t][id-t-1];
+						if (ci == m)  {
+							/**If dist(i,t) > dist(i,c')**/
+							if (tdistance > temp1->secdistance)	SDj += temp1->secdistance - temp1->mindistance;
+							else  SDj += tdistance - temp1->mindistance;
+						}
+						else {
+							/**if dist(i,t) < dist(i,c(i))**/
+							if (tdistance < temp1->mindistance)	SDj += tdistance - temp1->mindistance;
+						}
+						temp1 = temp1->next;
+					}
+				}
+				J1 = J + SDj;
+				if (J1 < prevJ) {
+					exists = 0;
+					for (z=0; z < info->k; z++) {
+						if (newcenter[z].center == (void *)(intptr_t)t) {
+							exists = 1;
+							break;
+						}
+					}
+					if (exists == 0) {
+						qdata = malloc((n)*sizeof(int));
+						for (z=0; z < t; z++) qdata[z] = distances[z][t-z-1];
+						qdata[t] = 0;
+						for (z=(t+1); z < n; z++) qdata[z] = distances[t][z-t-1];
+						/**Insert medoid's info to newcenter**/
+						newcenter[i].center = (void *)(intptr_t)t;
+						arr = (int *)newcenter[i].info;
+						for (z=0; z < n; z++) arr[z] = qdata[z];
+						free(qdata);
+					}
+				}
+				temp = temp->next;
+			}
+		}
+	}
+	/**Change centroid**/
+	for (i=0; i < info->k; i++) {
+		if (newcenter[i].center == (void *)(intptr_t)-1) continue;
+		centroids[i].center = newcenter[i].center;
+		arr = (int *)centroids[i].info;
+		for (z=0; z < n; z++) arr[z] = ((int *)newcenter[i].info)[z];
+	}
+	for (i=0; i < info->k; i++) free(newcenter[i].info);
+	free(newcenter);
 	return centroids;
 }
 
@@ -221,14 +321,12 @@ cpair sortPairs(cpair array, int N) {
 }
 
 centroid *matrix_update_clarans(pcluster clusters, centroid *centroids, cpair pairs, int **distances, int J, pinfo info) {
-	int i, j, z, y, SDj, J1, ci, m, t, id, pos, tdistance, *arr, Jc, newm, in,change;
+	int i, j, z, y, SDj, J1, ci, m, t, id, pos, tdistance, *arr, newm, in,change;
 	pointp temp;
 	centroid newcenter;
 	pairs = sortPairs(pairs, info->fraction);	
-	for (i=0; i< info->fraction; i++)	printf("pairs: (%d,%d)\n",(int)(intptr_t)pairs[i].m.center,(int)(intptr_t)pairs[i].t.center);
 	i = 0;
 	while (i < info->fraction) {
-		Jc  = J;
 		SDj = in = change = 0;
 		m = (int)(intptr_t)pairs[i].m.center;
 		newcenter.info = malloc((info->N)*sizeof(int));
@@ -264,10 +362,9 @@ centroid *matrix_update_clarans(pcluster clusters, centroid *centroids, cpair pa
 					temp = temp->next;
 				}
 			}	
-			J1 = Jc + SDj;
-			if (J1 < Jc) {
+			J1 = J + SDj;
+			if (J1 < J) {
 				change = 1;
-				Jc = J1;
 				newcenter.center =  pairs[z].t.center;
 				arr = (int *)newcenter.info;
 				for (y=0; y < info->N; y++) arr[y] = ((int *)pairs[z].t.info)[y];
@@ -293,13 +390,12 @@ centroid *matrix_update_clarans(pcluster clusters, centroid *centroids, cpair pa
 
 centroid *vector_update_clarans(pcluster clusters, centroid *centroids, cpair pairs, double **distances, double J, pinfo info) {
 	int i, j, z, y, ci, m, t, id, pos, newm, in,change;
-	double tdistance, *arr, Jc, SDj, J1;
+	double tdistance, *arr, SDj, J1;
 	pointp temp;
 	centroid newcenter;
 	pairs = sortPairs(pairs, info->fraction);
 	i = 0;
 	while (i < info->fraction) {
-		Jc  = J;
 		SDj = in = change = 0;
 		m = (int)(intptr_t)pairs[i].m.center;
 		newcenter.info = malloc((info->N)*sizeof(double));
@@ -335,10 +431,9 @@ centroid *vector_update_clarans(pcluster clusters, centroid *centroids, cpair pa
 					temp = temp->next;
 				}
 			}	
-			J1 = Jc + SDj;
-			if (J1 < Jc) {
+			J1 = J + SDj;
+			if (J1 < J) {
 				change = 1;
-				Jc = J1;
 				newcenter.center =  pairs[z].t.center;
 				arr = (double *)newcenter.info;
 				for (y=0; y < info->N; y++) arr[y] = ((double *)pairs[z].t.info)[y];
@@ -457,11 +552,10 @@ int compare_centroids(centroid *centroids, centroid *previous, int k) {
 }
 
 cpair matrix_select_pairs(centroid *centroids, int **distances, pinfo info) {
-	int i, j, z, x, index, item, again, *arr, *qdata;
+	int i = 0, j, z, x, index, item, again, *arr, *qdata;
 	cpair pairs;
 	pairs = malloc(info->fraction*sizeof(pair));
 	/**|Q| pairs**/
-	i = 0;
 	while (i < info->fraction) {
 		/**Pick a uniformly distributed integer x**/
 		x = (rand() / (RAND_MAX + 1.0)) * (info->k*info->N);
@@ -499,12 +593,11 @@ cpair matrix_select_pairs(centroid *centroids, int **distances, pinfo info) {
 }
 
 cpair vector_select_pairs(centroid *centroids, double **distances, pinfo info) {
-	int i, j, z, x, index, item, again;
+	int i = 0, j, z, x, index, item, again;
 	double *arr, *qdata;
 	cpair pairs;
 	pairs = malloc(info->fraction*sizeof(pair));
 	/**|Q| pairs**/
-	i = 0;
 	while (i < info->fraction) {
 		/**Pick a uniformly distributed integer x**/
 		x = (rand() / (RAND_MAX + 1.0)) * (info->k*info->N);

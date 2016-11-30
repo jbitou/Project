@@ -1,3 +1,3 @@
 #include "structure.h"
 
-double compute_silhouette(pcluster, void *, pinfo, int);
+double compute_silhouette(pcluster, void *, pinfo, int, FILE *);

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include "distances.h"
+#define ITEM_ID 15
 
 /**Chains info**/
 typedef struct chain_node *chainp;
@@ -45,8 +46,9 @@ void print_chain(chainp);
 void destroy_chain(chainp *, int);
 int insert_points(pointp *, char *, double, double, centroid, int);
 int chain_length(pointp);
+void print_cluster(int, pointp, FILE *);
 void print_points(pointp);
 void delete_from_chain(pointp *, char *);
+char *get_centroid_key(pointp);
 void destroy_points(pointp *);
 pointp clone(pointp);
-int make_item(char *);

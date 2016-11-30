@@ -9,6 +9,7 @@ typedef struct config_info {
 	int iterations;
 	int N;
 	int d;
+	int complete;
 }conf_info;
 
 int command_processing(int);

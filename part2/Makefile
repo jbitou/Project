@@ -1,9 +1,9 @@
-OBJS 	= medoids.o chain.o hash.o distances.o matrixMedoid.o inputProcessing.o initialization.o assignment.o update.o silhouette.o algorithms.o vectorMedoid.o hammingMedoid.o
-SOURCE	= medoids.c chain.c hash.c distances.c matrixMedoid.c inputProcessing.c initialization.c assignment.c update.c silhouette.c algorithms.c vectorMedoid.c hammingMedoid.c
+OBJS 	= main.o chain.o hash.o distances.o matrixMedoid.o inputProcessing.o initialization.o assignment.o update.o silhouette.o algorithms.o vectorMedoid.o hammingMedoid.o
+SOURCE	= main.c chain.c hash.c distances.c matrixMedoid.c inputProcessing.c initialization.c assignment.c update.c silhouette.c algorithms.c vectorMedoid.c hammingMedoid.c
 HEADER  = medoids.h chain.h hash.h distances.h medoids.h inputProcessing.h structure.h silhouette.h algorithms.h
 OUT  	= medoids
 CC	    = gcc
-FLAGS   = -g -c 	
+FLAGS   = -g -c 
 # -g option enables debugging mode 
 # -c flag generates object code for separate files
 
@@ -11,8 +11,8 @@ all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) -lm
 
 # create/compile the individual files >>separately<< 
-medoids.o: medoids.c medoids.h
-	$(CC) $(FLAGS) medoids.c
+main.o: main.c medoids.h
+	$(CC) $(FLAGS) main.c
 
 chain.o: chain.c chain.h distances.h
 	$(CC) $(FLAGS) chain.c

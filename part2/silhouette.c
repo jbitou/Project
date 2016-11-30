@@ -4,12 +4,13 @@
 #include <math.h>
 #include "silhouette.h"
 
-double compute_silhouette(pcluster clusters, void *dis, pinfo info, int flag) {
+double compute_silhouette(pcluster clusters, void *dis, pinfo info, int flag, FILE *fe) {
 	int i, j, **distances, id1, id2, idnext, s, c;
 	double **distancesv, si, a, b, sum, suma, sumb, n, max, average, total = 0.0;
 	pointp object, temp, second;
 	if ((flag == 3) || (flag == 0))		 distances = (int **)dis;
 	else if ((flag == 1) || (flag == 2)) distancesv = (double **)dis;
+	fprintf(fe,"Silhouette: [");
 	/**For every cluster**/
 	for (i=0; i < info->k; i++) {
 		object = clusters[i].items;
@@ -83,9 +84,10 @@ double compute_silhouette(pcluster clusters, void *dis, pinfo info, int flag) {
 		}
 		/**Average of points in cluster i**/
 		n = chain_length(clusters[i].items);
-		average = sum / n;
+		if (n != 0) average = sum / n;
+		else average = 0;
 		total += average;
-		printf("Average for cluster %.5lf\n",average);
+		fprintf(fe,"%.5lf, ",average);
 	}
 	return total;
 }

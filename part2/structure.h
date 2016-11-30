@@ -18,8 +18,8 @@ typedef struct cluster_node {
 int binarySearch(int, int, int *);
 int doublebinarySearch(int, double, double *);
 pj_info *sortArray(pj_info *, int);
-centroid *matrix_init_krandom(pinfo);
-centroid *vector_init_krandom(pinfo);
+centroid *matrix_init_krandom(pinfo, int **, int);
+centroid *vector_init_krandom(pinfo, double **, int);
 centroid *matrix_init_kmedoids(int **, pinfo, int);
 centroid *vector_init_kmedoids(double **, pinfo, int);
 centroid *matrix_init_concentrate(int **, pinfo, int);
@@ -30,6 +30,8 @@ hash_table *vector_insert_hash(hash_table *, ghashp *, pinfo, FILE *, int);
 hash_table *matrix_insert_hash(hash_table *, ghashp *, int **, pinfo);
 hash_table *hamming_insert_hash(hash_table *, ghashp *, FILE *, pinfo);
 hash_table hamming_one_hash(hash_table, ghashp *, FILE *, pinfo, int *, int);
+hash_table matrix_one_hash(hash_table, ghashp *, int **, int *, pinfo, int);
+hash_table vector_one_hash(hash_table, ghashp *, pinfo, FILE *, int , int *, int);
 
 /**Assignment functions**/
 pcluster matrix_simplest_assignment(pcluster, int **, hash_table, centroid *, int);
@@ -47,7 +49,8 @@ double matrix_compute_objective_function(pcluster, int **, int);
 double vector_compute_objective_function(pcluster, double **, int);
 
 /**Update functions**/
-centroid *matrix_pam_update(pcluster, centroid *, double, int **, pinfo);
+centroid *vector_pam_update(pcluster, centroid *, double, double **, pinfo, int);
+centroid *matrix_pam_update(pcluster, centroid *, double, int **, pinfo, int);
 centroid *matrix_update_alaloyds(pcluster, centroid *, double, int **, pinfo);
 centroid *vector_update_alaloyds(pcluster, centroid *, double, double **, pinfo);
 centroid *matrix_update_clarans(pcluster, centroid *, cpair, int **, int, pinfo);
