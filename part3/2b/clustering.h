@@ -1,0 +1,17 @@
+#include "points_list.h"
+#include "distanceDRMSD.h"
+
+
+/**Clusters info**/
+typedef struct cluster_node *pcluster;
+typedef struct cluster_node {
+	pointp items;
+	centroid center;
+}cluster;
+
+pcluster clustering(double **, int, int, int);
+centroid *vector_init_kmeans(double **, int, int, int);
+int doublebinarySearch(int, double, double *);
+pcluster vector_simplest_assignment(pcluster, double **, centroid *, int, int, int);
+double vector_compute_objective_function(pcluster, double **, int, int);
+double *calculate_mean(pointp, double **, int);

@@ -3,15 +3,15 @@
 #include <string.h>
 #include <time.h>
 #include "inputProcessing.h"
-#include "distanceDRMSD.h"
+#include "clustering.h"
 #define EXPERK 10
 
 int main (int argc, char **argv) {
 	FILE *fp, *fe;
 	char read[12];
 	int i, j, flag, input, T, r, numConform, N, size, k, bestk, counter = 0;
-	double **data, v1, v2, v3, silhouette, previousS, bestS;
-	dinfo *distances;
+	double **data, **vectors, v1, v2, v3, silhouette, previousS, bestS;
+	dinfo **alldistances, *distances;
 	srand(time(NULL));
 	//pcluster clusters, bestclusters;
 	if (command_processing(argc) == -1)	return -1;
@@ -50,11 +50,23 @@ int main (int argc, char **argv) {
 		data[i][2] = v3;
 		i++;
 	}
-	r = N;
-	distances = create_distances(data,numConform,N,r,T);
-	//for (i=0; i < size; i++)	printf("[%lf,%lf,%lf]\n",data[i][0],data[i][1],data[i][2]);
-	for (i=0; i < size; i++)	free(data[i]);
+	r = N/2+1;
+	alldistances = get_all_distances(data,numConform,N);
+	distances = create_distances(alldistances,data,numConform,N,r,T);
+	for (i=0; i < r; i++) 
+		printf("rdis[%d] -> p1 = %d, p2 = %d, distance = %lf\n",i,distances[i].point1,distances[i].point2,distances[i].distance);
+	vectors = create_vectors(alldistances,distances,numConform,N,r);
+	for (i=0; i < numConform; i++)  {
+		for (j=0; j < r; j++) 	printf("vectors[%d][%d] = %lf\n",i,j,vectors[i][j]);
+	}
+	clustering(vectors,numConform,r,2);
+	/**Free allocated memory**/
+	for (i=0; i < r; i++)	free(vectors[i]);
+	free(vectors);
 	free(distances);
+	for (i=0; i < numConform; i++)	free(alldistances[i]);
+	free(alldistances);
+	for (i=0; i < size; i++)	free(data[i]);
 	free(data);
 	fclose(fp);
 	fclose(fe);
