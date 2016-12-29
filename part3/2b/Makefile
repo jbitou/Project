@@ -1,6 +1,6 @@
-OBJS 	= main.o inputProcessing.o 
-SOURCE	= main.c inputProcessing.c 
-HEADER  = inputProcessing.h 
+OBJS 	= main.o inputProcessing.o distanceDRMSD.o
+SOURCE	= main.c inputProcessing.c  distanceDRMSD.c
+HEADER  = inputProcessing.h  distanceDRMSD.h
 OUT  	= drmsd
 CC	    = gcc
 FLAGS   = -g -c 
@@ -15,7 +15,10 @@ main.o: main.c inputProcessing.h
 	$(CC) $(FLAGS) main.c
 
 inputProcessing.o: inputProcessing.c inputProcessing.h
-	$(CC) $(FLAGS) inputProcessing.c	
+	$(CC) $(FLAGS) inputProcessing.c
+		
+distanceDRMSD.o: distanceDRMSD.c distanceDRMSD.h
+	$(CC) $(FLAGS) distanceDRMSD.c	
 			
 # clean house
 clean:
