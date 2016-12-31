@@ -15,8 +15,8 @@ typedef struct point_node {
 	pointp next;
 }point;
 
-int insert_points(pointp *, double, double, centroid, int);
-pointp clone_points(pointp);
+int insert_points(pointp *, double, double, centroid, int, int);
+pointp clone_points(pointp, int);
 int points_length(pointp);
 void destroy_points(pointp *);
 void printndestroy_points(pointp *, FILE *);
