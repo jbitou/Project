@@ -4,10 +4,10 @@
 #include "clustering.h"
 
 pcluster clustering(double **vectors, int numConform, int r, int k) {
-	int i, j, times = 0;
-	double J = 0.0, prevJ, *mean;
+	int i, j, diff, times = 0;
+	double J = 0.0;
 	pcluster clusters;
-	centroid *centroids;
+	centroid *centroids, *previous;
 	/**k-medoids++ initialization**/
 	centroids = vector_init_kmeans(vectors,numConform,k,r);
 	for (i=0; i < k; i++) {
@@ -15,12 +15,16 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		for (j=0; j < r; j++) printf("%lf\t",centroids[i].vector[j]);
 		printf("\n");
 	}
-	/*do {
+	previous = malloc(k*sizeof(centroid));
+	for (i=0; i < k; i++)	previous[i].vector = malloc(r*sizeof(double));
+	do {
 		if (times > 0) {
-			prevJ = J;
-			for (i=0; i < k; i++) destroy_points(&(clusters[i].items));
+			for (i=0; i < k; i++) {
+				free(clusters[i].center.vector);
+				destroy_points(&(clusters[i].items));
+			}
 			free(clusters);
-		}*/
+		}
 		/**Allocate memory for clusters**/
 		clusters = malloc(k*sizeof(cluster));
 		for (i=0; i < k; i++) {
@@ -29,25 +33,33 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		}
 		/**Simplest assignemt**/
 		clusters = vector_simplest_assignment(clusters,vectors,centroids,numConform,r,k);
+		for (i=0; i < k; i++) {
+			printf("Cluster %d: ",i);
+			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
+			printf("\n");
+			print_points(clusters[i].items);
+		}
 		J = vector_compute_objective_function(clusters,vectors,r,k);
 		printf("J = %lf\n",J);	
-		mean = calculate_mean(clusters[0].items,vectors,r);
-		for (i=0; i < r; i++)	printf("%lf\t",mean[i]);
-		mean = calculate_mean(clusters[1].items,vectors,r);
-		for (i=0; i < r; i++)	printf("%lf\t",mean[i]);
-		printf("\n");
-		/**Update à la Lloyd’s**/
-		/*centroids = vector_update_alaloyds(clusters,centroids,J,data,N,k);
-		if (times == 0)	prevJ = J;	
+		for (i=0; i < k; i++) {
+			for (j=0; j < r; j++)	previous[i].vector[j] = centroids[i].vector[j];	
+		}
+		/**Lloyd’s update**/
+		centroids = vector_update_loyds(clusters,centroids,J,vectors,r,k);
+		for (i=0; i < k; i++) {
+			printf("NEW centroid = %d: ",centroids[i].center);
+			for (j=0; j < r; j++) printf("%lf\t",centroids[i].vector[j]);
+			printf("\n");
+		}
+		diff = compare_centroids(centroids,previous,r,k);	
 		times++;
-	}while ((J < prevJ) || (times == 1));*/
-	free(centroids);
+	}while (diff > 0);
 	for (i=0; i < k; i++) {
-		printf("Cluster's centroid %d: ",clusters[i].center.center);
-		for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
-		printf("\n");
-		print_points(clusters[i].items);
+		free(centroids[i].vector);
+		free(previous[i].vector);
 	}
+	free(centroids);
+	free(previous);
 	return clusters;
 }
 
@@ -57,7 +69,7 @@ centroid *vector_init_kmeans(double **vectors, int numConform, int totalk, int r
 	double min, max, *D, *P, *temp;
 	centroid *centroids = malloc(totalk*sizeof(centroid)); 
 	centroids[0].center = (rand() / (RAND_MAX + 1.0)) * numConform;
-	centroids[0].vector = malloc(r*sizeof(double));
+	for (i=0; i < totalk; i++) centroids[i].vector = malloc(r*sizeof(double));
 	for (i=0; i < r; i++) centroids[0].vector[i] = vectors[centroids[0].center][i];
 	/**Create k centroids**/
 	while (k < totalk) {
@@ -100,14 +112,11 @@ centroid *vector_init_kmeans(double **vectors, int numConform, int totalk, int r
 				k--;
 				break;
 			}
-		}		
+		}	
+		for (j=0; j < r; j++)	centroids[k].vector[j] = vectors[centroids[k].center][j];	
 		free(D);
 		free(P);
 		k++;
-	}
-	for (i=0; i < totalk; i++) {
-		centroids[i].vector = malloc(r*sizeof(double));
-		for (j=0; j < r; j++)	centroids[i].vector[j] = vectors[centroids[i].center][j];
 	}
 	return centroids;
 }
@@ -165,7 +174,7 @@ pcluster vector_simplest_assignment(pcluster clusters, double **vectors, centroi
 				}
 			}
 		}
-		insert_points(&(clusters[mincentroid].items),mindistance,seconddistance,centroids[secondcentroid],i);
+		insert_points(&(clusters[mincentroid].items),mindistance,seconddistance,centroids[secondcentroid],i,r);
 	}
 	for (i=0; i < k; i++) {
 		clusters[i].center.center = centroids[i].center;
@@ -189,6 +198,66 @@ double vector_compute_objective_function(pcluster clusters, double **vectors, in
 	return J;
 }
 
+centroid *vector_update_loyds(pcluster clusters, centroid *centroids, double J, double **vectors, int r, int k) {
+	int i, j, z, flag;
+	double tdistance, SDj, J1, *m, *ci, *mean;
+	centroid newcenter;
+	pointp temp;
+	/**For each cluster**/
+	for (i=0; i < k; i++) {
+		SDj = 0;
+		/**Calculate mean for this cluster**/
+		mean = calculate_mean(clusters[i].items,vectors,r);
+		printf("Mean: ");
+		for (j=0; j < r; j++)	printf("%lf\t",mean[j]);
+		printf("\n");
+		/**Insert mean to newcenter**/
+		newcenter.vector = malloc(r*sizeof(double));
+		for (j=0; j < r; j++)	newcenter.vector[j] = mean[j];	
+		m = malloc(r*sizeof(double));
+		for (j=0; j < r; j++)	m[j] = clusters[i].center.vector[j];
+		/**Check all items using clusters**/
+		for (j=0; j < k; j++) {
+			flag = 0;
+			ci = malloc(r*sizeof(double));	
+			/**Check if ci == m**/
+			for (z=0; z < r; z++) {
+				ci[z] = clusters[j].center.vector[z];	
+				if (m[z] != ci[z]) {
+					flag = 1;
+					break;
+				}
+			}
+			/**For each item in the cluster j**/
+			temp = clusters[j].items;
+			while (temp != NULL) {
+				tdistance = distance_Euclidean(newcenter.vector,vectors[temp->position],r);
+				if (!flag)  {
+					/**If dist(i,t) > dist(i,c')**/
+					if (tdistance > temp->secdistance)	SDj += temp->secdistance - temp->mindistance;
+					else  SDj += tdistance - temp->mindistance;
+				}
+				else {
+					/**if dist(i,t) < dist(i,c(i))**/
+					if (tdistance < temp->mindistance)	SDj += tdistance - temp->mindistance;
+				}
+				temp = temp->next;
+			}
+			free(ci);
+		}
+		J1 = J + SDj;
+		printf("J1 = %.10lf and J = %.10lf\n",J1,J);
+		/**If J' < J, then swap centroid with mean**/
+		if (J1 < J)	{
+			for (j=0; j < r; j++)	centroids[i].vector[j] = newcenter.vector[j];
+		}
+		free(m);
+		free(mean);
+		free(newcenter.vector);
+	}
+	return centroids;
+}
+
 double *calculate_mean(pointp items, double **vectors, int r) {
 	int i, length;
 	pointp temp;
@@ -205,5 +274,19 @@ double *calculate_mean(pointp items, double **vectors, int r) {
 		mean[i] = sum/length;
 	}
 	return mean;
+}
+
+
+int compare_centroids(centroid *centroids, centroid *previous, int r, int k) {
+	int i, j, diff = 0;
+	for (i=0; i < k; i++) {
+		for (j=0; j < r; j++) {
+			if (centroids[i].vector[j] != previous[i].vector[j]) {	
+				diff++;
+				break;
+			}
+		}
+	}
+	return diff;
 }
 

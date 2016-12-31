@@ -3,17 +3,17 @@
 #include <string.h>
 #include <time.h>
 #include "inputProcessing.h"
-#include "clustering.h"
+#include "silhouette.h"
 #define EXPERK 10
 
 int main (int argc, char **argv) {
 	FILE *fp, *fe;
 	char read[12];
-	int i, j, flag, input, T, r, numConform, N, size, k, bestk, counter = 0;
+	int i, j, input, T, r, numConform, N, size, k, bestk, counter = 0;
 	double **data, **vectors, v1, v2, v3, silhouette, previousS, bestS;
 	dinfo **alldistances, *distances;
 	srand(time(NULL));
-	//pcluster clusters, bestclusters;
+	pcluster clusters, bestclusters;
 	if (command_processing(argc) == -1)	return -1;
 	for (i=1; i < (argc - 1); i+=2) {
 		if (strcmp(argv[i],"-d") == 0)	input = i+1;
@@ -53,21 +53,66 @@ int main (int argc, char **argv) {
 	r = N/2+1;
 	alldistances = get_all_distances(data,numConform,N);
 	distances = create_distances(alldistances,data,numConform,N,r,T);
-	for (i=0; i < r; i++) 
-		printf("rdis[%d] -> p1 = %d, p2 = %d, distance = %lf\n",i,distances[i].point1,distances[i].point2,distances[i].distance);
 	vectors = create_vectors(alldistances,distances,numConform,N,r);
-	for (i=0; i < numConform; i++)  {
-		for (j=0; j < r; j++) 	printf("vectors[%d][%d] = %lf\n",i,j,vectors[i][j]);
+	previousS = -1.1;
+	while ((counter != -1) && (counter <= EXPERK)) {
+		if (k == numConform / 2)	break;
+		for (i=0; i < numConform; i++)  {
+			for (j=0; j < r; j++) 	printf("vectors[%d][%d] = %lf\n",i,j,vectors[i][j]);
+		}
+		clusters = clustering(vectors,numConform,r,k);
+		silhouette = compute_silhouette(clusters,vectors,r,numConform,k);
+		printf("Silhouette = %lf\n",silhouette);
+		if (silhouette > previousS)	{
+			if (counter != 0) {
+				for (i=0; i < bestk; i++) {
+					free(bestclusters[i].center.vector);
+					destroy_points(&(bestclusters[i].items));
+				 }
+				free(bestclusters);
+			}
+			counter++;
+			bestk = k;
+			bestS = silhouette;
+			bestclusters = malloc(k*sizeof(cluster));
+			for (i=0; i < k; i++)	{
+				bestclusters[i].center.vector = malloc(r*sizeof(double));
+				bestclusters[i].items = NULL;	
+				bestclusters[i].items = clone_points(clusters[i].items,r);
+			}
+		}
+		else counter = -1;
+		for (i=0; i < k; i++) {
+			printf("Cluster %d: ",i);
+			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
+			printf("\n");
+			print_points(clusters[i].items);
+		}
+		for (i=0; i < k; i++) {
+			free(clusters[i].center.vector);
+			destroy_points(&(clusters[i].items));
+		}
+		free(clusters);
+		previousS = silhouette;
+		k++;
 	}
-	clustering(vectors,numConform,r,2);
+	printf("bestk = %d\n",bestk);
+	printf("bestS = %lf\n",bestS);
 	/**Free allocated memory**/
-	for (i=0; i < r; i++)	free(vectors[i]);
+	for (i=0; i < numConform; i++)	{
+		free(vectors[i]);
+		free(alldistances[i]);
+	}
 	free(vectors);
-	free(distances);
-	for (i=0; i < numConform; i++)	free(alldistances[i]);
 	free(alldistances);
+	free(distances);
 	for (i=0; i < size; i++)	free(data[i]);
 	free(data);
+	for (i=0; i < bestk; i++) {
+		free(bestclusters[i].center.vector);
+		printndestroy_points(&(bestclusters[i].items),fe);
+	}
+	free(bestclusters);
 	fclose(fp);
 	fclose(fe);
 	return 0;

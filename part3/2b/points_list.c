@@ -3,7 +3,8 @@
 #include <string.h>
 #include "points_list.h"
 
-int insert_points(pointp *list, double distance1, double distance2, centroid second, int position) {
+int insert_points(pointp *list, double distance1, double distance2, centroid second, int position, int r) {
+	int i;
 	pointp temp;
 	temp = *list;
 	/**If list is empty, put the first node**/
@@ -12,7 +13,8 @@ int insert_points(pointp *list, double distance1, double distance2, centroid sec
 		temp->position = position;
 		temp->mindistance = distance1;
 		temp->secdistance = distance2;
-		temp->second = second;
+		temp->second.vector = malloc(r*sizeof(double));
+		for (i=0; i < r; i++)	temp->second.vector[i] = second.vector[i];
 		temp->next = NULL;
 		*list = temp;
 	}
@@ -23,20 +25,23 @@ int insert_points(pointp *list, double distance1, double distance2, centroid sec
 		temp->next->position = position;
 		temp->next->mindistance = distance1;
 		temp->next->secdistance = distance2;
-		temp->next->second = second;
+		temp->next->second.vector = malloc(r*sizeof(double));
+		for (i=0; i < r; i++)	temp->next->second.vector[i] = second.vector[i];
 		temp->next->next = NULL;
 	}
 	return 0;
 }
 
-pointp clone_points(pointp list) {
+pointp clone_points(pointp list, int r) {
+	int i;
     if (list == NULL) return NULL;
     pointp result = malloc(sizeof(point));
 	result->mindistance = list->mindistance;
 	result->secdistance = list->secdistance;
-	result->second = list->second;
+	result->second.vector = malloc(r*sizeof(double));
+	for (i=0; i < r; i++)	result->second.vector[i] = list->second.vector[i];
 	result->position = list->position;
-    result->next = clone_points(list->next);
+    result->next = clone_points(list->next,r);
     return result;
 }
 
@@ -56,7 +61,8 @@ void destroy_points(pointp *l) {
 	if (curr == NULL)		return;		
 	while (curr != NULL) {
 		temp = curr;
-		curr = curr->next;		
+		curr = curr->next;
+		free(temp->second.vector);		
 		free(temp);
 	}
 	*l = NULL;	
@@ -69,7 +75,8 @@ void printndestroy_points(pointp *l, FILE *fp) {
 	while (curr != NULL) {
 		fprintf(fp,"%d\t",curr->position+1);
 		temp = curr;
-		curr = curr->next;		
+		curr = curr->next;
+		free(temp->second.vector);		
 		free(temp);
 	}
 	fprintf(fp,"\n");
