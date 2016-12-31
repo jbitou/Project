@@ -1,6 +1,6 @@
-OBJS 	= main.o inputProcessing.o distanceDRMSD.o clustering.o points_list.o
-SOURCE	= main.c inputProcessing.c  distanceDRMSD.c clustering.c points_list.c
-HEADER  = inputProcessing.h  distanceDRMSD.h clustering.h points_list.o points_list.h
+OBJS 	= main.o inputProcessing.o distanceDRMSD.o clustering.o points_list.o silhouette.o
+SOURCE	= main.c inputProcessing.c  distanceDRMSD.c clustering.c points_list.c silhouette.c
+HEADER  = inputProcessing.h  distanceDRMSD.h clustering.h points_list.o points_list.h silhouette.h
 OUT  	= drmsd
 CC	    = gcc
 FLAGS   = -g -c 
@@ -24,7 +24,10 @@ clustering.o: clustering.c clustering.h
 	$(CC) $(FLAGS) clustering.c	
 
 points_list.o: points_list.c points_list.h
-	$(CC) $(FLAGS) points_list.c			
+	$(CC) $(FLAGS) points_list.c	
+
+silhouette.o: silhouette.c silhouette.h
+	$(CC) $(FLAGS) silhouette.c			
 			
 # clean house
 clean:
