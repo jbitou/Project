@@ -15,7 +15,6 @@ double **create_vectors(dinfo **alldistances, dinfo *distances, int numConform, 
 		for (j=0; j < r; j++) {
 			for (z=0; z < N*(N-1)/2; z++) {
 				if ((alldistances[i][z].point1 == distances[j].point1) && (alldistances[i][z].point2 == distances[j].point2)) {
-					printf("i=%d, j=%d, p1=%d, p2=%d\n",i,j,distances[j].point1,distances[j].point2);
 					vectors[i][j] = alldistances[i][z].distance;
 					break;
 				}
@@ -25,35 +24,40 @@ double **create_vectors(dinfo **alldistances, dinfo *distances, int numConform, 
 	return vectors;
 }	
 
-dinfo *create_distances(dinfo **alldistances, double **data, int numConform, int N, int r, int T) {
+dinfo *create_distances(dinfo *alldistances, double **data, int numConform, int N, int r, int T) {
 	int i, j, flag, index, size;
-	dinfo *rdis;
+	dinfo *rdis, *temp;
 	/**Choose r distances**/
 	size = N*(N-1)/2;
+	if (r == size) {
+		temp =  malloc(size*sizeof(dinfo));
+		for (i=0; i < size; i++)	temp[i] = alldistances[i];
+		return temp;
+	}
 	rdis = malloc(r*sizeof(dinfo));
 	if (T == 3) {
 		for (i=0; i < r; i++) {
 			flag = 0;
 			index = (rand() / (RAND_MAX + 1.0)) * size;	
 			for (j=0; j < i; j++) {
-				if ((alldistances[0][index].point1 == rdis[j].point1) && (alldistances[0][index].point2 == rdis[j].point2)) {
+				if ((alldistances[index].point1 == rdis[j].point1) && (alldistances[index].point2 == rdis[j].point2)) {
 					i--;
 					flag = 1;
 				}
 				if (flag) break;
 			}
-			if (!flag)	rdis[i] = alldistances[0][index];
+			if (!flag)	rdis[i] = alldistances[index];
 		}
 	}
 	else {
-		alldistances[0] = sortdistances(alldistances[0],size);
+		alldistances = sortdistances(alldistances,size);
 		if (T == 1) {
-			for (i=0; i < r; i++) rdis[i] = alldistances[0][i];
+			for (i=0; i < r; i++) rdis[i] = alldistances[i];
 		}
 		if (T == 2) {
 			j = 0;
 			for (i=size-1; i >= size-r; i--) {
-				rdis[j] = alldistances[0][i];
+				rdis[j] = alldistances[i];
 				j++;
 			}
 		}
@@ -68,7 +72,7 @@ dinfo **get_all_distances(double **data, int numConform, int N) {
 	alldistances = malloc(numConform*sizeof(dinfo *));
 	/**For each conformation**/
 	for (i=0; i < numConform; i++) {
-		printf("Conform %d\n",i+1);
+		//printf("Comform %d:\n",i);
 		alldistances[i] = malloc((N*(N-1)/2)*sizeof(dinfo));
 		v1 = malloc(3*sizeof(double));
 		start = i*N;
@@ -80,14 +84,14 @@ dinfo **get_all_distances(double **data, int numConform, int N) {
 			v1[2] = data[j][2];
 			v2 = malloc(3*sizeof(double));
 			for (z=j+1; z < start+N; z++) {
-				printf("item %d distance with item %d\n",abs(start-j),abs(start-z));
 				v2[0] = data[z][0];
 				v2[1] = data[z][1];
 				v2[2] = data[z][2];
+				//printf("abs(start-j) = %d and abs(start-z) = %d ",abs(start-j),abs(start-z));
 				alldistances[i][y].point1 = abs(start-j);
 				alldistances[i][y].point2 = abs(start-z);
 				alldistances[i][y].distance = distance_Euclidean(v1,v2,3);
-				printf("distance = %lf\n",alldistances[i][y].distance);
+				//printf("distance = %lf\n",alldistances[i][y].distance);
 				y++;
 			}
 			free(v2);

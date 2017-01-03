@@ -1,7 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "clustering.h"
+#include <time.h>
+#include "inputProcessing.h"
+#define EXPERK 10
+
+void experiment(double **data, dinfo **alldistances, int numConform, int N, int r, int T, int k, FILE *fe) {
+	int i, j, bestk;
+	double **vectors, bestS, total_t;
+	pcluster bestclusters;
+	dinfo *distances;
+	clock_t start_t, end_t;
+	start_t = clock();
+	distances = create_distances(alldistances[0],data,numConform,N,r,T);
+	vectors = create_vectors(alldistances,distances,numConform,N,r);
+	bestclusters = k_clustering(vectors,k,r,numConform,&bestk,&bestS);
+	end_t = clock();
+	total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+	if (T == 0)	fprintf(fe,"%d\t-\t%d\t%.6lf\t%.5lf\n",r,bestk,bestS,total_t);
+	else 	fprintf(fe,"%d\t%d\t%d\t%.6lf\t%.5lf\n",r,T,bestk,bestS,total_t);
+	if ((clean_memory(vectors,distances,bestclusters,numConform,bestk)) == -1) printf("Failed to free memory\n");
+	return;
+}
+
+
+pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk, double *bestS) {
+	int i, j, counter = 0;
+	pcluster clusters, bestclusters;
+	double silhouette, previousS;
+	previousS = -1.1;
+	while ((counter != -1) && (counter <= EXPERK)) {
+		if (k == numConform / 2)	break;
+		clusters = clustering(vectors,numConform,r,k);
+		silhouette = compute_silhouette(clusters,vectors,r,numConform,k);
+		if (silhouette > previousS)	{
+			if (counter != 0) {
+				for (i=0; i < *bestk; i++) {
+					free(bestclusters[i].center.vector);
+					destroy_points(&(bestclusters[i].items));
+				 }
+				free(bestclusters);
+			}
+			counter++;
+			*bestk = k;
+			*bestS = silhouette;
+			bestclusters = malloc(k*sizeof(cluster));
+			for (i=0; i < k; i++)	{
+				bestclusters[i].center.vector = malloc(r*sizeof(double));
+				bestclusters[i].items = NULL;	
+				bestclusters[i].items = clone_points(clusters[i].items,r);
+			}
+		}
+		else counter = -1;
+		for (i=0; i < k; i++) {
+			printf("Cluster %d: ",i);
+			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
+			printf("\n");
+			print_points(clusters[i].items);
+		}
+		for (i=0; i < k; i++) {
+			free(clusters[i].center.vector);
+			destroy_points(&(clusters[i].items));
+		}
+		free(clusters);
+		previousS = silhouette;
+		k++;
+	}
+	return bestclusters;
+}
 
 pcluster clustering(double **vectors, int numConform, int r, int k) {
 	int i, j, diff, times = 0;
@@ -10,11 +76,6 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 	centroid *centroids, *previous;
 	/**k-medoids++ initialization**/
 	centroids = vector_init_kmeans(vectors,numConform,k,r);
-	for (i=0; i < k; i++) {
-		printf("centroid = %d: ",centroids[i].center);
-		for (j=0; j < r; j++) printf("%lf\t",centroids[i].vector[j]);
-		printf("\n");
-	}
 	previous = malloc(k*sizeof(centroid));
 	for (i=0; i < k; i++)	previous[i].vector = malloc(r*sizeof(double));
 	do {
@@ -33,12 +94,6 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		}
 		/**Simplest assignemt**/
 		clusters = vector_simplest_assignment(clusters,vectors,centroids,numConform,r,k);
-		for (i=0; i < k; i++) {
-			printf("Cluster %d: ",i);
-			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
-			printf("\n");
-			print_points(clusters[i].items);
-		}
 		J = vector_compute_objective_function(clusters,vectors,r,k);
 		printf("J = %lf\n",J);	
 		for (i=0; i < k; i++) {
@@ -46,11 +101,6 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		}
 		/**Lloyd’s update**/
 		centroids = vector_update_loyds(clusters,centroids,J,vectors,r,k);
-		for (i=0; i < k; i++) {
-			printf("NEW centroid = %d: ",centroids[i].center);
-			for (j=0; j < r; j++) printf("%lf\t",centroids[i].vector[j]);
-			printf("\n");
-		}
 		diff = compare_centroids(centroids,previous,r,k);	
 		times++;
 	}while (diff > 0);
@@ -208,9 +258,6 @@ centroid *vector_update_loyds(pcluster clusters, centroid *centroids, double J, 
 		SDj = 0;
 		/**Calculate mean for this cluster**/
 		mean = calculate_mean(clusters[i].items,vectors,r);
-		printf("Mean: ");
-		for (j=0; j < r; j++)	printf("%lf\t",mean[j]);
-		printf("\n");
 		/**Insert mean to newcenter**/
 		newcenter.vector = malloc(r*sizeof(double));
 		for (j=0; j < r; j++)	newcenter.vector[j] = mean[j];	

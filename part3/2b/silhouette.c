@@ -34,7 +34,6 @@ double compute_silhouette(pcluster clusters, double **vectors, int r, int numCon
 			a = suma / n;
 			/**Find 2nd best neighbor of this object**/
 			nextbest = object->second.vector;
-			for (z=0; z < r; z++) printf("nextbest[%d] = %lf\n",z,nextbest[z]);
 			for (j=0; j < k; j++) {
 				compare = 0;
 				for (z=0; z < r; z++) {

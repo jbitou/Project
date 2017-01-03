@@ -9,6 +9,9 @@ typedef struct cluster_node {
 	centroid center;
 }cluster;
 
+
+void experiment(double **, dinfo **, int, int, int, int, int, FILE *);
+pcluster k_clustering(double **, int, int, int, int *, double *);
 pcluster clustering(double **, int, int, int);
 centroid *vector_init_kmeans(double **, int, int, int);
 int doublebinarySearch(int, double, double *);
