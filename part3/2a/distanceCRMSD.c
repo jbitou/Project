@@ -13,8 +13,18 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 	if (conf1 == conf2) return 0;
 	/**Get X and Y matrices from data**/
 	X = get_pointset(data,N,conf1);
+	/*for (i=0; i < N*3; i+=3)	printf("X[%d] = [%lf,%lf,%lf]\n",i,X[i],X[i+1],X[i+2]);
+	printf("////////\n");*/
 	Y = get_pointset(data,N,conf2);
+	/*for (i=0; i < N*3; i+=3)	printf("Y[%d] = [%lf,%lf,%lf]\n",i,Y[i],Y[i+1],Y[i+2]);
+	printf("////////\n");*/
 	xtrs = find_transpose(X,N,3);
+	/*for (i=0; i < 3*N; i+=N) {
+		printf("Xtrs[%d] = [",i);
+		for (j=i; j < i+N; j++) printf("%lf,",xtrs[j]);
+		printf("]\n");
+	}
+	printf("////////\n");*/
 	/**Multiply X^T with Y**/
 	C = LAPACKE_malloc(9*sizeof(double));
 	for (i=0; i < 9; i++)	C[i] = 0.0;
@@ -26,15 +36,22 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 	for (i=0; i < 9; i++)	Vtrs[i] = 0.0;
 	info = LAPACKE_dgesvj(LAPACK_ROW_MAJOR,'G','U','V',3,3,C,3,singular,0,Vtrs,3,stat);
 	U = C;
+	/*for (i=0; i < 9; i+=3)	printf("U[%d] = [%lf,%lf,%lf]\n",i,U[i],U[i+1],U[i+2]);	
+	printf("////////\n");
+	for (i=0; i < 9; i+=3)	printf("Vtrs[%d] = [%lf,%lf,%lf]\n",i,Vtrs[i],Vtrs[i+1],Vtrs[i+2]);	
+	printf("////////\n");*/
 	/**Check singular**/
 	for (i=0; i < 3; i++) {
-		if (singular[i] <= 0) flag = 1;
+		//printf("singular[%d] = %.20lf\n",i,singular[i]);
+		if (singular[i] <= 0.0) flag = 1;
 	}
 	if (flag == 0) {
 		/**Multiply U with V^T**/
 		Q = LAPACKE_malloc(9*sizeof(double));
 		double *tempQ = LAPACKE_malloc(9*sizeof(double));
 		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,3,3,3,1.0,U,3,Vtrs,3,0.0,Q,3);
+		/*for (i=0; i < 9; i+=3)	printf("Q[%d] = [%lf,%lf,%lf]\n",i,Q[i],Q[i+1],Q[i+2]);	
+		printf("////////\n");*/
 		/**Find the determinant**/
 		for (i=0; i < 9; i++)	tempQ[i] = Q[i];
 		det = find_det(tempQ);
@@ -49,8 +66,8 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 			cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,3,3,3,1.0,U,3,Vtrs,3,0.0,Q,3);
 		}
 		/*for (i=0; i < N*3; i+=3)	printf("X[%d] = [%lf,%lf,%lf]\n",i,X[i],X[i+1],X[i+2]);
-		/printf("////////\n");	
-		for (i=0; i < 9; i+=3)	printf("Q[%d] = [%lf,%lf,%lf]\n",i,Q[i],Q[i+1],Q[i+2]);	
+		printf("////////\n");	*/
+		/*for (i=0; i < 9; i+=3)	printf("Q[%d] = [%lf,%lf,%lf]\n",i,Q[i],Q[i+1],Q[i+2]);	
 		printf("////////\n");*/
 		/**Calculate XQ-Y**/
 		XQ = LAPACKE_malloc(N*3*sizeof(double));
@@ -64,7 +81,7 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 		printf("////////\n");*/
 		/**Find frobenius norm**/
 		crmsd = find_frobenius_norm(XQ_Y,N);
-		/*printf("frobenius = %lf\n",crmsd);*/
+		//printf("frobenius = %lf\n",crmsd);
 		/**Calculate c-RMSD**/
 		crmsd /= sqrt(N);
 		/**Free allocated memory**/
@@ -73,7 +90,7 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 		LAPACKE_free(XQ_Y);	
 	}
 	else crmsd = 0.1;
-	/*printf("%d-%d crmsd = %lf\n",conf1,conf2,crmsd);*/
+	//printf("%d-%d crmsd = %lf\n",conf1,conf2,crmsd);
 	/**Free allocated memory**/
 	LAPACKE_free(xtrs);
 	LAPACKE_free(Y);

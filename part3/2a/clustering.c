@@ -1,20 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "clustering.h"
-#include "distanceCRMSD.h"
+#include "silhouette.h"
+#define EXPERK 10
+
+pcluster k_clustering(double **data, int numConform, int N, int k, int *bestk, double *bestS) {
+	int i, counter = 0;;
+	double silhouette, previousS;
+	pcluster clusters, bestclusters;
+	previousS = -1.1;
+	*bestS = -1.1;
+	*bestk = k;
+	while ((counter != -1) && (counter <= EXPERK)) {
+		if (k == numConform / 2)	break;
+		clusters = clustering(data,numConform,N,k);
+		silhouette = compute_silhouette(clusters,data,N,numConform,k);
+		printf("Silhouette = %lf for k = %d\n",silhouette,k);
+		if (silhouette > previousS)	{
+			if (counter != 0) {
+				for (i=0; i < *bestk; i++) destroy_points(&(bestclusters[i].items));
+				free(bestclusters);
+			}
+			counter++;
+			*bestk = k;
+			*bestS = silhouette;
+			bestclusters = malloc(k*sizeof(cluster));
+			for (i=0; i < k; i++)	{
+				bestclusters[i].items = NULL;	
+				bestclusters[i].items = clone_points(clusters[i].items);
+			}
+		}
+		else counter = -1;
+		for (i=0; i < k; i++) destroy_points(&(clusters[i].items));
+		free(clusters);
+		previousS = silhouette;
+		k++;
+	}
+	return bestclusters;
+}
+
 
 pcluster clustering(double **data, int numConform, int N, int k) {
-	printf("start\n");
-	int i, j, *centroids, times = 0;
-	double J = 0.0, prevJ;
+	int i, j, *centroids, *previous, times = 0, diff;
+	double J = 0.0;
 	pcluster clusters;
 	/**k-medoids++ initialization**/
 	centroids = vector_init_kmedoids(data,numConform,k,N);
-	printf("1st centroid = %d , 2nd centroid = %d\n",centroids[0],centroids[1]);
+	previous = malloc(k*sizeof(int));
 	do {
 		if (times > 0) {
-			prevJ = J;
 			for (i=0; i < k; i++) destroy_points(&(clusters[i].items));
 			free(clusters);
 		}
@@ -24,12 +58,14 @@ pcluster clustering(double **data, int numConform, int N, int k) {
 		/**Simplest assignemt**/
 		clusters = vector_simplest_assignment(clusters,data,centroids,numConform,N,k);
 		J = vector_compute_objective_function(clusters,data,N,k);
-		printf("J = %lf\n",J);	
+		printf("J = %lf\n",J);
+		for (i=0; i < k; i++)	previous[i] = centroids[i];	
 		/**Update à la Lloyd’s**/
 		centroids = vector_update_alaloyds(clusters,centroids,J,data,N,k);
-		if (times == 0)	prevJ = J;	
+		diff = compare_centroids(centroids,previous,k);	
+		printf("diff = %d\n",diff);
 		times++;
-	}while ((J < prevJ) || (times == 1));
+	}while (diff > 0);
 	free(centroids);
 	for (i=0; i < k; i++) {
 		printf("Cluster's centroid: conform %d\n",clusters[i].center);
@@ -248,4 +284,12 @@ pointp vector_calculate_medoid(pointp items, double **data, int N) {
 		temp = temp->next;
 	}
 	return medoid;
+}
+
+int compare_centroids(int *centroids, int *previous, int k) {
+	int i, diff = 0;
+	for (i=0; i < k; i++) {
+		if (centroids[i] != previous[i]) diff++;
+	}
+	return diff;
 }
