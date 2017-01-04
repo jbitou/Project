@@ -26,9 +26,9 @@ int main (int argc, char **argv) {
 		perror("Error opening output_file");
 		return -1;
 	}
-	fscanf(fp,"%s%d\n",read,&numConform);
-	fscanf(fp,"%s%d\n",read,&N);
-	if (numConform > 100) k = 10;
+	fscanf(fp,"%d\n",&numConform);
+	fscanf(fp,"%d\n",&N);
+	if (numConform > 200) k = 100;
 	else k = 2;
 	size = numConform*N;
 	data = malloc(size*sizeof(double *));
@@ -43,7 +43,6 @@ int main (int argc, char **argv) {
 	fclose(fp);
 	/**Translate to common origin**/
 	translation(data,numConform,N);
-	//distanceCRMSD(data,N,1,1);
 	/**Clustering**/
 	bestclusters = k_clustering(data,numConform,N,k,&bestk,&bestS);
 	/**Write in output file**/
