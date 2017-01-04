@@ -11,10 +11,14 @@ void experiment(double **data, dinfo **alldistances, int numConform, int N, int 
 	pcluster bestclusters;
 	dinfo *distances;
 	clock_t start_t, end_t;
-	start_t = clock();
+	printf("start distances\n");
 	distances = create_distances(alldistances[0],data,numConform,N,r,T);
+	printf("start vectors\n");
 	vectors = create_vectors(alldistances,distances,numConform,N,r);
+	printf("done vectors\n");
+	start_t = clock();
 	bestclusters = k_clustering(vectors,k,r,numConform,&bestk,&bestS);
+	printf("done k-clustering for r=%d and T=%d\n",r,T);
 	end_t = clock();
 	total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
 	if (T == 0)	fprintf(fe,"%d\t-\t%d\t%.6lf\t%.5lf\n",r,bestk,bestS,total_t);
@@ -23,7 +27,6 @@ void experiment(double **data, dinfo **alldistances, int numConform, int N, int 
 	return;
 }
 
-
 pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk, double *bestS) {
 	int i, j, counter = 0;
 	pcluster clusters, bestclusters;
@@ -31,8 +34,11 @@ pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk
 	previousS = -1.1;
 	while ((counter != -1) && (counter <= EXPERK)) {
 		if (k == numConform / 2)	break;
+		printf("start clustering\n");
 		clusters = clustering(vectors,numConform,r,k);
+		printf("done clustering\n");
 		silhouette = compute_silhouette(clusters,vectors,r,numConform,k);
+		printf("done silhouette\n");
 		if (silhouette > previousS)	{
 			if (counter != 0) {
 				for (i=0; i < *bestk; i++) {
@@ -48,16 +54,18 @@ pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk
 			for (i=0; i < k; i++)	{
 				bestclusters[i].center.vector = malloc(r*sizeof(double));
 				bestclusters[i].items = NULL;	
+				printf("before clone\n");
 				bestclusters[i].items = clone_points(clusters[i].items,r);
+				printf("after clone\n");
 			}
 		}
 		else counter = -1;
-		for (i=0; i < k; i++) {
+		/*for (i=0; i < k; i++) {
 			printf("Cluster %d: ",i);
 			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
 			printf("\n");
 			print_points(clusters[i].items);
-		}
+		}*/
 		for (i=0; i < k; i++) {
 			free(clusters[i].center.vector);
 			destroy_points(&(clusters[i].items));
@@ -92,8 +100,10 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 			clusters[i].center.vector = malloc(r*sizeof(double));
 			clusters[i].items = NULL;
 		}
+		printf("done allocating clusters\n");	
 		/**Simplest assignemt**/
 		clusters = vector_simplest_assignment(clusters,vectors,centroids,numConform,r,k);
+		printf("done assignment\n");
 		J = vector_compute_objective_function(clusters,vectors,r,k);
 		printf("J = %lf\n",J);	
 		for (i=0; i < k; i++) {
@@ -101,7 +111,9 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		}
 		/**Lloyd’s update**/
 		centroids = vector_update_loyds(clusters,centroids,J,vectors,r,k);
-		diff = compare_centroids(centroids,previous,r,k);	
+		printf("done update\n");
+		diff = compare_centroids(centroids,previous,r,k);
+		printf("diff = %d\n",diff);		
 		times++;
 	}while (diff > 0);
 	for (i=0; i < k; i++) {
@@ -123,6 +135,7 @@ centroid *vector_init_kmeans(double **vectors, int numConform, int totalk, int r
 	for (i=0; i < r; i++) centroids[0].vector[i] = vectors[centroids[0].center][i];
 	/**Create k centroids**/
 	while (k < totalk) {
+		printf("k=%d\n",k);
 		/**For each (k < number of centroids) allocate new Distances and Probabilities array**/
 		D = malloc((numConform-k)*sizeof(double));
 		P = malloc((numConform-k+1)*sizeof(double));
@@ -293,7 +306,7 @@ centroid *vector_update_loyds(pcluster clusters, centroid *centroids, double J, 
 			free(ci);
 		}
 		J1 = J + SDj;
-		printf("J1 = %.10lf and J = %.10lf\n",J1,J);
+		//printf("J1 = %.10lf and J = %.10lf\n",J1,J);
 		/**If J' < J, then swap centroid with mean**/
 		if (J1 < J)	{
 			for (j=0; j < r; j++)	centroids[i].vector[j] = newcenter.vector[j];

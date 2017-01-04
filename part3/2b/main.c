@@ -26,9 +26,9 @@ int main (int argc, char **argv) {
 		return -1;
 	}
 	/**Read number of conformations and N**/
-	fscanf(fp,"%s%d\n",read,&numConform);
-	fscanf(fp,"%s%d\n",read,&N);
-	if (numConform > 100) k = 10;
+	fscanf(fp,"%d\n",&numConform);
+	fscanf(fp,"%d\n",&N);
+	if (numConform > 100) k = 110;
 	else k = 2;
 	size = numConform*N;
 	data = malloc(size*sizeof(double *));
@@ -44,21 +44,15 @@ int main (int argc, char **argv) {
 	alldistances = get_all_distances(data,numConform,N);
 	fprintf(fe,"r\tT\tk\tSilhouette\tTime\t\n");
 	for (T=1; T <= 3; T++)  {
-		printf("//////////////////////////////////\n\n");
-		printf("FOR r=N AND T=%d k = %d \n",T,k);
 		r = N;
 		experiment(data,alldistances,numConform,N,r,T,k,fe); 
-		r = pow(N,1.5);
+		/*r = pow(N,1.5);
 		if (r <= N*(N-1)/2) {
-			printf("//////////////////////////////////\n\n");
-			printf("FOR r=%d(N^1.5) AND T=%d\n",r,T);
 			experiment(data,alldistances,numConform,N,r,T,k,fe);
-		}
+		}*/
 	}
-	printf("//////////////////////////////////\n\n");
-	printf("FOR r=N(N-1)/2 k =%d\n",k);
-	r = N*(N-1)/2;
-	experiment(data,alldistances,numConform,N,r,0,k,fe); 
+	//r = N*(N-1)/2;
+	//experiment(data,alldistances,numConform,N,r,0,k,fe); 
 	for (i=0; i < numConform; i++)	free(alldistances[i]);
 	free(alldistances);
 	alldistances = NULL;
