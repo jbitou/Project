@@ -28,7 +28,7 @@ int main (int argc, char **argv) {
 	/**Read number of conformations and N**/
 	fscanf(fp,"%d\n",&numConform);
 	fscanf(fp,"%d\n",&N);
-	if (numConform > 100) k = 110;
+	if (numConform > 200) k = 100;
 	else k = 2;
 	size = numConform*N;
 	data = malloc(size*sizeof(double *));
