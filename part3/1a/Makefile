@@ -1,6 +1,6 @@
-OBJS 	= main.o inputProcessing.o 
-SOURCE	= main.c inputProcessing.c 
-HEADER  = inputProcessing.h 
+OBJS 	= main.o inputProcessing.o NNsearch.o
+SOURCE	= main.c inputProcessing.c NNsearch.c
+HEADER  = inputProcessing.h NNsearch.h
 OUT  	= recommendation
 CC	    = gcc
 FLAGS   = -g -c 
@@ -16,6 +16,9 @@ main.o: main.c inputProcessing.h
 
 inputProcessing.o: inputProcessing.c inputProcessing.h
 	$(CC) $(FLAGS) inputProcessing.c	
+
+NNsearch.o: NNsearch.c NNsearch.h
+	$(CC) $(FLAGS) NNsearch.c	
 			
 # clean house
 clean:

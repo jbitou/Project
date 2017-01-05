@@ -3,21 +3,16 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include "inputProcessing.h"
+#include "NNsearch.h"
 
 int main (int argc, char **argv) {
-	int i, input = -1, output = -1, validate = 0;
+	int i, j, input, output, validate, numofusers, numofitems, P;
+	char p[4];
 	FILE *fp, *fe;
-	if (command_processing(argc) == -1)	return -1;
-	for (i=1; i < (argc - 1); i+=2) {
-		if (strcmp(argv[i],"-d") == 0) 			input = i+1;
-		else if (strcmp(argv[i],"-o") == 0)		output = i+1;
-	}
-	if (strcmp(argv[argc-1],"-validate") == 0)	validate = 1;
-	if ((input == -1) || (output == -1)) {
-		printf("Arguments -d,-c,-o are required. Try again.\n");
-		return -1;
-	}
+	user *users;
+	input = output = -1;
+	validate = numofusers = numofitems = 0;
+	if (command_processing(argv,argc,&input,&output,&validate) == -1)	return -1;
 	/**Open input file**/
 	fp = fopen(argv[input],"r");
 	if (fp == NULL) {
@@ -30,6 +25,16 @@ int main (int argc, char **argv) {
 		perror("Error opening output_file");
 		return -1;
 	}
+	P = count_data(fp,&numofusers,&numofitems);
+	printf("P = %d users = %d items = %d\n",P,numofusers,numofitems);
+	/**Set R'(u,i)**/
+	users = create_users(fp,numofusers,numofitems);
+	for (i=0; i < numofusers; i++) {
+		printf("user %d: ",users[i].userId);
+		for (j=0; j < numofitems; j++)	printf("item %d rating %d\n",users[i].ratings[j].itemId,users[i].ratings[j].rate);
+	}
+	for (i=0; i < numofusers; i++) free(users[i].ratings);
+	free(users);
 	fclose(fp);
 	fclose(fe);
 	return 0;
