@@ -1,4 +1,6 @@
-#include "inputProcessing.h"
+#include "hash.h"
 
-void binary_repeated_nnsearch(user *, int, int, int);
-double find_first_radius(user *, int);
+void nnlsh_recommendation(user *, int, int, int);
+nnrlist binary_repeated_nnsearch(hash_table *, ghashp *, nnrlist, user *, int, int, int, int, double);
+double find_first_radius(user *, int, int);
+double distance_Euclidean(ratingp, ratingp, int);

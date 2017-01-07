@@ -1,6 +1,6 @@
-OBJS 	= main.o inputProcessing.o NNsearch.o
-SOURCE	= main.c inputProcessing.c NNsearch.c
-HEADER  = inputProcessing.h NNsearch.h
+OBJS 	= main.o inputProcessing.o NNsearch.o hash.o chain.o distances.o 
+SOURCE	= main.c inputProcessing.c NNsearch.c hash.c chain.c distances.c 
+HEADER  = inputProcessing.h NNsearch.h hash.h chain.h distances.h 
 OUT  	= recommendation
 CC	    = gcc
 FLAGS   = -g -c 
@@ -18,7 +18,17 @@ inputProcessing.o: inputProcessing.c inputProcessing.h
 	$(CC) $(FLAGS) inputProcessing.c	
 
 NNsearch.o: NNsearch.c NNsearch.h
-	$(CC) $(FLAGS) NNsearch.c	
+	$(CC) $(FLAGS) NNsearch.c
+
+hash.o: hash.c hash.h
+	$(CC) $(FLAGS) hash.c
+
+chain.o: chain.c chain.h
+	$(CC) $(FLAGS) chain.c	
+	
+distances.o: distances.c distances.h
+	$(CC) $(FLAGS) distances.c	
+						
 			
 # clean house
 clean:

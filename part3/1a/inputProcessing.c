@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "inputProcessing.h"
-#define STARTSIZE 10
 
 int command_processing(char **argv, int argc, int *input, int *output, int *validate) {
 	int i;
@@ -30,15 +29,15 @@ int command_processing(char **argv, int argc, int *input, int *output, int *vali
 }
 
 
-int count_data(FILE *fp, int *numofusers, int *numofitems) {
-	int i, j, flag, userId, itemId, rate, previousu, *items, size, P;
+int *create_items(FILE *fp, int *P, int *numofusers, int *numofitems) {
+	int i, j, flag, userId, itemId, rate, previousu, size, *items;
 	char p[4];
 	previousu = -1;
 	/**Read the number of NN, if given**/
 	fscanf(fp,"%s",p);
-	if (strcmp(p,"P:") == 0)	fscanf(fp,"%d[^\n]",&P);
+	if (strcmp(p,"P:") == 0)	fscanf(fp,"%d[^\n]",P);
 	else {
-		P = 20;
+		*P = 20;
 		fseek(fp,0,SEEK_SET);
 	}
 	items = malloc(STARTSIZE*sizeof(int));
@@ -48,6 +47,7 @@ int count_data(FILE *fp, int *numofusers, int *numofitems) {
 	while (fscanf(fp,"%d%d%d[^\n]",&userId,&itemId,&rate) != EOF) {
 		if (previousu != userId) (*numofusers)++;
 		if (items[size-1] == -1) {
+			/**Check if item already exists**/
 			j = flag = 0;
 			while (items[j] != -1) {
 				if (items[j] == itemId) {
@@ -59,10 +59,20 @@ int count_data(FILE *fp, int *numofusers, int *numofitems) {
 			if (!flag) items[j] = itemId;
 		}	
 		else {
-			items = realloc(items,(size+STARTSIZE)*sizeof(int));
-			items[size] = itemId;
-			for (j=size+1; j < size+STARTSIZE; j++)	items[j] = -1;
-			size += STARTSIZE;
+			/**Check if item already exists**/
+			flag = 0;
+			for (j=0; j < size; j++) {
+				if (items[j] == itemId) {
+					flag = 1;
+					break;
+				}
+			}
+			if (!flag) {
+				items = realloc(items,(size+STARTSIZE)*sizeof(int));
+				items[size] = itemId;
+				for (j=size+1; j < size+STARTSIZE; j++)	items[j] = -1;
+				size += STARTSIZE;
+			}
 		}	
 		previousu = userId;
 	}
@@ -73,14 +83,13 @@ int count_data(FILE *fp, int *numofusers, int *numofitems) {
 			i++;
 			(*numofitems)++;
 		}
-	}
-	for (i=0; i < size; i++) printf("items[%d]=%d\n",i,items[i]);
-	free(items);
-	return P;
+	}	
+	return items;
 }
 
-user *create_users(FILE *fp, int numofusers, int numofitems) {
-	int i, j, num, avrate, previousu, userId, itemId, rate;
+user *create_users(FILE *fp, int *items, int numofusers, int numofitems) {
+	int i, j, num, previousu, userId, itemId;
+	double rate, avrate;
 	char p[4];
 	user *users;
 	previousu = -1;
@@ -89,7 +98,7 @@ user *create_users(FILE *fp, int numofusers, int numofitems) {
 	for (i=0; i < numofusers; i++) {
 		users[i].ratings = malloc(numofitems*sizeof(rating));
 		for (j=0; j < numofitems; j++) {
-			users[i].ratings[j].itemId = 0;
+			users[i].ratings[j].itemId = items[j];
 			users[i].ratings[j].rate = 0;
 		}
 	}
@@ -97,27 +106,68 @@ user *create_users(FILE *fp, int numofusers, int numofitems) {
 	fscanf(fp,"%s",p);
 	if (strcmp(p,"P:") != 0)	fseek(fp,0,SEEK_SET);
 	i = 0;
-	while (fscanf(fp,"%d%d%d[^\n]",&userId,&itemId,&rate) != EOF) {
+	while (fscanf(fp,"%d%d%lf[^\n]",&userId,&itemId,&rate) != EOF) {
 		if (previousu != userId && previousu != -1) {
 			if (previousu == -1) users[i].userId = userId;
 			else users[i].userId = previousu;
 			avrate /= num;
-			printf("user %d has average rate %d\n",previousu,avrate);
 			/**Normalize ratings**/
-			for (j=0; j < num; j++)	users[i].ratings[j].rate -= avrate;
+			for (j=0; j < numofitems; j++)	{
+				if (users[i].ratings[j].rate != 0) users[i].ratings[j].rate -= avrate;
+			}
 			num = avrate = 0;
 			i++;
 		}
-		users[i].ratings[num].itemId = itemId;
-		users[i].ratings[num].rate = rate;
+		for (j=0; j < numofitems; j++)	{
+			if (users[i].ratings[j].itemId == itemId) {
+				users[i].ratings[j].rate = rate;
+				break;
+			}
+		}
 		avrate += rate;
 		num++;
 		previousu = userId;
 	}
 	users[i].userId = previousu;
 	avrate /= num;
-	printf("user %d has average rate %d\n",previousu,avrate);
-	for (j=0; j < num; j++)	users[i].ratings[j].rate -= avrate;
+	for (j=0; j < numofitems; j++)	{
+		if (users[i].ratings[j].rate != 0) users[i].ratings[j].rate -= avrate;
+	}
 	return users;
 }
+
+void quickSort(int *arr, int low, int high) {
+	int pi;
+    if (low < high) {
+        pi = partition(arr,low,high);
+		/**Separately sort elements before partition and after partition**/
+        quickSort(arr,low,pi-1);
+        quickSort(arr,pi+1,high);
+    }
+}
+
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+ 
+int partition(int *arr, int low, int high) {
+	/**This function takes last element as pivot**/
+    int j, pivot = arr[high];
+    /**Index of smallest element**/
+    int i = low - 1;  
+    for (j=low; j <= high-1; j++) {
+        /**If current element is smaller than pivot**/
+        if (arr[j] < pivot) {
+			/**Increment index of smaller element**/
+            i++;    
+            swap(&arr[i],&arr[j]);
+        }
+    }
+    swap(&arr[i+1],&arr[high]);
+    return (i + 1);
+}
+
+
 
