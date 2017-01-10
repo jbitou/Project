@@ -20,7 +20,7 @@ int main (int argc, char **argv) {
 	}
 	if (strcmp(argv[argc-1],"-complete") == 0)	complete = 1;
 	if ((input == -1) || (config == -1) || (output == -1)) {
-		printf("Arguments -d,-c,-o are required. Try again.\n");
+		printf("Arguments -d,-o are required. Try again.\n");
 		return -1;
 	}
 	/**Open input file**/
