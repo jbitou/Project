@@ -10,21 +10,22 @@
 double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 	int i, j, flag = 0;
 	lapack_int info;
-	double *xtrs, *Y, *C, *singular, *stat, *V, *Vtrs, *Q, *U, *X, *XQ, *XQ_Y, det, crmsd, sum = 0.0;
-	//if (conf1 == conf2) return 0;
+	double *xtrs, *Y, *C, *singular, *stat, *V, *Vtrs, *tempQ, *Q, *U, *X, *XQ, *XQ_Y, det, crmsd, sum = 0.0;
 	/**Get X and Y matrices from data**/
 	X = get_pointset(data,N,conf1);
 	Y = get_pointset(data,N,conf2);
 	xtrs = find_transpose(X,N,3);
-	/**Multiply X^T with Y**/
 	C = LAPACKE_malloc(9*sizeof(double));
-	for (i=0; i < 9; i++)	C[i] = 0.0;
-	cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,3,3,N,1.0,xtrs,N,Y,3,0.0,C,3);
-	/**SVD**/
 	singular = LAPACKE_malloc(3*sizeof(double));
 	stat = LAPACKE_malloc(6*sizeof(double));
 	V = LAPACKE_malloc(9*sizeof(double));
-	for (i=0; i < 9; i++)	V[i] = 0.0;
+	for (i=0; i < 9; i++)	{
+		V[i] = 0.0;
+		C[i] = 0.0;
+	}
+	/**Multiply X^T with Y**/	
+	cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,3,3,N,1.0,xtrs,N,Y,3,0.0,C,3);
+	/**SVD**/
 	info = LAPACKE_dgesvj(LAPACK_ROW_MAJOR,'G','U','V',3,3,C,3,singular,0,V,3,stat);
 	Vtrs = find_transpose(V,3,3);
 	U = C;
@@ -35,7 +36,7 @@ double distanceCRMSD(double **data, int N, int conf1, int conf2) {
 	if (flag == 0) {
 		/**Multiply U with V^T**/
 		Q = LAPACKE_malloc(9*sizeof(double));
-		double *tempQ = LAPACKE_malloc(9*sizeof(double));
+		tempQ = LAPACKE_malloc(9*sizeof(double));
 		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,3,3,3,1.0,U,3,Vtrs,3,0.0,Q,3);
 		/**Find the determinant**/
 		for (i=0; i < 9; i++)	tempQ[i] = Q[i];
@@ -98,11 +99,10 @@ double find_frobenius_norm(double *XQ_Y, int N) {
 }
 
 double *get_pointset(double **data, int N, int conf) {
-	int i, j, start;
+	int i, j = 0, start;
 	double *X;
 	X = LAPACKE_malloc(N*3*sizeof(double));
 	start = conf*N;
-	j = 0;
 	for (i=start; i < start+N; i++) {
 		X[j] = data[i][0];
 		j++;

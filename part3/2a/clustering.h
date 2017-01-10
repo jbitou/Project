@@ -9,10 +9,11 @@ typedef struct cluster_node {
 
 pcluster k_clustering(double **, int, int, int, int *, double *);
 pcluster clustering(double **, int, int, int);
-int *vector_init_kmedoids(double **, int, int, int);
-int doublebinarySearch(int, double, double *);
-pcluster vector_simplest_assignment(pcluster, double **, int *, int, int, int);
-double vector_compute_objective_function(pcluster, double **, int, int);
-int *vector_update_alaloyds(pcluster, int *, double, double **, int, int);
-pointp vector_calculate_medoid(pointp, double **, int);
+int *init_krandom(int, int);
+int *init_kmedoids(double **, int, int, int);
+int binarySearch(int, double, double *);
+pcluster simplest_assignment(pcluster, double **, int *, int, int, int);
+double compute_objective_function(pcluster, double **, int, int);
+int *update_alaloyds(pcluster, int *, double, double **, int, int);
+pointp calculate_medoid(pointp, double **, int);
 int compare_centroids(int *, int *, int);

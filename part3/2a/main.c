@@ -5,7 +5,6 @@
 #include "inputProcessing.h"
 #include "silhouette.h"
 
-
 int main (int argc, char **argv) {
 	int i, j, numConform, N, size, k, bestk;
 	double **data, v1, v2, v3, bestS;
@@ -28,8 +27,9 @@ int main (int argc, char **argv) {
 	}
 	fscanf(fp,"%d\n",&numConform);
 	fscanf(fp,"%d\n",&N);
-	if (numConform > 200) k = 100;
-	else k = 2;
+	if (numConform <= 10)	k = 2;
+	else if (numConform <= 100) k = 10;
+	else k = numConform * 0.25;
 	size = numConform*N;
 	data = malloc(size*sizeof(double *));
 	for (i=0; i < size; i++)	data[i] = malloc(3*sizeof(double));

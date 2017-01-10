@@ -7,7 +7,7 @@
 
 int main (int argc, char **argv) {
 	int i, j, T, r, numConform, N, size, k;
-	double **data, v1, v2, v3;
+	double **data, v1, v2, v3, total_t;
 	char read[12];
 	FILE *fp, *fe;
 	dinfo **alldistances;
@@ -28,8 +28,8 @@ int main (int argc, char **argv) {
 	/**Read number of conformations and N**/
 	fscanf(fp,"%d\n",&numConform);
 	fscanf(fp,"%d\n",&N);
-	if (numConform > 200) k = 100;
-	else k = 2;
+	if (numConform <= 10)	k = 2;
+	else k = numConform * 0.1;
 	size = numConform*N;
 	data = malloc(size*sizeof(double *));
 	for (i=0; i < size; i++)	data[i] = malloc(3*sizeof(double));
@@ -43,16 +43,21 @@ int main (int argc, char **argv) {
 	}
 	alldistances = get_all_distances(data,numConform,N);
 	fprintf(fe,"r\tT\tk\tSilhouette\tTime\t\n");
+	clock_t start_t, end_t;
+	start_t = clock();
 	for (T=1; T <= 3; T++)  {
 		r = N;
 		experiment(data,alldistances,numConform,N,r,T,k,fe); 
-		/*r = pow(N,1.5);
+		r = pow(N,1.5);
 		if (r <= N*(N-1)/2) {
 			experiment(data,alldistances,numConform,N,r,T,k,fe);
-		}*/
+		}
 	}
-	//r = N*(N-1)/2;
-	//experiment(data,alldistances,numConform,N,r,0,k,fe); 
+	end_t = clock();
+	total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+	printf("total time = %lf\n",total_t);
+	r = N*(N-1)/2;
+	experiment(data,alldistances,numConform,N,r,0,k,fe); 
 	for (i=0; i < numConform; i++)	free(alldistances[i]);
 	free(alldistances);
 	alldistances = NULL;

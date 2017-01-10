@@ -39,6 +39,7 @@ dinfo *create_distances(dinfo *alldistances, double **data, int numConform, int 
 		for (i=0; i < r; i++) {
 			flag = 0;
 			index = (rand() / (RAND_MAX + 1.0)) * size;	
+			/**Choose unique distances**/
 			for (j=0; j < i; j++) {
 				if ((alldistances[index].point1 == rdis[j].point1) && (alldistances[index].point2 == rdis[j].point2)) {
 					i--;
@@ -72,7 +73,6 @@ dinfo **get_all_distances(double **data, int numConform, int N) {
 	alldistances = malloc(numConform*sizeof(dinfo *));
 	/**For each conformation**/
 	for (i=0; i < numConform; i++) {
-		//printf("Comform %d:\n",i);
 		alldistances[i] = malloc((N*(N-1)/2)*sizeof(dinfo));
 		v1 = malloc(3*sizeof(double));
 		start = i*N;
@@ -87,11 +87,9 @@ dinfo **get_all_distances(double **data, int numConform, int N) {
 				v2[0] = data[z][0];
 				v2[1] = data[z][1];
 				v2[2] = data[z][2];
-				//printf("abs(start-j) = %d and abs(start-z) = %d ",abs(start-j),abs(start-z));
 				alldistances[i][y].point1 = abs(start-j);
 				alldistances[i][y].point2 = abs(start-z);
 				alldistances[i][y].distance = distance_Euclidean(v1,v2,3);
-				//printf("distance = %lf\n",alldistances[i][y].distance);
 				y++;
 			}
 			free(v2);

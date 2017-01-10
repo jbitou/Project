@@ -3,7 +3,8 @@
 #include <string.h>
 #include <time.h>
 #include "inputProcessing.h"
-#define EXPERK 10
+#define UPPER 3
+#define LOWER 2
 
 void experiment(double **data, dinfo **alldistances, int numConform, int N, int r, int T, int k, FILE *fe) {
 	int i, j, bestk;
@@ -17,6 +18,8 @@ void experiment(double **data, dinfo **alldistances, int numConform, int N, int 
 	vectors = create_vectors(alldistances,distances,numConform,N,r);
 	printf("done vectors\n");
 	start_t = clock();
+	/*bestclusters = clustering(vectors,numConform,r,100);
+	bestS = compute_silhouette(bestclusters,vectors,r,numConform,100);*/
 	bestclusters = k_clustering(vectors,k,r,numConform,&bestk,&bestS);
 	printf("done k-clustering for r=%d and T=%d\n",r,T);
 	end_t = clock();
@@ -28,38 +31,40 @@ void experiment(double **data, dinfo **alldistances, int numConform, int N, int 
 }
 
 pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk, double *bestS) {
-	int i, j, counter = 0;
+	int i, j, counter, betterS = -1, smallerS = 0, previousBest = 0;
 	pcluster clusters, bestclusters;
 	double silhouette, previousS;
 	previousS = -1.1;
-	while ((counter != -1) && (counter <= EXPERK)) {
-		if (k == numConform / 2)	break;
-		printf("start clustering\n");
+	/**Check LOWER times for smaller silhouette and UPPER times for larger silhouette**/
+	while ((smallerS < LOWER) && (betterS < UPPER)) {
+		printf("smallerS = %d and betterS = %d\n",smallerS,betterS);
+		if (k > (int)(numConform * 0.25))	break;
 		clusters = clustering(vectors,numConform,r,k);
-		printf("done clustering\n");
 		silhouette = compute_silhouette(clusters,vectors,r,numConform,k);
-		printf("done silhouette\n");
-		if (silhouette > previousS)	{
-			if (counter != 0) {
+		if (silhouette > previousS && silhouette > previousBest) {
+			if (betterS != -1) {
 				for (i=0; i < *bestk; i++) {
 					free(bestclusters[i].center.vector);
 					destroy_points(&(bestclusters[i].items));
-				 }
+				}
 				free(bestclusters);
 			}
-			counter++;
+			betterS++;
+			smallerS = 0;
 			*bestk = k;
 			*bestS = silhouette;
 			bestclusters = malloc(k*sizeof(cluster));
 			for (i=0; i < k; i++)	{
 				bestclusters[i].center.vector = malloc(r*sizeof(double));
 				bestclusters[i].items = NULL;	
-				printf("before clone\n");
 				bestclusters[i].items = clone_points(clusters[i].items,r);
-				printf("after clone\n");
 			}
+			previousBest = silhouette;
 		}
-		else counter = -1;
+		else {
+			smallerS++;
+			betterS = 0;
+		}
 		/*for (i=0; i < k; i++) {
 			printf("Cluster %d: ",i);
 			for (j=0; j < r; j++) printf("%lf\t",clusters[i].center.vector[j]);
@@ -72,7 +77,7 @@ pcluster k_clustering(double **vectors, int k, int r, int numConform, int *bestk
 		}
 		free(clusters);
 		previousS = silhouette;
-		k++;
+		k += 5;
 	}
 	return bestclusters;
 }
@@ -99,21 +104,16 @@ pcluster clustering(double **vectors, int numConform, int r, int k) {
 		for (i=0; i < k; i++) {
 			clusters[i].center.vector = malloc(r*sizeof(double));
 			clusters[i].items = NULL;
-		}
-		printf("done allocating clusters\n");	
+		}	
 		/**Simplest assignemt**/
 		clusters = vector_simplest_assignment(clusters,vectors,centroids,numConform,r,k);
-		printf("done assignment\n");
 		J = vector_compute_objective_function(clusters,vectors,r,k);
-		printf("J = %lf\n",J);	
 		for (i=0; i < k; i++) {
 			for (j=0; j < r; j++)	previous[i].vector[j] = centroids[i].vector[j];	
 		}
 		/**Lloyd’s update**/
 		centroids = vector_update_loyds(clusters,centroids,J,vectors,r,k);
-		printf("done update\n");
-		diff = compare_centroids(centroids,previous,r,k);
-		printf("diff = %d\n",diff);		
+		diff = compare_centroids(centroids,previous,r,k);		
 		times++;
 	}while (diff > 0);
 	for (i=0; i < k; i++) {
@@ -135,7 +135,6 @@ centroid *vector_init_kmeans(double **vectors, int numConform, int totalk, int r
 	for (i=0; i < r; i++) centroids[0].vector[i] = vectors[centroids[0].center][i];
 	/**Create k centroids**/
 	while (k < totalk) {
-		printf("k=%d\n",k);
 		/**For each (k < number of centroids) allocate new Distances and Probabilities array**/
 		D = malloc((numConform-k)*sizeof(double));
 		P = malloc((numConform-k+1)*sizeof(double));
@@ -306,7 +305,6 @@ centroid *vector_update_loyds(pcluster clusters, centroid *centroids, double J, 
 			free(ci);
 		}
 		J1 = J + SDj;
-		//printf("J1 = %.10lf and J = %.10lf\n",J1,J);
 		/**If J' < J, then swap centroid with mean**/
 		if (J1 < J)	{
 			for (j=0; j < r; j++)	centroids[i].vector[j] = newcenter.vector[j];

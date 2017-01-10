@@ -6,29 +6,15 @@
 int insert_points(pointp *list, double distance1, double distance2, centroid second, int position, int r) {
 	int i;
 	pointp temp;
-	temp = *list;
-	/**If list is empty, put the first node**/
-	if (temp == NULL) {
-		temp = malloc(sizeof(point));
-		temp->position = position;
-		temp->mindistance = distance1;
-		temp->secdistance = distance2;
-		temp->second.vector = malloc(r*sizeof(double));
-		for (i=0; i < r; i++)	temp->second.vector[i] = second.vector[i];
-		temp->next = NULL;
-		*list = temp;
-	}
-	/**If list isn't empty, put new node at the end**/
-	else {
-		while (temp->next != NULL)	temp = temp->next;
-		temp->next = malloc(sizeof(point));
-		temp->next->position = position;
-		temp->next->mindistance = distance1;
-		temp->next->secdistance = distance2;
-		temp->next->second.vector = malloc(r*sizeof(double));
-		for (i=0; i < r; i++)	temp->next->second.vector[i] = second.vector[i];
-		temp->next->next = NULL;
-	}
+	temp = malloc(sizeof(point));
+	temp->position = position;
+	temp->mindistance = distance1;
+	temp->secdistance = distance2;
+	temp->second.vector = malloc(r*sizeof(double));
+	for (i=0; i < r; i++)	temp->second.vector[i] = second.vector[i];
+	/**Put new node at start**/
+	temp->next = *list;
+	*list = temp;
 	return 0;
 }
 

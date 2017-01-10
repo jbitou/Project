@@ -2,35 +2,39 @@
 #include <stdlib.h>
 #include <string.h>
 #include "silhouette.h"
-#define EXPERK 10
+#define UPPER 10
+#define LOWER 5
 
 pcluster k_clustering(double **data, int numConform, int N, int k, int *bestk, double *bestS) {
-	int i, counter = 0;;
+	int i, betterS = 0, smallerS = 0;
 	double silhouette, previousS;
 	pcluster clusters, bestclusters;
 	previousS = -1.1;
 	*bestS = -1.1;
 	*bestk = k;
-	while ((counter != -1) && (counter <= EXPERK)) {
+	/**Check LOWER times for smaller silhouette and UPPER times for larger silhouette**/
+	while ((smallerS <= LOWER) && (betterS <= UPPER)) {
+		printf("smallerS = %d and betterS = %d\n",smallerS,betterS);
 		if (k == numConform / 2)	break;
 		clusters = clustering(data,numConform,N,k);
 		silhouette = compute_silhouette(clusters,data,N,numConform,k);
 		printf("Silhouette = %lf for k = %d\n",silhouette,k);
 		if (silhouette > previousS)	{
-			if (counter != 0) {
+			if (betterS != 0) {
 				for (i=0; i < *bestk; i++) destroy_points(&(bestclusters[i].items));
 				free(bestclusters);
 			}
-			counter++;
+			betterS++;
 			*bestk = k;
 			*bestS = silhouette;
+			/**Clone clusters to keep the best**/
 			bestclusters = malloc(k*sizeof(cluster));
 			for (i=0; i < k; i++)	{
 				bestclusters[i].items = NULL;	
 				bestclusters[i].items = clone_points(clusters[i].items);
 			}
 		}
-		else counter = -1;
+		else smallerS++;
 		for (i=0; i < k; i++) destroy_points(&(clusters[i].items));
 		free(clusters);
 		previousS = silhouette;
@@ -44,8 +48,9 @@ pcluster clustering(double **data, int numConform, int N, int k) {
 	int i, j, *centroids, *previous, times = 0, diff;
 	double J = 0.0;
 	pcluster clusters;
-	/**k-medoids++ initialization**/
-	centroids = vector_init_kmedoids(data,numConform,k,N);
+	/**Centroids' initialization**/
+	centroids = init_krandom(numConform,k);
+	//centroids = init_kmedoids(data,numConform,k,N);
 	previous = malloc(k*sizeof(int));
 	do {
 		if (times > 0) {
@@ -56,25 +61,45 @@ pcluster clustering(double **data, int numConform, int N, int k) {
 		clusters = malloc(k*sizeof(cluster));
 		for (i=0; i < k; i++)	 clusters[i].items = NULL;
 		/**Simplest assignemt**/
-		clusters = vector_simplest_assignment(clusters,data,centroids,numConform,N,k);
-		J = vector_compute_objective_function(clusters,data,N,k);
+		clusters = simplest_assignment(clusters,data,centroids,numConform,N,k);
+		J = compute_objective_function(clusters,data,N,k);
 		printf("J = %lf\n",J);
 		for (i=0; i < k; i++)	previous[i] = centroids[i];	
 		/**Update à la Lloyd’s**/
-		centroids = vector_update_alaloyds(clusters,centroids,J,data,N,k);
+		centroids = update_alaloyds(clusters,centroids,J,data,N,k);
 		diff = compare_centroids(centroids,previous,k);	
 		printf("diff = %d\n",diff);
 		times++;
 	}while (diff > 0);
 	free(centroids);
-	for (i=0; i < k; i++) {
+	/*for (i=0; i < k; i++) {
 		printf("Cluster's centroid: conform %d\n",clusters[i].center);
 		print_points(clusters[i].items);
-	}
+	}*/
 	return clusters;
 }
 
-int *vector_init_kmedoids(double **data, int numConform, int totalk, int N) {
+int *init_krandom(int numConform, int totalk) {
+	int i, j, flag;
+	int *centroids = malloc(totalk*sizeof(int)); 
+	/**Create k centroids**/
+	for (i=0; i < totalk; i++) {
+		printf("i = %d\n",i);
+		flag = 1;
+		while (flag == 1) {
+			flag = 0;
+			centroids[i] = (rand() / (RAND_MAX + 1.0)) * numConform;
+			/**Check if centroid already exists**/
+			for (j=0; j < i; j++) {
+				if (centroids[i] == centroids[j]) flag = 1;
+			}
+			if (flag == 0)  break;
+		}
+	}
+	return centroids;
+}
+
+int *init_kmedoids(double **data, int numConform, int totalk, int N) {
 	int k = 1, i, j, x, z, flag;
 	double min, max, *D, *P, *temp;
 	int *centroids = malloc(totalk*sizeof(int)); 
@@ -115,7 +140,7 @@ int *vector_init_kmedoids(double **data, int numConform, int totalk, int N) {
 		}
 		x = (rand() / (RAND_MAX + 1.0)) * (P[numConform-k]+1);
 		/**r is the new centroid center**/
-		centroids[k] = doublebinarySearch(numConform - k, x, P);
+		centroids[k] = binarySearch(numConform - k, x, P);
 		for (i=0; i < k; i++) {
 			if (centroids[k] == centroids[i]) {
 				k--;
@@ -129,7 +154,7 @@ int *vector_init_kmedoids(double **data, int numConform, int totalk, int N) {
 	return centroids;
 }
 
-int doublebinarySearch(int Nk, double search, double *array) {
+int binarySearch(int Nk, double search, double *array) {
 	int first = 0, last = Nk, middle;
 	middle = (first+last)/2;
 	if (search == 0)  return search;
@@ -142,7 +167,7 @@ int doublebinarySearch(int Nk, double search, double *array) {
 	return middle; 
 }
 
-pcluster vector_simplest_assignment(pcluster clusters, double **data, int *centroids, int numConform, int N, int k) {
+pcluster simplest_assignment(pcluster clusters, double **data, int *centroids, int numConform, int N, int k) {
 	int i, j, z, secondcentroid, mincentroid;
 	double distance, mindistance, seconddistance;
 	/**For each comform**/
@@ -187,7 +212,7 @@ pcluster vector_simplest_assignment(pcluster clusters, double **data, int *centr
 	return clusters;
 }
 
-double vector_compute_objective_function(pcluster clusters, double **data, int N, int k) {
+double compute_objective_function(pcluster clusters, double **data, int N, int k) {
 	int i, center; 
 	double J = 0.0;
 	pointp temp;
@@ -204,14 +229,14 @@ double vector_compute_objective_function(pcluster clusters, double **data, int N
 	return J;
 }
 
-int *vector_update_alaloyds(pcluster clusters, int *centroids, double J, double **data, int N, int k) {
+int *update_alaloyds(pcluster clusters, int *centroids, double J, double **data, int N, int k) {
 	pointp medoid, temp, delete;
 	int i, j, z, s, ci, m, id1, id2, newcenter;
 	double tdistance, SDj, J1;
 	/**For each cluster**/
 	for (i=0; i < k; i++) {
 		SDj = 0;
-		medoid = vector_calculate_medoid(clusters[i].items,data,N);
+		medoid = calculate_medoid(clusters[i].items,data,N);
 		if (medoid == NULL) continue;
 		id1 = medoid->position;
 		/**Insert medoid's info to newcenter**/
@@ -248,7 +273,7 @@ int *vector_update_alaloyds(pcluster clusters, int *centroids, double J, double 
 	return centroids;
 }
 
-pointp vector_calculate_medoid(pointp items, double **data, int N) {
+pointp calculate_medoid(pointp items, double **data, int N) {
 	int id1, id2;
 	double min, distance, sum;
 	pointp temp, curr, first, medoid;
