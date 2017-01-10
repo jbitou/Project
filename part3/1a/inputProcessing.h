@@ -1,4 +1,7 @@
 #define STARTSIZE 10 
+#define f 10
+#define L 5
+#define k 4
 
 typedef struct rating_info *ratingp;
 typedef struct rating_info {

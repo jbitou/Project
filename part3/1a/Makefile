@@ -1,6 +1,6 @@
-OBJS 	= main.o inputProcessing.o NNsearch.o hash.o chain.o distances.o 
-SOURCE	= main.c inputProcessing.c NNsearch.c hash.c chain.c distances.c 
-HEADER  = inputProcessing.h NNsearch.h hash.h chain.h distances.h 
+OBJS 	= main.o inputProcessing.o NNsearch.o hash.o chain.o distances.o  cross-validation.o
+SOURCE	= main.c inputProcessing.c NNsearch.c hash.c chain.c distances.c  cross-validation.c
+HEADER  = inputProcessing.h NNsearch.h hash.h chain.h distances.h  cross-validation.h
 OUT  	= recommendation
 CC	    = gcc
 FLAGS   = -g -c 
@@ -29,7 +29,9 @@ chain.o: chain.c chain.h
 distances.o: distances.c distances.h
 	$(CC) $(FLAGS) distances.c	
 						
-			
+cross-validation.o: cross-validation.c cross-validation.h
+	$(CC) $(FLAGS) cross-validation.c
+				
 # clean house
 clean:
 	rm -f $(OBJS) $(OUT)

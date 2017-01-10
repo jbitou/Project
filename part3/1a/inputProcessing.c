@@ -37,7 +37,7 @@ int *create_items(FILE *fp, int *P, int *numofusers, int *numofitems) {
 	fscanf(fp,"%s",p);
 	if (strcmp(p,"P:") == 0)	fscanf(fp,"%d[^\n]",P);
 	else {
-		*P = 20;
+		*P = 30;
 		fseek(fp,0,SEEK_SET);
 	}
 	items = malloc(STARTSIZE*sizeof(int));
@@ -88,7 +88,7 @@ int *create_items(FILE *fp, int *P, int *numofusers, int *numofitems) {
 }
 
 user *create_users(FILE *fp, int *items, int numofusers, int numofitems) {
-	int i, j, num, previousu, userId, itemId;
+	int i, j,tempP, num, previousu, userId, itemId;
 	double rate, avrate;
 	char p[4];
 	user *users;
@@ -105,6 +105,7 @@ user *create_users(FILE *fp, int *items, int numofusers, int numofitems) {
 	fseek(fp,0,SEEK_SET);
 	fscanf(fp,"%s",p);
 	if (strcmp(p,"P:") != 0)	fseek(fp,0,SEEK_SET);
+	else fscanf(fp,"%d[^\n]",&tempP);
 	i = 0;
 	while (fscanf(fp,"%d%d%lf[^\n]",&userId,&itemId,&rate) != EOF) {
 		if (previousu != userId && previousu != -1) {

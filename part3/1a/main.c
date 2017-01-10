@@ -3,10 +3,10 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include "NNsearch.h"
+#include "cross-validation.h"
 
 int main (int argc, char **argv) {
-	int i, j, input, output, validate, numofusers, numofitems, P, *items;
+	int i, j, input, output, validate, numofusers, numofitems, P, *items, flag;
 	char p[4];
 	FILE *fp, *fe;
 	user *users;
@@ -40,7 +40,11 @@ int main (int argc, char **argv) {
 			if (users[i].ratings[j].rate != 0) printf("item[%d] %d rating %lf\n",j,users[i].ratings[j].itemId,users[i].ratings[j].rate);
 		}
 	}*/
-	nnlsh_recommendation(users,numofusers,numofitems,P);
+	/**for (i=1; i < 3; i++)**/
+	flag = 2;
+		nnlsh_recommendation(users,users,20,numofusers,numofitems,P,fe,flag);
+		fcross_validation(users,numofusers,numofitems,P,flag);
+	/**}**/
 	for (i=0; i < numofusers; i++) free(users[i].ratings);
 	free(items);
 	free(users);
